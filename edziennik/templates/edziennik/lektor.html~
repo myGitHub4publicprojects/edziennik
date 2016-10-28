@@ -1,0 +1,14 @@
+<a href="/edziennik/">home</a>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<h1>Lektor: {{ lek.lektor_name }}</h1>
+
+{% if current_group_list %}
+    <p>Obecne grupy:</p>
+    <ul>
+    {% for grupa in current_group_list %}
+        <li><a href="/edziennik/{{ grupa.id }}/group">{{ grupa.group_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No groups are available.</p>
+{% endif %}

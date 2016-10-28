@@ -1,0 +1,26 @@
+<a href="/edziennik/">home</a>
+
+<h1>Nazwa grupy: {{ groupp.group_name }}</h1>
+
+<h2>Obecność słuchaczy w dniu {{ dzisiejsza_data }}:</h2>
+
+
+{% if error_message %}
+<h2>{{ error_message }}</h2>
+{% endif %}
+
+{% if not error_message %}
+<form action="{% url 'edziennik:name_attendance_check' groupp.id %}" method="post">
+{% csrf_token %}
+Temat lekcji: <input type="text" name="class_subject" required />
+
+<fieldset>
+{% for student in students_list %}
+    <input type="checkbox" name="student" id="student{{ forloop.counter }}" value="{{ student.id }}" />
+    <label for="student{{ forloop.counter }}">{{ student.student_name }}</label><br />
+{% endfor %}
+<input type="submit" value="Wybierz" />
+</fieldset>
+</form>
+{% endif %}
+<!-- type="checkbox" zeby było można kilka opcji wybrac, musza tez miec to samo 'name' - wowczas pojda jako lista o takiej nazwie -->

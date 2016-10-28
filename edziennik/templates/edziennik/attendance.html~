@@ -1,0 +1,19 @@
+<a href="{% url 'edziennik:name_index' question.id %}">home</a>
+{% if output %}
+    <p>obecność:<p>
+   
+<table style="width:100%">
+
+{% for i, dates in output %}  
+
+  <tr>
+    <td>{{ i }}: {{ dates }}</td>
+
+  </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+    <p>No data is available.</p>
+{% endif %}
+

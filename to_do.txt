@@ -1,0 +1,29 @@
+github
+logical error in group view - list of all grades is created unique grades.name, if grades.name is the same it'll not be appended
+to prevent it use also date to check and when adding grades make sure to prevent adding two same grade.name in one day
+
+nie pozwala dodac oceny o tej samej nazwie tego samego dnia - powinno pozwolic jesli date_of_test jest inne
+	user log in
+	log out redirect to home page - next hidden
+attendance_by_group.html - present dates vertiacally
+authomatic logout after 10 hours
+	separate view for each logged user
+urls in templates - make dynamic
+use return render instead of return HttpResponse
+
+
+	ekran logowania przed index - daj w index view na początku sprawdzanie czy zalogowany - jak nie to przekieruj na logowanie
+
+	dodaj uczniów i staff
+	add subject of a class
+	add grades for students
+display grades
+add time_of_test attribute to grades class
+
+css styling
+test
+
+deploy to server
+
+Documentation:
+It is not permitted to add the same grade name to a given student in one day.

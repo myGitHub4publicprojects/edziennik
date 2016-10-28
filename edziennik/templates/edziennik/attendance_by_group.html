@@ -1,0 +1,78 @@
+
+{% extends "edziennik/base.html" %}
+
+{% block content %}
+<a href="/edziennik/">home</a>
+{% if output %}
+  <p>obecność w grupie {{ group.group_name }}:<p>
+     
+<!--   <table style="width:100%">
+
+  {% for i, dates in output %}  
+
+    <tr>
+      <td>{{ i }}: {{ dates }}</td>
+
+    </tr>
+      {% endfor %}
+  </table> -->
+
+<!--   <p>All dates: {{ all_dates }}</p>
+  <p>output:</p>
+  <p>{{output}}</p>
+  <p>output2:</p>
+  <p>{{output2}}</p>
+  <p>tester:</p>
+  <p>{{tester}}</p>
+
+  <table style="width:100%">
+
+  {% for i in tester %}  
+
+    <tr>{% for y in i  %}
+
+      <td>{{ y }}</td>
+       {% endfor %}
+
+    </tr>
+      {% endfor %}
+  </table>
+ -->
+  <table style="width:100%">
+
+  {% for i in output2|slice:":1" %}  
+
+    <tr>{% for y in i  %}
+
+      <th>{{ y }}</th>
+       {% endfor %}
+
+    </tr>
+      {% endfor %}
+
+    
+
+    <tr>{% for i in all_subjects %}
+
+      <td>{{ i }}</td>
+       {% endfor %}
+
+    </tr>
+      
+
+  {% for i in output2|slice:"1:" %}  
+
+    <tr>{% for y in i  %}
+
+      <td>{{ y }}</td>
+       {% endfor %}
+
+    </tr>
+      {% endfor %}
+  </table>
+
+{% else %}
+    <p>No data is available.</p>
+{% endif %}
+
+{% endblock content %}

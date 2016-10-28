@@ -1,0 +1,18 @@
+{% if request.user.is_authenticated %}
+
+	<a href="/edziennik/">home</a>
+	<p>Wybierz grupę:</p>
+
+	{% if group_list %}
+	    <ul>
+	    {% for group in group_list %}
+	        <li><a href="/edziennik/{{ group.id }}/group_grades">{{ group.group_name }}</a></li>
+	    {% endfor %}
+	    </ul>
+	{% else %}
+	    <p>No groups are available.</p>
+	{% endif %}
+
+{% else %}
+Zaloguj się
+{% endif %}
