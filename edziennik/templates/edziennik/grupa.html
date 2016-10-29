@@ -1,54 +1,36 @@
 {% extends "edziennik/base.html" %}
-
 {% block content %}
-<a href="/edziennik/">home</a>
-<h1>Nazwa grupy: {{ groupp.group_name }}</h1>
-Lektor prowadzący: <a href="/edziennik/{{ lektor.id }}/lektor">{{ lektor.lektor_name }}</a>
-<p>Lista studentów:</p>
 
-{% if students_list %}
-    <ul>
-    {% for student in students_list %}
-        <li><a href="/edziennik/{{ student.id }}/student">{{ student.student_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No students are available.</p>
+<h1>Nazwa grupy: {{ groupp.group_name }}</h1>
+{% if request.user.is_superuser %}
+Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lektor.id %}">{{ lektor.lektor_name }}</a>
 {% endif %}
 
-
 <table>
 	<tr>
-	{% for i in grades_list %}
-		<th>{{ i }}</th>
-	{% endfor %}
+		{% for x in main_list2.0 %}
+		<td>{{ x }}</td>
+		{% endfor %}
+	</tr>
+	<tr>
+		{% for x in main_list2.1 %}
+		<td>{{ x }}</td>
+		{% endfor %}
 	</tr>
 
+	{% for i in main_list2|slice:"2:" %}
 	<tr>
-	{% for i in dates_of_test %}
-		<td>{{ i }}</td>
-	{% endfor %}
-	</tr>
-
-
-</table>
-
-<table>
-	{% for i in main_list2 %}
-	<tr>
-		{% for x in i %}
+		<td><a href="{% url 'edziennik:name_student' i.0.1 %}">{{ i.0.0 }}</a></td>
+		{% for x in i|slice:"1:" %}
 		<td>{{ x }}</td>
 		{% endfor %}
 	</tr>
 	{% endfor %}
-
 </table>
 
 
-
-{{ main_list2 }}<br>
-{{ all_dates_and_grades }}
-
-
+{{ x }}<br>
+<br>
+{{ y }}
 
 {% endblock content %}

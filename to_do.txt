@@ -25,5 +25,8 @@ test
 
 deploy to server
 
+attendance_by_group.html and view need clean up - remove redundant code
+in all views remove HttpResponse(template.render(context))
+
 Documentation:
 It is not permitted to add the same grade name to a given student in one day.

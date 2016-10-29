@@ -1,4 +1,6 @@
-<a href="{% url 'edziennik:name_base' %}">home</a>
+{% extends "edziennik/base.html" %}
+{% block content %}
+
 {% if output %}
     <p>obecność:<p>
    
@@ -17,3 +19,4 @@
     <p>No data is available.</p>
 {% endif %}
 
+{% endblock content %}

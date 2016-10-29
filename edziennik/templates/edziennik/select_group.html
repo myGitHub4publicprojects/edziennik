@@ -1,12 +1,13 @@
-{% if request.user.is_authenticated %}
+{% extends "edziennik/base.html" %}
+{% block content %}
 
-	<a href="/edziennik/">home</a>
-	<p>Wybierz grupę:</p>
+{% if request.user.is_authenticated %}
+	<p>Aby sprawdzić obecność wybierz grupę:</p>
 
 	{% if group_list %}
 	    <ul>
 	    {% for group in group_list %}
-	        <li><a href="/edziennik/{{ group.id }}/group_check">{{ group.group_name }}</a></li>
+	        <li><a href="{% url 'edziennik:name_group_check' group.id %}">{{ group.group_name }}</a></li>
 	    {% endfor %}
 	    </ul>
 	{% else %}
@@ -16,3 +17,5 @@
 {% else %}
 Zaloguj się
 {% endif %}
+
+{% endblock content %}

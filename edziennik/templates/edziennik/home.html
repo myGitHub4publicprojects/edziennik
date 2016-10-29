@@ -1,6 +1,6 @@
 {% extends "edziennik/base.html" %}
-
 {% block content %}
+
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -8,15 +8,16 @@
     {% endfor %}
 </ul>
 {% endif %}
+
 Dziś jest: {{ dzisiejsza_data|date:'d-m-Y' }}
 
 {% if not request.user.is_authenticated %}
-<h2>Zaloguj się</h2>
-<form method="POST" action="{% url 'auth_login' %}" >{% csrf_token %}
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="password">
-    <button type="submit">Login</button>
-</form>
+    <h2>Zaloguj się</h2>
+    <form method="POST" action="{% url 'auth_login' %}" >{% csrf_token %}
+        <input type="text" name="username" placeholder="username">
+        <input type="password" name="password" placeholder="password">
+        <button type="submit">Login</button>
+    </form>
 {% else %}
     <h2>Zalogowano jako: <strong>{{ username }}</strong></h2>
     {% if not request.user.is_superuser %}
@@ -25,57 +26,27 @@ Dziś jest: {{ dzisiejsza_data|date:'d-m-Y' }}
     {% endif %}
     <h3>Zobacz frekwencje w grupach:</h3>
     {% if group_list %}
-    <ul>
-    {% for group in group_list %}
-        <li><a href="/edziennik/{{ group.id }}/attendance_by_group">{{ group.group_name }}</a></li>
-    {% endfor %}
-    </ul>
+        <ul>
+        {% for group in group_list %}
+            <li><a href="{% url 'edziennik:name_attendance_by_group' group.id %}">{{ group.group_name }}</a></li>
+        {% endfor %}
+        </ul>
     {% else %}
         <p>No groups are available.</p>
     {% endif %}
 
-    
+    <h3>Zobacz oceny w grupach:</h3>
+    {% if group_list %}
+        <ul>
+        {% for group in group_list %}
+            <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.group_name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No groups are available.</p>
+    {% endif %}
+
     Wyloguj się: <a href="{% url 'auth_logout' %}?next=/edziennik/">Logout</a>
     
-
 {% endif %}
-
-
-
-
-
-
-<!-- {% if lektor_list %}
-    <p>Lektorzy:<p>
-    <ul>
-    {% for lektor in lektor_list %}
-        <li><a href="{% url 'edziennik:name_lektor' lektor.id %}">{{ lektor.lektor_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No lektors are available.</p>
-{% endif %}
-
-{% if group_list %}
-    <p>Grupy:<p>
-    <ul>
-    {% for grupa in group_list %}
-        <li><a href="{% url 'edziennik:name_group' grupa.id %}">{{ grupa.group_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No groups are available.</p>
-{% endif %}
-
-{% if group_list %}
-    <p>Studenci:<p>
-    <ul>
-    {% for student in student_list %}
-        <li><a href="{% url 'edziennik:name_student' student.id %}">{{ student.student_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No students are available.</p>
-{% endif %}
- -->
 {% endblock content %}

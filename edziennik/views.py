@@ -29,7 +29,6 @@ def index(request):
     return HttpResponse(template.render(context))
 
 def lektor(request, question_id):
-    #lek = Lektor.objects.get(id=question_id)
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
     lek = get_object_or_404(Lektor, pk=question_id)
@@ -47,70 +46,38 @@ def student(request, question_id):
     return HttpResponse(x)
 
 def group(request, question_id):
-
+    ''' displays a list of students and their scores for each grade '''
     groupp = Group.objects.get(id=question_id)
     lektor = groupp.prowadzacy_lektor
     students_list = [student for student in Student.objects.all() if student.przynaleznosc_grupy == groupp]
-    grades_list= ['grades']
-
-    
-    dates_of_test = ['dates']
-
     all_dates_and_grades = []
-    main_list = [grades_list, dates_of_test]
-    main2 = []
-    main3 = {}
+
     for student in students_list:
-        student_grades = []
-        student_date_and_grade = [student.student_name]
-        student_date_name_score = []
+        student_date_and_grade = [(student.id, student.student_name)]
         grades = student.grades_set.all()
         for grade in grades:
-            student_grades.append(grade.score)
-            student_date_and_grade.append((grade.date_of_test, grade.name, grade.score))
-            a = {}
-            a['date'] = grade.date_of_test
-            a['name'] = grade.name
-            a['score'] = grade.score
-            student_date_name_score.append(a)
-            
-                
+            student_date_and_grade.append((grade.date_of_test, grade.name, grade.score)) 
             if (grade.date_of_test, grade.name) not in all_dates_and_grades:
                 all_dates_and_grades.append((grade.date_of_test, grade.name))
-                grades_list.append(grade.name)
-                dates_of_test.append(grade.date_of_test)
-        main3[student.student_name] = student_date_name_score
-
-        main_list.append(student_grades)
-        main2.append(student_date_and_grade)
-
-    main_list2 = [grades_list] + [dates_of_test]
+    main_list2 = [['grades'] + [i[1] for i in all_dates_and_grades]] + [['dates'] + [i[0] for i in all_dates_and_grades]]
 
     # fill spaces when student has no grade in a day that others got grades
     for student in students_list:
         grades = student.grades_set.all()
         simple_student_grades2 = [(i.date_of_test, i.name) for i in grades]
         student_grades2 = [(i.date_of_test, i.name, i.score) for i in grades]
-        # print 'grades before: ', student_grades2
         for i in all_dates_and_grades:
             if i not in simple_student_grades2:
-                # insert item into student_grades2 item
                 position = all_dates_and_grades.index(i)
                 student_grades2.insert(position, (i)+(None,))
-        only_name_and_scores = [student.student_name]
+        only_name_and_scores = [(student.student_name, student.id)]
         for i in student_grades2:
             only_name_and_scores.append(i[2])
         main_list2 += [only_name_and_scores]
 
     template = loader.get_template('edziennik/grupa.html')
     context = RequestContext(request, {
-        'main_list': main_list,
-        'all_dates_and_grades': all_dates_and_grades,
         'main_list2': main_list2,
-        'main2': main2,
-        'main3': main3,
-        'dates_of_test': dates_of_test,
-        'grades_list': grades_list,
         'groupp': groupp,
         'lektor': lektor,
         'students_list': students_list,
@@ -154,7 +121,6 @@ def attendance_check(request, groupp_id):
             'groupp': p,
             'dzisiejsza_data': datetime.datetime.today().strftime("%d/%m/%Y")
         })
-   
     # process attendance of each student
     selected_student_list = request.POST.getlist('student')
     class_subject = request.POST.get('class_subject')
@@ -165,7 +131,6 @@ def attendance_check(request, groupp_id):
         x = ClassDate(date_of_class = datetime.datetime.today(), student = Student.objects.get(id = student.id), subject = class_subject)
         x.save()
 
-   
     messages.success(request, "Obecnosc w grupie %s sprawdzona" % p.group_name)
     return redirect('edziennik:name_home')
 

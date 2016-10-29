@@ -1,18 +1,16 @@
-{% if request.user.is_authenticated %}
+{% extends "edziennik/base.html" %}
+{% block content %}
 
-	<a href="/edziennik/">home</a>
-	<p>Wybierz grupę:</p>
+<p>Wybierz grupę:</p>
 
-	{% if group_list %}
-	    <ul>
-	    {% for group in group_list %}
-	        <li><a href="/edziennik/{{ group.id }}/group_grades">{{ group.group_name }}</a></li>
-	    {% endfor %}
-	    </ul>
-	{% else %}
-	    <p>No groups are available.</p>
-	{% endif %}
-
+{% if group_list %}
+    <ul>
+    {% for group in group_list %}
+        <li><a href="{% url 'edziennik:group_grades' group.id %}">{{ group.group_name }}</a></li>
+    {% endfor %}
+    </ul>
 {% else %}
-Zaloguj się
+    <p>No groups are available.</p>
 {% endif %}
+
+{% endblock content %}

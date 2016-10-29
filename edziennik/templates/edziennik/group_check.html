@@ -1,4 +1,5 @@
-<a href="/edziennik/">home</a>
+{% extends "edziennik/base.html" %}
+{% block content %}
 
 <h1>Nazwa grupy: {{ groupp.group_name }}</h1>
 
@@ -23,4 +24,5 @@ Temat lekcji: <input type="text" name="class_subject" required />
 </fieldset>
 </form>
 {% endif %}
-<!-- type="checkbox" zeby było można kilka opcji wybrac, musza tez miec to samo 'name' - wowczas pojda jako lista o takiej nazwie -->
+
+{% endblock content %}
