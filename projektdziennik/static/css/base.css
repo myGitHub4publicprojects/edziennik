@@ -1,0 +1,44 @@
+.container {
+	width: 800px;
+	background-color: #d2d2f7;
+	margin: 0 auto;
+}
+#header {
+	background-image: url("headerdoszablonu.png");
+}
+
+p {
+	color: #888;
+}
+
+table {
+	margin: 5%;
+	border-collapse: collapse;
+}
+
+td, th {
+	padding: 2%;
+	text-align: center;
+
+}
+
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2}
+tr:nth-child(odd) {background-color: #f7f7f7}
+
+td a { 
+   display: block;
+   }
+
+.messages {
+	background-color: red;
+}
+
+body {
+	background: linear-gradient(red, yellow);
+	background-image: url("subtle-bg-backop.png");
+}

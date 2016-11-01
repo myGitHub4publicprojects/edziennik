@@ -150,7 +150,7 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/edziennik'
 LOGOUT_REDIRECT_URL = '/edziennik'
 
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+STATICFILES_STORAGE='whitenoise.django.GzipManifestStaticFilesStorage'
 
 import dj_database_url
 DATABASES['default'] = dj_database_url.config()
