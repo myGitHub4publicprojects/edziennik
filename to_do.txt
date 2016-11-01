@@ -30,4 +30,10 @@ in all views remove HttpResponse(template.render(context))
 write in documentation how to add new lektors
 
 Documentation:
+Afer new installation:
+	add users in admin panel - use your lektors' names
+	add lektors - use same names as for users
+	add groups
+	add students
+
 It is not permitted to add the same grade name to a given student in one day.
