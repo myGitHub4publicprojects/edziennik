@@ -3,24 +3,13 @@
 
 {% if output %}
   <p>obecność w grupie {{ group.group_name }}:<p>
-  
-  <table style="width:100%">
-  {% for i in output2|slice:":1" %}  
-    <tr>{% for y in i  %}
-      <th>{{ y }}</th>
-       {% endfor %}
-    </tr>
-      {% endfor %}
-    <tr>{% for i in all_subjects %}
-      <td>{{ i }}</td>
-       {% endfor %}
-    </tr>
-  {% for i in output2|slice:"1:" %}  
+    <table>
+    {% for i in new %}  
     <tr>{% for y in i  %}
       <td>{{ y }}</td>
        {% endfor %}
     </tr>
-      {% endfor %}
+    {% endfor %}
   </table>
 
 {% else %}

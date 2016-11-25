@@ -1,39 +1,49 @@
-github
-logical error in group view - list of all grades is created unique grades.name, if grades.name is the same it'll not be appended
-to prevent it use also date to check and when adding grades make sure to prevent adding two same grade.name in one day
-
-nie pozwala dodac oceny o tej samej nazwie tego samego dnia - powinno pozwolic jesli date_of_test jest inne
+	github
 	user log in
 	log out redirect to home page - next hidden
-attendance_by_group.html - present dates vertiacally
-authomatic logout after 10 hours
+attendance_by_group.html - present dates vertiacally, table styling - th bold, width of the table
+	authomatic logout after 5 hours
 	separate view for each logged user
-urls in templates - make dynamic
-use return render instead of return HttpResponse
-
-
+	urls in templates - make dynamic
 	ekran logowania przed index - daj w index view na początku sprawdzanie czy zalogowany - jak nie to przekieruj na logowanie
-
 	dodaj uczniów i staff
 	add subject of a class
 	add grades for students
-display grades
-add time_of_test attribute to grades class
-
-css styling
+	display grades
+	add time_of_test attribute to grades class
+finish css styling
 test
-
-deploy to server
-
+	deploy to server
 attendance_by_group.html and view need clean up - remove redundant code
-in all views remove HttpResponse(template.render(context))
+in all views remove HttpResponse(template.render(context)) use return render instead of return HttpResponse
 write in documentation how to add new lektors
+change secret key
+
+Further development:
+if student is absent second time in a row - notify admin, admin should be able to change notification settings
+
+Technical:
+django 1.9
+registration
+css resizing
+
 
 Documentation:
+The edziennik application is designed for language schools. It enables users (lectors) to add grades and check attendance of students as well as display past attendace and grades records.
+The admin can create lectors (Lektor), groups and students.
 Afer new installation:
 	add users in admin panel - use your lektors' names
 	add lektors - use same names as for users
 	add groups
 	add students
 
+How to add group
+How to add student
+How to check attendance
+How to add grade
+How to display grades
+Displaying attendance and subjects
+
 It is not permitted to add the same grade name to a given student in one day.
+User will be automatically logged out after 5 hours.
+works on desktops, laptops, tablets and smartphones

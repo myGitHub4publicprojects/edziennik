@@ -2,7 +2,8 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
-	<p>Aby sprawdzić obecność wybierz grupę:</p>
+<div class="select-group">
+	<h3>Aby sprawdzić obecność wybierz grupę:</h3>
 
 	{% if group_list %}
 	    <ul>
@@ -13,9 +14,14 @@
 	{% else %}
 	    <p>No groups are available.</p>
 	{% endif %}
-
+</div>
 {% else %}
-Zaloguj się
+<h2>Zaloguj się</h2>
+    <form method="POST" action="{% url 'auth_login' %}" >{% csrf_token %}
+        <input type="text" name="username" placeholder="username">
+        <input type="password" name="password" placeholder="password">
+        <button type="submit">Login</button>
+    </form>
 {% endif %}
 
 {% endblock content %}

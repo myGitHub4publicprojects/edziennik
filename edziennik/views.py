@@ -75,9 +75,12 @@ def group(request, question_id):
             only_name_and_scores.append(i[2])
         main_list2 += [only_name_and_scores]
 
+    new = zip(*main_list2)
+
     template = loader.get_template('edziennik/grupa.html')
     context = RequestContext(request, {
         'main_list2': main_list2,
+        'new': new,
         'groupp': groupp,
         'lektor': lektor,
         'students_list': students_list,
@@ -183,7 +186,14 @@ def attendance_by_group(request, group_id):
         for i in all_dates:
             if i not in y:
                 y.insert(all_dates.index(i)+1, 'absent')
-    all_subjects = ['tematy:'] + all_subjects        
+    all_subjects = ['tematy:'] + all_subjects
+
+
+    x = output2[:1] + [all_subjects] + output2[1:]
+    new = [[] for i in range(len(x[0]))]
+    for i in range(len(x)):
+        for y in range(len(x[i])):
+            new[y].append(x[i][y])     
 
     template = loader.get_template('edziennik/attendance_by_group.html')
     context = RequestContext(request, {
@@ -192,6 +202,8 @@ def attendance_by_group(request, group_id):
         'group': group,
         'all_dates': all_dates,
         'all_subjects': all_subjects,
+        'x': x,
+        'new': new
     })
     return HttpResponse(template.render(context))
 

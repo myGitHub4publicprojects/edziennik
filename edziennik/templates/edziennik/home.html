@@ -9,7 +9,9 @@
 </ul>
 {% endif %}
 
-Dziś jest: {{ dzisiejsza_data|date:'d-m-Y' }}
+    <div id="date">
+    <span class="descriptor">Dziś jest: </span><span id="today_date">{{ dzisiejsza_data|date:'d-m-Y' }}</span>
+    </div>
 
 {% if not request.user.is_authenticated %}
     <h2>Zaloguj się</h2>
@@ -19,34 +21,49 @@ Dziś jest: {{ dzisiejsza_data|date:'d-m-Y' }}
         <button type="submit">Login</button>
     </form>
 {% else %}
-    <h2>Zalogowano jako: <strong>{{ username }}</strong></h2>
-    {% if not request.user.is_superuser %}
-        <h2><a href="{% url 'edziennik:name_sprawdz' %}">Sprawdź obecność</a></h2>
-        <h2><a href="{% url 'edziennik:select_group_for_grades' %}">Dodaj oceny</a></h2>
-    {% endif %}
-    <h3>Zobacz frekwencje w grupach:</h3>
-    {% if group_list %}
-        <ul>
-        {% for group in group_list %}
-            <li><a href="{% url 'edziennik:name_attendance_by_group' group.id %}">{{ group.group_name }}</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No groups are available.</p>
-    {% endif %}
+    <div id="user_credentials">
+        <span class="descriptor">Zalogowano jako: </span><span id="username">{{ username }}</span>
+    </div>
+    <nav class="center-400">
+        {% if not request.user.is_superuser %}
+        <div class="large-btn fl-left">
+            <h2><a href="{% url 'edziennik:name_sprawdz' %}">Sprawdź obecność</a></h2>
+        </div>
 
-    <h3>Zobacz oceny w grupach:</h3>
-    {% if group_list %}
-        <ul>
-        {% for group in group_list %}
-            <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.group_name }}</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No groups are available.</p>
-    {% endif %}
-
-    Wyloguj się: <a href="{% url 'auth_logout' %}?next=/edziennik/">Logout</a>
+        <div class="large-btn fl-right">
+            <h2><a href="{% url 'edziennik:select_group_for_grades' %}">Dodaj oceny</a></h2>
+        </div>
+        {% endif %}
+    </nav>
+        
+    <section class="center-400">
+        <div class="select-group fl-left">
+           <h3>Frekwencja w grupie:</h3>
+            {% if group_list %}
+                <ul>
+                {% for group in group_list %}
+                <li><a href="{% url 'edziennik:name_attendance_by_group' group.id %}">{{ group.group_name }}</a></li>
+                {% endfor %}
+                 </ul>
+            {% else %}
+                <p>No groups are available.</p>
+            {% endif %}
+        </div>
+    
+        <div class="select-group fl-right">
+            <h3>Oceny w grupie:</h3>
+            {% if group_list %}
+                <ul>
+                {% for group in group_list %}
+                <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.group_name }}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No groups are available.</p>
+            {% endif %}
+        </div>
+    <div class="clear"></div>
+    </section>
     
 {% endif %}
 {% endblock content %}
