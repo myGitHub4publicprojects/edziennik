@@ -172,14 +172,15 @@ img {
 }
 
 table {
-	margin: 7%;
+	margin: 5%;
 	border-collapse: collapse;
 	max-width: 80%;
 }
 
 td, th {
-	padding: 2%;
+	padding: 5px 5px;
 	text-align: center;
+	text-decoration: none;
 
 }
 

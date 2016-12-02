@@ -4,7 +4,13 @@
 {% if output %}
   <p>obecność w grupie {{ group.group_name }}:<p>
     <table>
-    {% for i in new %}  
+    <tr>{% for y in new.0  %}
+      <th>{{ y }}</th>
+       {% endfor %}
+    </tr>
+    
+
+    {% for i in new|slice:"1:" %}  
     <tr>{% for y in i  %}
       <td>{{ y }}</td>
        {% endfor %}

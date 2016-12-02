@@ -6,26 +6,25 @@
 Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lektor.id %}">{{ lektor.lektor_name }}</a>
 {% endif %}
 
-<table>
-	<tr>
-		{% for x in main_list2.0 %}
-		<td>{{ x }}</td>
-		{% endfor %}
-	</tr>
-	<tr>
-		{% for x in main_list2.1 %}
-		<td>{{ x }}</td>
-		{% endfor %}
-	</tr>
 
-	{% for i in main_list2|slice:"2:" %}
-	<tr>
-		<td><a href="{% url 'edziennik:name_student' i.0.1 %}">{{ i.0.0 }}</a></td>
-		{% for x in i|slice:"1:" %}
-		<td>{{ x }}</td>
-		{% endfor %}
-	</tr>
-	{% endfor %}
-</table>
+    <table>
+    <tr>{% for y in new.0|slice:"0:2"  %}
+      <th>{{ y }}</th>
+       {% endfor %}
+
+       {% for y in new.0|slice:"2:"  %}
+      <th><a href="{% url 'edziennik:name_student' y.1 %}">{{ y.0 }}</a></th>
+       {% endfor %}
+
+    </tr>
+    
+
+    {% for i in new|slice:"1:" %}  
+    <tr>{% for y in i  %}
+      <td>{{ y }}</td>
+       {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
 
 {% endblock content %}
