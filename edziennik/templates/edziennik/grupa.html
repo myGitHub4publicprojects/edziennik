@@ -1,7 +1,7 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 
-<h1>Nazwa grupy: {{ groupp.group_name }}</h1>
+<h1><small class='helper'>Nazwa grupy: </small>{{ groupp.group_name }}</h1>
 {% if request.user.is_superuser %}
 Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lektor.id %}">{{ lektor.lektor_name }}</a>
 {% endif %}
@@ -20,9 +20,12 @@ Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lektor.id %}">{{ lek
     
 
     {% for i in new|slice:"1:" %}  
-    <tr>{% for y in i  %}
-      <td>{{ y }}</td>
-       {% endfor %}
+    <tr>
+      <td>{{ i.0 }}</td>
+      <td>{{ i.1|date:"d/m/Y" }}</td>
+      {% for y in i|slice:"2:"  %}
+      <td>{% if y == None %}-{% else %}{{ y }}{% endif %}</td>
+      {% endfor %}
     </tr>
     {% endfor %}
   </table>

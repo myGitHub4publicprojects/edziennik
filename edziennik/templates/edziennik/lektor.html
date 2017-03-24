@@ -8,7 +8,7 @@
     <p>Obecne grupy:</p>
     <ul>
     {% for group in current_group_list %}
-        <li><a href="{% url 'edziennik:name_group' group.id ">{{ group.group_name }}</a></li>
+        <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.group_name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

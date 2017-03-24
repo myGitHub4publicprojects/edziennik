@@ -1,8 +1,9 @@
 {% extends "edziennik/base.html" %}
+{% load staticfiles %}
 {% block content %}
 
 {% if output %}
-  <p>obecność w grupie {{ group.group_name }}:<p>
+  <h1><small class='helper'>obecność w grupie: </small>{{ group.group_name }}</h1>
     <table>
     <tr>{% for y in new.0  %}
       <th>{{ y }}</th>
@@ -11,8 +12,19 @@
     
 
     {% for i in new|slice:"1:" %}  
-    <tr>{% for y in i  %}
-      <td>{{ y }}</td>
+    <tr>{% for y in i|slice:":2"  %}
+        <td>{% if y == 'absent' %}
+          <img src="{% static 'img/x-mark-red.png' %}">
+        {% else %}
+          {{ y }}
+          {% endif %}</td>
+        {% endfor %}
+        {% for y in i|slice:"2:"  %}
+        <td>{% if y == 'absent' %}
+          <img src="{% static 'img/x-mark-red.png' %}">
+        {% else %}
+          <img src="{% static 'img/check_sign_icon_green.png' %}">
+          {% endif %}</td>
        {% endfor %}
     </tr>
     {% endfor %}

@@ -1,0 +1,55 @@
+{% extends "edziennik/base.html" %}
+{% block content %}
+
+{% if not request.user.is_authenticated %}
+    <h2>Zaloguj się</h2>
+    <form method="POST" action="{% url 'auth_login' %}" >{% csrf_token %}
+        <input type="text" name="username" placeholder="username">
+        <input type="password" name="password" placeholder="password">
+        <input type="hidden" name="next" value="{% url 'edziennik:name_student' student.id %}" />
+        <button type="submit">Login</button>
+    </form>
+{% else %}
+
+    {% if request.user.is_staff or request.user == student.rodzic  %}
+
+    <h1>{{ student.student_name }}</h1>
+    <p><small>Grupa: {{ group.group_name }}</small>, <small>Lektor: {{ lektor.lektor_name }}</small></p>
+
+
+    <h2>Oceny:</h2>
+        {% if grade_list %}
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Za co</th>
+                <th>Ocena</th>
+            </tr>
+            {% for i in grade_list %}
+            <tr>
+                <td>{{ i.0|date:"d/m/Y" }}</td>
+                {% for j in i|slice:"1:" %}
+                <td>{{ j }}</td>
+                {% endfor %}
+            </tr>
+
+
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>Nie ma jeszcze żadnych ocen</p>
+        {% endif %}
+
+    {% else %}
+
+    nie masz uprawnien
+
+    {% endif %}
+
+    {% if request.user.is_staff %}
+    <h2>Frekwencja</h2>
+    {% endif %}
+
+{% endif %}
+
+{% endblock content %}

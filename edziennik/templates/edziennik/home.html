@@ -24,6 +24,9 @@
     <div id="user_credentials">
         <span class="descriptor">Zalogowano jako: </span><span id="username">{{ username }}</span>
     </div>
+{% endif %}
+
+{% if request.user.is_staff %}
     <nav class="center-400">
         {% if not request.user.is_superuser %}
         <div class="large-btn fl-left">

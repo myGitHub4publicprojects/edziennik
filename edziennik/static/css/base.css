@@ -1,4 +1,15 @@
 /*	edziennik\static\css */
+html {
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+	background: linear-gradient(red, yellow);
+	background-image: url("subtle-bg-backop.png");
+}
 .container {
 	width: 800px;
 	background-color: #d2d2f7;
@@ -39,7 +50,10 @@ td a {
 	background-color: red;
 }
 
-body {
-	background: linear-gradient(red, yellow);
-	background-image: url("subtle-bg-backop.png");
+#h1-helper {
+	font-size: 0.7em;
+}
+
+.helper {
+	color: #7d7474;
 }

@@ -1,7 +1,10 @@
 	github
 	user log in
 	log out redirect to home page - next hidden
-attendance_by_group.html - present dates vertiacally, table styling - th bold, width of the table
+	attendance_by_group.html - present dates vertiacally, table styling - th bold, width of the table,
+			obecność w grupie testowa1: - middle na h1
+			table: display present or absent (with color)
+
 	authomatic logout after 5 hours
 	separate view for each logged user
 	urls in templates - make dynamic
@@ -11,10 +14,16 @@ attendance_by_group.html - present dates vertiacally, table styling - th bold, w
 	add grades for students
 	display grades
 	add time_of_test attribute to grades class
-finish css styling
+	grupa.html - change dates format in table, if no grade display '-' instead of 'None', No underscore in th
+student.html - add tables and data
+finish css styling - usta który plik jest używany
 test
 	deploy to server
 attendance_by_group.html and view need clean up - remove redundant code
+
+student.html - after login redirects to home, should stay on student
+zarejestruj rodzica sam, w adminie dodaj tego rodzica jako foreign field do studenta (foreign field musi mieć możliwość być blank), rodzicom wyślij link do logowania, user i pass, niech już sami się nie rejestrują
+
 in all views remove HttpResponse(template.render(context)) use return render instead of return HttpResponse
 write in documentation how to add new lektors
 change secret key
@@ -32,10 +41,14 @@ Documentation:
 The edziennik application is designed for language schools. It enables users (lectors) to add grades and check attendance of students as well as display past attendace and grades records.
 The admin can create lectors (Lektor), groups and students.
 Afer new installation:
-	add users in admin panel - use your lektors' names
-	add lektors - use same names as for users
 	add groups
 	add students
+	add lektors - use same names as for users
+	add users for lektors - use your lektors' names
+	add users for parents and edit students to have a user connected with them
+	
+
+
 
 How to add group
 How to add student

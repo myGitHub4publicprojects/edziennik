@@ -1,7 +1,13 @@
 /*projektdziennik\projektdziennik\static\css*/
+html {
+    height: 100%;
+}
 body {
-	margin: 0;
-	background: linear-gradient(#68a2fb, #224fff);
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+	  background: linear-gradient(#68a2fb, #224fff);
 }
 
 #wrapper {
@@ -184,6 +190,10 @@ td, th {
 
 }
 
+th a {
+	    text-decoration: none;
+}
+
 
 table, th, td {
     border: 1px solid #ddd;
@@ -200,3 +210,30 @@ td a {
 	background-color: red;
 }
 
+.element {
+    position: relative;
+}
+ 
+/*replace the content value with the
+corresponding value from the list below*/
+ 
+.element:before {
+    content: "\f00d";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+/*--adjust as necessary--*/
+    color: #000;
+    font-size: 18px;
+    padding-right: 0.5em;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+
+.helper {
+  font-size: 0.7em;
+  color: #7d7474;
+}

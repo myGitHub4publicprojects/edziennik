@@ -29,24 +29,27 @@ def index(request):
     return HttpResponse(template.render(context))
 
 def lektor(request, question_id):
-    if not request.user.is_staff or not request.user.is_superuser:
+    if not request.user.is_staff:
         raise Http404
     lek = get_object_or_404(Lektor, pk=question_id)
     groups = Group.objects.all()
     current_group_list = [group for group in groups if lek == group.prowadzacy_lektor]
     return render(request, 'edziennik/lektor.html', {'lek': lek, 'current_group_list': current_group_list})
 
-
-
 def student(request, question_id):
-    s = Student.objects.get(id = question_id)
-    name = s.student_name
-    g = s.przynaleznosc_grupy.group_name
-    x = name+' '+g
-    return HttpResponse(x)
+    print(request.user.id)
+    student = Student.objects.get(id = question_id)
+    lektor = student.przynaleznosc_grupy.prowadzacy_lektor
+    group = student.przynaleznosc_grupy
+    grades = Grades.objects.filter(student=student)
+    grade_list = [(g.date_of_test, g.name, g.score) for g in grades]
+    context = {'student': student, 'lektor': lektor, 'group': group, 'grade_list': grade_list}
+    return render(request, 'edziennik/student.html', context)
 
 def group(request, question_id):
     ''' displays a list of students and their scores for each grade '''
+    if not request.user.is_staff:
+        raise Http404
     groupp = Group.objects.get(id=question_id)
     lektor = groupp.prowadzacy_lektor
     students_list = [student for student in Student.objects.all() if student.przynaleznosc_grupy == groupp]
@@ -89,6 +92,8 @@ def group(request, question_id):
 
 def select_group(request):
     '''select group to check attendance, only groups assigned to a given teacher are returned'''
+    if not request.user.is_staff:
+        raise Http404
     date_today = datetime.datetime.today().strftime("%d/%m/%Y")
     groups = Group.objects.all()
     group_list = [g for g in groups if g.prowadzacy_lektor.lektor_name == request.user.username]
@@ -101,6 +106,8 @@ def select_group(request):
 
 def group_check(request, group_id):
     ''' displays a group where attendance is checked'''
+    if not request.user.is_staff:
+        raise Http404
     groupp = Group.objects.get(id=group_id)
     students_list = [student for student in Student.objects.all() if student.przynaleznosc_grupy == groupp]
     template = loader.get_template('edziennik/group_check.html')
@@ -113,6 +120,9 @@ def group_check(request, group_id):
 
 def attendance_check(request, groupp_id):
     ''' handles checked attendance of a group and generates error message if attendance was checked earlier that day'''
+    if not request.user.is_staff:
+        raise Http404
+
     p = get_object_or_404(Group, pk=groupp_id)
     # checks if attendance was checked today in this group, if yes, error
     for i in ClassDate.objects.all():
@@ -140,6 +150,9 @@ def attendance_check(request, groupp_id):
 
 def attendance(request):
     ''' attendance results'''
+    if not request.user.is_staff:
+        raise Http404
+
     students = Student.objects.all()
     dates = ClassDate.objects.all()
     output = {}
@@ -159,6 +172,8 @@ def attendance(request):
 
 def attendance_by_group(request, group_id):
     ''' attendance results in a given group, after checkin attendance you are redirected here'''
+    if not request.user.is_staff:
+        raise Http404
 
     dates = ClassDate.objects.all()
 
@@ -209,6 +224,9 @@ def attendance_by_group(request, group_id):
 
 def select_group_for_grades(request):
     '''select group to add grades, only groups assigned to a given teacher are returned'''
+    if not request.user.is_staff:
+        raise Http404
+
     date_today = datetime.datetime.today().strftime("%d/%m/%Y")
     groups = Group.objects.all()
     group_list = [g for g in groups if g.prowadzacy_lektor.lektor_name == request.user.username]
@@ -221,6 +239,9 @@ def select_group_for_grades(request):
 
 def group_grades(request, group_id):
     ''' displays a list of students in a given group and user can input name of test and grades for each student'''
+    if not request.user.is_staff:
+        raise Http404
+
     groupp = Group.objects.get(id=group_id)
     students_list = [student for student in Student.objects.all() if student.przynaleznosc_grupy == groupp]
     template = loader.get_template('edziennik/group_grades.html')
@@ -233,6 +254,9 @@ def group_grades(request, group_id):
 
 def add_grades(request, groupp_id):
     ''' handles grades for each student in the group'''
+    if not request.user.is_staff:
+        raise Http404
+
     p = get_object_or_404(Group, pk=groupp_id)
     students_list = [student for student in Student.objects.all() if student.przynaleznosc_grupy == p]
     date_of_test = request.POST.get('date_of_test') or datetime.datetime.now().date()

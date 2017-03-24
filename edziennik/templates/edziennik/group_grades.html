@@ -9,22 +9,21 @@
 </ul>
 {% endif %}
 
-<h1>Nazwa grupy: {{ groupp.group_name }}</h1>
+<h1><small class='helper'>Nazwa grupy: </small>{{ groupp.group_name }}</h1>
 
-<h2>ocena {{ dzisiejsza_data }}:</h2>
-<ul>
-	{% for student in students_list %}
-	    <li>{{ student.student_name }}</li>
-	{% endfor %}
-</ul>
 <form action="{% url 'edziennik:add_grades' groupp.id %}" method="post">
 	{% csrf_token %}
 	Za co ocena: <input type="text" name="grade_name" required /><br>
-	Data testu: <input type="date" name="date_of_test" /><br>
+	Data testu: <input type="date" name="date_of_test" />(jeśli nie podasz zostanie wybrana dzisiejsza data)<br>
+
+	<table>
 	{% for student in students_list %}
-	    <label for="student{{ forloop.counter }}">{{ student.student_name }}</label>
-	    <input type="number" min="1" max="6" name="{{ student.student_name }}" id="student{{ forloop.counter }}" /><br />
+		<tr>
+	    	<td><label for="student{{ forloop.counter }}">{{ student.student_name }}</label></td>
+	    	<td><input type="number" min="1" max="6" name="{{ student.student_name }}" id="student{{ forloop.counter }}" /><br /></td>
+	    </tr>
 	{% endfor %}
+	</table>
 	<input type="submit" value="Zatwierdzam" />
 
 </form>
