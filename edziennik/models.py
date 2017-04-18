@@ -1,35 +1,47 @@
 from django.db import models
 from django.conf import settings
 
-class Lektor(models.Model):
-    lektor_name = models.CharField(max_length=200)
+class Lector(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def __str__(self):              
-        return self.lektor_name
+        return self.user.username
 
 class Group(models.Model):
-    group_name = models.CharField(max_length=200)
-    prowadzacy_lektor = models.ForeignKey(Lektor)
+    name = models.CharField(max_length=200)
+    lector = models.ForeignKey(Lector)
 
     def __str__(self):              
-        return self.group_name
+        return self.name
+
+class Parent(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    phone_number = models.IntegerField()
+
+    def __str__(self):              
+        return self.user.username
 
 class Student(models.Model):
-    student_name = models.CharField(max_length=200)
-    przynaleznosc_grupy = models.ForeignKey(Group)
-    rodzic = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    group = models.ForeignKey(Group)
+    parent = models.ForeignKey(Parent)
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+        )
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 
     def __str__(self):              
-        return self.student_name
+        return self.name
 
 class ClassDate(models.Model):
-    date_of_class = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    date_of_class = models.DateField()
     subject = models.CharField(max_length=200, default = 'testowy temat')
-    student = models.ForeignKey(Student)
+    student = models.ManyToManyField(Student)
     
     def __str__(self):
         return str(self.date_of_class)
-# ClassDate.objects.get(id=1).date_of_class.strftime("%d/%m/%Y")
 
 class Grades(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -40,3 +52,25 @@ class Grades(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+class SMS(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    SERVICE_CHOICES = (
+        ('smsapipl', 'smsapipl'),
+        ('twilio', 'twilio'),
+        )
+    service = models.CharField(max_length=10, choices=SERVICE_CHOICES)
+    message = models.TextField(max_length=1600)
+    addressee = models.ForeignKey(settings.AUTH_USER_MODEL)
+    delivered = models.BooleanField(default=False)
+    checked_once = models.BooleanField(default=False)
+    checked_twice = models.BooleanField(default=False)
+    twilio_message_sid = models.CharField(max_length=120, null=True, blank=True)
+    twilio_message_status = models.CharField(max_length=120, null=True, blank=True)
+    smsapipl_message_id = models.CharField(max_length=120, null=True, blank=True)
+    smsapipl_status = models.CharField(max_length=120, null=True, blank=True)
+    smsapipl_error_code = models.CharField(max_length=120, null=True, blank=True)
+    smsapipl_error_message = models.CharField(max_length=120, null=True, blank=True)
+
+    def __str__(self):
+        return self.service + self.addressee.username + str(self.timestamp)

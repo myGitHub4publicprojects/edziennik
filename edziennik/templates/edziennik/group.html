@@ -1,9 +1,10 @@
 {% extends "edziennik/base.html" %}
-{% load staticfiles %}
 {% block content %}
 
-{% if table_content %}
-  <h1><small class='helper'>obecność w grupie: </small>{{ group.name }}</h1>
+<h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
+{% if request.user.is_superuser %}
+Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user }}</a>
+{% endif %}
 
   <table>
     <tr>
@@ -11,18 +12,13 @@
       <th>{{ i }}</th>
       {% endfor %}
     </tr>
-    
     {% for i in table_content %}
     <tr>
       {% for j in i %}
-        <td>{{ j|safe }}</td>
+      <td>{{ j }}</td>
       {% endfor %}
     </tr>
     {% endfor %}
   </table>
-
-{% else %}
-    <p>No data is available.</p>
-{% endif %}
 
 {% endblock content %}

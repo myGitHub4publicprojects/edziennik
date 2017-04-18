@@ -2,17 +2,17 @@
 {% block content %}
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<h1>Lektor: {{ lek.lektor_name }}</h1>
+<h1>Lektor: {{ lector.user.username }}</h1>
 
-{% if current_group_list %}
+{% if lectors_groups %}
     <p>Obecne grupy:</p>
     <ul>
-    {% for group in current_group_list %}
-        <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.group_name }}</a></li>
+    {% for group in lectors_groups %}
+        <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>No groups are available.</p>
+    <p>Nie ma żadnych grup</p>
 {% endif %}
 
 {% endblock content %}

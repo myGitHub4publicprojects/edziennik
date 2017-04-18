@@ -11,14 +11,16 @@
     </form>
 {% else %}
 
-    {% if request.user.is_staff or request.user == student.rodzic  %}
+    {% if request.user.is_superuser or request.user == lector.user or request.user == student.parent.user  %}
 
-    <h1>{{ student.student_name }}</h1>
-    <p><small>Grupa: {{ group.group_name }}</small>, <small>Lektor: {{ lektor.lektor_name }}</small></p>
+    <h1>{{ student.name }}</h1>
+    <p><small>Grupa: {{ group.name }}</small>, <small>Lektor: {{ lector.user.username}}</small></p>
 
 
     <h2>Oceny:</h2>
+
         {% if grade_list %}
+        
         <table>
             <tr>
                 <th>Data</th>
@@ -27,15 +29,13 @@
             </tr>
             {% for i in grade_list %}
             <tr>
-                <td>{{ i.0|date:"d/m/Y" }}</td>
-                {% for j in i|slice:"1:" %}
+                {% for j in i %}
                 <td>{{ j }}</td>
                 {% endfor %}
             </tr>
-
-
             {% endfor %}
         </table>
+
         {% else %}
         <p>Nie ma jeszcze żadnych ocen</p>
         {% endif %}
@@ -46,8 +46,23 @@
 
     {% endif %}
 
-    {% if request.user.is_staff %}
+    {% if request.user.is_superuser or request.user == lector.user %}
     <h2>Frekwencja</h2>
+    <table>
+        <tr>
+        {% for i in attendence_table_header %}
+        <td>{{ i }}</td>
+        {% endfor %}
+        </tr>
+
+        {% for i in attendance_table_content %}
+        <tr>
+          {% for j in i %}
+          <td>{{ j }}</td>
+          {% endfor %}  
+        </tr>
+        {% endfor %}
+    </table>
     {% endif %}
 
 {% endif %}

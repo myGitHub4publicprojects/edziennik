@@ -1,0 +1,50 @@
+{% extends "edziennik/base.html" %}
+{% block content %}
+
+<div id="user_credentials">
+    <span class="descriptor">Zalogowano jako: </span><span id="username">{{ user.get_username }}</span>
+</div>
+
+<section class="center-400">
+        <div class="select-group fl-left">
+           <h3>Lektorzy:</h3>
+            {% if lectors %}
+                <ul>
+                {% for lector in lectors %}
+                <li><a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.username }}</a></li>
+                {% endfor %}
+                 </ul>
+            {% else %}
+                <p>Nie masz zadnych lektorow</p>
+            {% endif %}
+        </div>
+
+        <div class="select-group fl-left">
+           <h3>Frekwencja w grupie:</h3>
+            {% if group_list %}
+                <ul>
+                {% for group in group_list %}
+                <li><a href="{% url 'edziennik:name_attendance_by_group' group.id %}">{{ group.name }}</a></li>
+                {% endfor %}
+                 </ul>
+            {% else %}
+                <p>No groups are available.</p>
+            {% endif %}
+        </div>
+    
+        <div class="select-group fl-right">
+            <h3>Oceny w grupie:</h3>
+            {% if group_list %}
+                <ul>
+                {% for group in group_list %}
+                <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No groups are available.</p>
+            {% endif %}
+        </div>
+    <div class="clear"></div>
+    </section>
+    
+{% endblock content %}

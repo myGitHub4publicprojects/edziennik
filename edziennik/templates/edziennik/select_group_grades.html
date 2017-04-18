@@ -3,10 +3,10 @@
 
 <p>Wybierz grupę:</p>
 
-{% if group_list %}
+{% if groups %}
     <ul>
-    {% for group in group_list %}
-        <li><a href="{% url 'edziennik:group_grades' group.id %}">{{ group.group_name }}</a></li>
+    {% for group in groups %}
+        <li><a href="{% url 'edziennik:group_grades' group.id %}">{{ group.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

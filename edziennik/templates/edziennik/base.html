@@ -23,6 +23,18 @@
     </nav>
     </div>
 
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div id="date">
+<span class="descriptor">Dziś jest: </span><span id="today_date">{% now "d m Y" %}</span>
+</div>
+
 {% block content %}
 
 {% endblock content %}
