@@ -39,7 +39,7 @@ def send_sms_twilio(parent, message):
     ACCOUNT_SID = settings.TWILIO_ACCOUNT_SID
     AUTH_TOKEN = settings.TWILIO_AUTH_TOKEN
     client = Client(ACCOUNT_SID, AUTH_TOKEN)
-    parent_phone_number = parent.phone_number
+    parent_phone_number = '+48' + str(parent.phone_number)
     twilio_message = client.messages.create(to=parent_phone_number,
                                     # from_=settings.TWILIO_TEST_PHONE_NO,
                                     messaging_service_sid=settings.MESSAGING_SERVICE_SID,
