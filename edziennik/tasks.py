@@ -23,12 +23,6 @@ def admin_email(mail_title, mail_body):
 def twilio_first_sms_status_check_task():
     ''' after time specified in call parameter checks msg status with sms provider '''
     logger.info("first sms status check")
-
-    # for testing
-    admin_email('first', 'first')
-
-
-
     new_msgs = SMS.objects.filter(checked_once=False)
     ACCOUNT_SID = settings.TWILIO_ACCOUNT_SID
     AUTH_TOKEN = settings.TWILIO_AUTH_TOKEN
@@ -50,13 +44,6 @@ def twilio_second_sms_status_check_task():
     '''  after time specified in call parameter checks msg status
     with sms provider for messages which had not "delivered" status '''
     logger.info("second sms status check")
-
-
-        # for testing
-    admin_email('second', 'second')
-
-
-
     undelivered_msgs = SMS.objects.filter(checked_once=True, checked_twice=False, delivered=False)
     ACCOUNT_SID = settings.TWILIO_ACCOUNT_SID
     AUTH_TOKEN = settings.TWILIO_AUTH_TOKEN

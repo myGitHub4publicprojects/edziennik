@@ -41,7 +41,8 @@ def send_sms_twilio(parent, message):
     client = Client(ACCOUNT_SID, AUTH_TOKEN)
     parent_phone_number = parent.phone_number
     twilio_message = client.messages.create(to=parent_phone_number,
-                                    from_=settings.TWILIO_TEST_PHONE_NO,
+                                    # from_=settings.TWILIO_TEST_PHONE_NO,
+                                    messaging_service_sid=settings.MESSAGING_SERVICE_SID,
                                     body=message)
 
     SMS.objects.create(service='twilio',
