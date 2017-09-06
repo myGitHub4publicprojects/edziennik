@@ -1,3 +1,7 @@
+when student is absent twice in a row - email admin
+when student has no homework twice in a row - email admin
+switch off sms
+
 	github
 	user log in
 	log out redirect to home page - next hidden
@@ -16,7 +20,7 @@
 	add time_of_test attribute to grades class
 	grupa.html - change dates format in table, if no grade display '-' instead of 'None', No underscore in th
 student.html - add tables and data
-finish css styling - usta który plik jest używany
+finish css styling - ustal który plik jest używany
 test
 	deploy to server
 attendance_by_group.html and view need clean up - remove redundant code
