@@ -143,14 +143,25 @@ def attendance_check(request, pk):
     class_subject = request.POST.get('class_subject')
     class_date = ClassDate.objects.create(  date_of_class=datetime.datetime.today(),
                                             subject = class_subject)
+    have_homework = request.POST.getlist('homework')
     for id in selected_student_list:
         class_date.student.add(Student.objects.get(id=id))
-
+        if id in have_homework:
+            class_date.has_homework.add(Student.objects.get(id=id))
+        # else:
+        #     student_without_homework = Student.objects.get(id=id)
+        #     student_without_homework.no_homework += 1
+        #     if student_without_homework.no_homework > 1:
+        #         email admin
+        #         student_without_homework.no_homework = 0
+        
     # notify parents of absence
     absentees = group.student_set.exclude(id__in=selected_student_list)
     for student in absentees:
         student_absence(student)
 
+    print(selected_student_list)
+    print(have_homework)
     messages.success(request, "Obecnosc w grupie %s sprawdzona" % group.name)
     return redirect('edziennik:name_home')
 

@@ -16,10 +16,34 @@
 	Temat lekcji: <input type="text" name="class_subject" required />
 
 	<fieldset>
-	{% for student in students %}
-	    <input type="checkbox" name="student" id="student{{ forloop.counter }}" value="{{ student.id }}" />
-	    <label for="student{{ forloop.counter }}">{{ student.name }}</label><br />
-	{% endfor %}
+	<table>
+		<tr>
+			<th>Uczeń</th>
+			<th>Obecność</th>
+			<th>Zadanie domowe</th>
+		</tr>
+		{% for student in students %}
+		<tr>
+			<td>
+				<label for="student{{ forloop.counter }}">{{ student.name }}</label><br />
+			</td>
+			<td>
+					<input type="checkbox"
+					name="student"
+					id="student{{ forloop.counter }}"
+					value="{{ student.id }}" />
+			</td>
+			<td>
+				<input type="checkbox"
+				name="homework"
+				id="homework{{ forloop.counter }}"
+				value="{{ student.id }}" />
+				<label for="homework{{ forloop.counter }}"></label><br />
+			</td>
+		</tr>
+		{% endfor %}
+		
+	</table>
 	<input type="submit" value="Zatwierdzam" />
 	</fieldset>
 	</form>

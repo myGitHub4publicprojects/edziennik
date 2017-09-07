@@ -41,7 +41,8 @@ class ClassDate(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     date_of_class = models.DateField()
     subject = models.CharField(max_length=200, default = 'testowy temat')
-    student = models.ManyToManyField(Student)
+    student = models.ManyToManyField(Student, related_name="student")
+    has_homework = models.ManyToManyField(Student, related_name="has_homework")
     
     def __str__(self):
         return str(self.date_of_class)
