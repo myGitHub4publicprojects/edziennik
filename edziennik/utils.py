@@ -63,5 +63,5 @@ def student_absence(student):
     # send_sms_smsapi(parent_phone, message)
 
     # send sms via twilio
-    send_sms_twilio(parent, message)
+    # send_sms_twilio(parent, message)
 
