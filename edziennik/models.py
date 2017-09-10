@@ -32,10 +32,10 @@ class Student(models.Model):
         ('F', 'Female'),
         )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    quizlet = models.BooleanField(default=False) # give student reward for activity on quizlet
 
     def __str__(self):              
         return self.name.encode("utf-8")
-        # return unicode(self.name, 'utf-8')
 
 class ClassDate(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
