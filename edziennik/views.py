@@ -53,7 +53,10 @@ def student(request, pk):
     attendance_table_content = []
     for date in all_classes:
         if student.student.filter(date_of_class=date.date_of_class):
-            attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '+'))
+            if  not student.has_homework.filter(date_of_class=date.date_of_class):
+                attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '+n'))
+            else:
+                attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '+'))
         else:
             attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '-'))
 
