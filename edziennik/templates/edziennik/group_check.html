@@ -1,4 +1,5 @@
 {% extends "edziennik/base.html" %}
+{% load staticfiles %}
 {% block content %}
 
 	<h2><small class='helper'>Obecność słuchaczy w dniu </small>{% now "d m Y" %}</h2>
@@ -21,6 +22,7 @@
 			<th>Uczeń</th>
 			<th>Obecność</th>
 			<th>Zadanie domowe</th>
+			<th>Quizlet</th>
 		</tr>
 		{% for student in students %}
 		<tr>
@@ -39,6 +41,12 @@
 				id="homework{{ forloop.counter }}"
 				value="{{ student.id }}" />
 				<label for="homework{{ forloop.counter }}"></label><br />
+			</td>
+			<td>
+				{% if student.quizlet %}
+				<img src="{% static 'img/check_sign_icon_green.png' %}">
+				{% else %}
+				{% endif %}
 			</td>
 		</tr>
 		{% endfor %}

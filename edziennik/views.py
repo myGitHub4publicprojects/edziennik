@@ -148,9 +148,13 @@ def attendance_check(request, pk):
                                             subject = class_subject)
     have_homework = request.POST.getlist('homework')
     for id in selected_student_list:
-        class_date.student.add(Student.objects.get(id=id))
+        student = Student.objects.get(id=id)
+        class_date.student.add(student)
+        student.quizlet = False
+        student.save()
+            
         if id in have_homework:
-            class_date.has_homework.add(Student.objects.get(id=id))
+            class_date.has_homework.add(student)
         # else:
         #     student_without_homework = Student.objects.get(id=id)
         #     student_without_homework.no_homework += 1
