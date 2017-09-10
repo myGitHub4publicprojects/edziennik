@@ -52,7 +52,7 @@ def student(request, pk):
     attendence_table_header = ['data', 'obecnosc']
     attendance_table_content = []
     for date in all_classes:
-        if student.classdate_set.filter(date_of_class=date.date_of_class):
+        if student.student.filter(date_of_class=date.date_of_class):
             attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '+'))
         else:
             attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '-'))
