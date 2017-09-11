@@ -1,0 +1,17 @@
+{% extends "edziennik/base.html" %}
+{% block content %}
+
+<p>Wybierz grupę:</p>
+
+{% if groups %}
+    <ul>
+    {% for group in groups %}
+        <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No group available.</p>
+{% endif %}
+
+
+{% endblock content %}

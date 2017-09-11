@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/group/$', views.group, name='name_group'),
     url(r'^(?P<pk>\d+)/add_quizlet/$', views.add_quizlet, name='add_quizlet'),
     url(r'^process_quizlet/$', views.process_quizlet, name='process_quizlet'),
+    url(r'^(?P<pk>\d+)/show_group_grades$', views.show_group_grades, name='show_group_grades'),
 
 ]

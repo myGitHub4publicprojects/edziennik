@@ -6,7 +6,7 @@
 </div>
 
 
-    <nav class="center-400">
+    <!-- <nav class="center-400">
         <div class="large-btn fl-left">
             <h2><a href="{% url 'edziennik:select_group_for_attendance' %}">Sprawdź obecność</a></h2>
         </div>
@@ -14,10 +14,10 @@
         <div class="large-btn fl-right">
             <h2><a href="{% url 'edziennik:select_group_for_grades' %}">Dodaj oceny</a></h2>
         </div>
-    </nav>
+    </nav> -->
         
     <section class="center-400">
-        <div class="select-group fl-left">
+        <!-- <div class="select-group fl-left">
            <h3>Frekwencja w grupie:</h3>
             {% if group_list %}
                 <ul>
@@ -42,7 +42,18 @@
                 <p>Nie ma żadnych grup</p>
             {% endif %}
         </div>
-    <div class="clear"></div>
+    <div class="clear"></div> -->
+    <p>Wybierz grupę:</p>
+    
+    {% if groups %}
+        <ul>
+        {% for group in groups %}
+            <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No group available.</p>
+    {% endif %}
     </section>
     
 {% endblock content %}

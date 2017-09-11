@@ -4,20 +4,9 @@
 <h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
 {% if request.user.is_superuser %}
 Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user }}</a>
-<br>
-<a href="{% url 'edziennik:add_quizlet' group.id %}">Dodaj quizlet</a>
-<br>
 {% endif %}
 
-<a href="{% url 'edziennik:name_group_check' group.id %}">Sprawdź obecność</a>
-<a href="{% url 'edziennik:group_grades' group.id %}">Dodaj oceny</a>
-<a href="{% url 'edziennik:name_attendance_by_group' group.id %}">Pokaż frekwencje</a>
-<a href="{% url 'edziennik:show_group_grades' group.id %}">Pokaż oceny</a>
-
-
-
-
-  <!-- <table>
+  <table>
     <tr>
       {% for i in table_header %}
       <th>{{ i }}</th>
@@ -30,6 +19,6 @@ Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lec
       {% endfor %}
     </tr>
     {% endfor %}
-  </table> -->
+  </table>
 
 {% endblock content %}

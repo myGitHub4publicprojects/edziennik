@@ -16,17 +16,22 @@ def index(request):
     '''displays either a login prompt or a button to check attendance, for logged in users'''
     if not request.user.is_authenticated():
         return render(request, 'edziennik/home_for_others.html')
-
+    if request.user in Lector.objects.all():
+        groups = Group.objects.filter(lector=lector)
+    else:
+        groups = Group.objects.all()
     group_list = Group.objects.all()
     lectors = Lector.objects.all()
     if request.user.is_superuser:
         context = {
+            'groups': groups,
             'group_list': group_list,
             'lectors': lectors,
         }
         return render(request, 'edziennik/home_for_admin.html', context)
     if request.user in [lector.user for lector in lectors]:
-        return render(request, 'edziennik/home_for_lector.html', {'group_list': group_list})
+        return render(request, 'edziennik/home_for_lector.html', {'group_list': group_list,
+                                                                    'groups': groups,})
     else:
         raise Http404
 
@@ -71,7 +76,7 @@ def student(request, pk):
     return render(request, 'edziennik/student.html', context)
 
 def group(request, pk):
-    ''' displays a list of students and their scores for each grade '''
+    ''' enables to select an action for a group '''
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
@@ -103,6 +108,40 @@ def group(request, pk):
         'table_content': table_content,
     }
     return render(request, 'edziennik/group.html', context)
+
+def show_group_grades(request, pk):
+    ''' displays grades in a group '''
+    if not request.user.is_staff:
+        raise Http404
+    group = get_object_or_404(Group, pk=pk)
+    lector = group.lector
+    students = Student.objects.filter(group=group)
+    grades_in_this_group = Grades.objects.filter(student__in=students)
+
+    dates_grades = []
+    for grade in grades_in_this_group:
+        if (grade.date_of_test, grade.name) not in dates_grades:
+            dates_grades.append((grade.date_of_test, grade.name))
+
+    table_header = ['data', 'za co'] + list(students)
+    table_content = []
+    for grade in dates_grades:
+        grade_date_name_score = [grade[0].strftime("%d/%m/%Y"), grade[1]]
+        for student in students:
+            item = grades_in_this_group.filter(student=student, date_of_test=grade[0], name=grade[1]).first()
+            if item:
+                grade_date_name_score.append(item.score)
+            else:
+                grade_date_name_score.append('-')
+        table_content.append(grade_date_name_score)
+
+    context = {
+        'group': group,
+        'lector': lector,
+        'table_header': table_header,
+        'table_content': table_content,
+    }
+    return render(request, 'edziennik/show_group_grades.html', context)
 
 def select_group_for_attendance(request):
     '''select group to check attendance, only groups assigned to a given teacher are returned'''
