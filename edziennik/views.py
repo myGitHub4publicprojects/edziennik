@@ -167,8 +167,6 @@ def attendance_check(request, pk):
     for student in absentees:
         student_absence(student)
 
-    print(selected_student_list)
-    print(have_homework)
     messages.success(request, "Obecnosc w grupie %s sprawdzona" % group.name)
     return redirect('edziennik:name_home')
 
@@ -246,4 +244,27 @@ def add_grades(request, pk):
                 )
 
     messages.success(request, "Oceny w grupie %s dodane" % group.name)
+    return redirect('edziennik:name_home')
+
+def add_quizlet(request, pk):
+    '''enables selecting students that should get rewards for quizlet activity'''
+    if not request.user.is_superuser:
+        raise Http404
+    group = get_object_or_404(Group, pk=pk)
+    students = Student.objects.filter(group=group)
+    context = {
+        'group': group,
+        'students': students,
+        }
+    return render(request, 'edziennik/add_quizlet.html', context)
+
+def process_quizlet(request):
+    if not request.user.is_superuser:
+        raise Http404
+    students = request.POST.getlist('student')
+    for student in students:
+        student_object = Student.objects.get(id=student)
+        student_object.quizlet = True
+        student_object.save()
+    messages.success(request, "Punkty za quizlet w grupie %s dodane" % student_object.group.name)
     return redirect('edziennik:name_home')

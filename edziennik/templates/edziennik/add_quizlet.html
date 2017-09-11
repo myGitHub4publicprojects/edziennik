@@ -1,0 +1,33 @@
+{% extends "edziennik/base.html" %}
+
+{% block content %}
+
+<h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
+
+<form action="{% url 'edziennik:process_quizlet' %}" method="post">
+	{% csrf_token %}
+    <table>
+            <tr>
+                <th>Uczeń</th>
+                <th>Dodaj pieczątkę za quizlet</th>
+            </tr>
+            {% for student in students %}
+            <tr>
+                <td>
+                    <label for="student{{ forloop.counter }}">{{ student.name }}</label><br />
+                </td>
+                <td>
+                        <input type="checkbox"
+                        name="student"
+                        id="student{{ forloop.counter }}"
+                        value="{{ student.id }}" />
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+	<input type="submit" value="Zatwierdzam" />
+
+</form>
+
+{% endblock content %}
