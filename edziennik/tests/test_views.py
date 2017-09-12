@@ -3,9 +3,11 @@ from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.contrib import auth
-
+from mixer.backend.django import mixer
+import pytest
 
 from edziennik.models import Lector, Group, Parent, Student
+pytestmark = pytest.mark.django_db
 
 class IndexViewTests(TestCase):
     def test_home_view_for_not_authenticated_noerror(self):
@@ -60,22 +62,27 @@ class IndexViewTests(TestCase):
         self.client.login(username='john', password='glassonion')
         lector = Lector.objects.create(user=user_john)
         response = self.client.get(reverse('edziennik:name_home'))
-        self.assertQuerysetEqual(response.context['group_list'], [])
+        self.assertQuerysetEqual(response.context['groups'], [])
 
     def test_home_view_for_lector_2_groups(self):
         """
-        if lector has 2 groups
+        if lector has 2 of 3 groups, should have access to only 2
         """
         user_john = User.objects.create_user(username='john',
                                  email='jlennon@beatles.com',
                                  password='glassonion')
-        self.client.login(username='john', password='glassonion')
+        user_john2 = User.objects.create_user(username='john2',
+                                 email='2jlennon@beatles.com',
+                                 password='glassonion')
         lector = Lector.objects.create(user=user_john)
+        lector2 = Lector.objects.create(user=user_john2)
+        self.client.login(username='john', password='glassonion')
         group1 = Group.objects.create(name='group1', lector=lector)
         group2 = Group.objects.create(name='group2', lector=lector)
-        groups = map(repr, Group.objects.all())
+        group3 = Group.objects.create(name='group3', lector=lector2)
+        groups = map(repr, Group.objects.filter(lector=lector))
         response = self.client.get(reverse('edziennik:name_home'))
-        response_groups = list(response.context['group_list'])
+        response_groups = list(response.context['groups'])
         self.assertQuerysetEqual(response_groups, groups)
   
 
@@ -104,7 +111,7 @@ class IndexViewTests(TestCase):
                                  password='glassonion')
         self.client.login(username='admin', password='glassonion')
         response = self.client.get(reverse('edziennik:name_home'))
-        self.assertQuerysetEqual(response.context['group_list'], [])
+        self.assertQuerysetEqual(response.context['groups'], [])
 
     def test_home_view_for_admin_2_groups(self):
         """
@@ -122,7 +129,7 @@ class IndexViewTests(TestCase):
         group2 = Group.objects.create(name='group2', lector=lector)
         groups = map(repr, Group.objects.all())
         response = self.client.get(reverse('edziennik:name_home'))
-        response_groups = list(response.context['group_list'])
+        response_groups = list(response.context['groups'])
         self.assertQuerysetEqual(response_groups, groups)
 
     def test_home_view_for_admin_no_lectors(self):
@@ -156,6 +163,37 @@ class IndexViewTests(TestCase):
         response = self.client.get(reverse('edziennik:name_home'))
         response_lectors = list(response.context['lectors'])
         self.assertQuerysetEqual(response_lectors, lectors)
+    
+    def test_home_view_for_parent(self):
+        """
+        should redirect to student view
+        """
+        user_john = User.objects.create_user(username='john',
+                                 email='jlennon@beatles.com',
+                                 password='glassonion')
+        parent = mixer.blend('edziennik.Parent', user=user_john)
+        student = mixer.blend('edziennik.Student', parent=parent)
+        logged_in = self.client.login(username='john', password='glassonion')
+        
+        response = self.client.get(reverse('edziennik:name_home'))
+    
+        self.assertTrue(logged_in)
+        expected_url = reverse('edziennik:name_student', args=(student.id,))
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
+
+    def test_home_view_others(self):
+        """
+        if a user is authenticated but is not admin, lector nor parent return 404
+        """
+        user_john = User.objects.create_user(username='john',
+                                 email='jlennon@beatles.com',
+                                 password='glassonion')
+    
+        logged_in = self.client.login(username='john', password='glassonion')
+        
+        response = self.client.get(reverse('edziennik:name_home'))
+        self.assertTrue(logged_in)
+        self.assertEqual(response.status_code, 404)
 
 
 class LectorViewTests(TestCase):

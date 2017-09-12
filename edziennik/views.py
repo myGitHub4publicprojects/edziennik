@@ -16,22 +16,31 @@ def index(request):
     '''displays either a login prompt or a button to check attendance, for logged in users'''
     if not request.user.is_authenticated():
         return render(request, 'edziennik/home_for_others.html')
-    if request.user in Lector.objects.all():
-        groups = Group.objects.filter(lector=lector)
-    else:
-        groups = Group.objects.all()
-    group_list = Group.objects.all()
-    lectors = Lector.objects.all()
+
+    lector_users = [lector.user for lector in Lector.objects.all()]
+
+    # home for lectors
+    if request.user in lector_users:
+        # show only groups associated with this lector
+        lector = Lector.objects.get(user=request.user)
+        context = {'groups': Group.objects.filter(lector=lector)}
+        return render(request, 'edziennik/home_for_lector.html', context)
+
+    # home for admins
     if request.user.is_superuser:
-        context = {
-            'groups': groups,
-            'group_list': group_list,
-            'lectors': lectors,
-        }
+        groups = Group.objects.all()
+        context = { 'groups': Group.objects.all(),
+                    'lectors': Lector.objects.all(),}
         return render(request, 'edziennik/home_for_admin.html', context)
-    if request.user in [lector.user for lector in lectors]:
-        return render(request, 'edziennik/home_for_lector.html', {'group_list': group_list,
-                                                                    'groups': groups,})
+
+    # home for parents
+    parent_users = [parent.user for parent in Parent.objects.all()]
+    if request.user in parent_users:
+        # redirect to student view
+        parent = Parent.objects.get(user=request.user)
+        student = Student.objects.get(parent=parent)
+        return redirect('edziennik:name_student', pk=student.id)
+
     else:
         raise Http404
 
