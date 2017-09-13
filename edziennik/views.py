@@ -237,14 +237,14 @@ def attendance_by_group(request, group_id):
         }
     return render(request, 'edziennik/attendance_by_group.html', context)
 
-def select_group_for_grades(request):
-    '''select group to add grades, only groups assigned to a given teacher are returned'''
-    if not request.user.is_staff:
-        raise Http404
-    lector = Lector.objects.get(user=request.user)
-    groups = Group.objects.filter(lector=lector)
+# def select_group_for_grades(request):
+#     '''select group to add grades, only groups assigned to a given teacher are returned'''
+#     if not request.user.is_staff:
+#         raise Http404
+#     lector = Lector.objects.get(user=request.user)
+#     groups = Group.objects.filter(lector=lector)
 
-    return render(request, 'edziennik/select_group_grades.html', {'groups': groups})
+#     return render(request, 'edziennik/select_group_grades.html', {'groups': groups})
 
 def group_grades(request, group_id):
     ''' displays a list of students in a given group,
@@ -284,7 +284,7 @@ def add_grades(request, pk):
                 )
 
     messages.success(request, "Oceny w grupie %s dodane" % group.name)
-    return redirect('edziennik:name_home')
+    return redirect(reverse('edziennik:name_group', args=(group.id,)))
 
 def add_quizlet(request, pk):
     '''enables selecting students that should get rewards for quizlet activity'''
