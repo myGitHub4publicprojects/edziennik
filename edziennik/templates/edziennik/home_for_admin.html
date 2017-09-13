@@ -7,11 +7,13 @@
 
 <section class="center-400">
         <div class="select-group fl-left">
-           <h3>Lektorzy:</h3>
+           <h2>Lektorzy:</h2>
             {% if lectors %}
-                <ul>
+                <ul class="no-indent">
                 {% for lector in lectors %}
-                <li><a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.username }}</a></li>
+                <li class="large-btn">
+                    <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.username }}</a>
+                </li>
                 {% endfor %}
                  </ul>
             {% else %}
@@ -20,12 +22,14 @@
         </div>
 
         <div class="select-group fl-left">
-           <h3>Grupy:</h3>
+           <h2>Grupy:</h2>
             
             {% if groups %}
-                <ul>
+                <ul class="no-indent">
                 {% for group in groups %}
-                    <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
+                    <li class="large-btn">
+                        <a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a>
+                    </li>
                 {% endfor %}
                 </ul>
             {% else %}

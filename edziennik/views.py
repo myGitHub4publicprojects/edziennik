@@ -152,15 +152,6 @@ def show_group_grades(request, pk):
     }
     return render(request, 'edziennik/show_group_grades.html', context)
 
-def select_group_for_attendance(request):
-    '''select group to check attendance, only groups assigned to a given teacher are returned'''
-    if not request.user.is_staff:
-        raise Http404
-    lector = Lector.objects.get(user=request.user)
-    groups = Group.objects.filter(lector=lector)
-
-    return render(request, 'edziennik/select_group_for_attendance.html', {'groups': groups})
-
 def group_check(request, pk):
     ''' displays a group where attendance is checked'''
     if not request.user.is_authenticated():
@@ -216,7 +207,8 @@ def attendance_check(request, pk):
         student_absence(student)
 
     messages.success(request, "Obecnosc w grupie %s sprawdzona" % group.name)
-    return redirect('edziennik:name_home')
+    # return redirect('edziennik:name_home')
+    return redirect(reverse('edziennik:name_group', args=(group.id,)))
 
 def attendance_by_group(request, group_id):
     ''' displays attendance results in a given group'''

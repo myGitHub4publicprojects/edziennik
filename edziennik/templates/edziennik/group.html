@@ -1,6 +1,6 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
-
+<section class="center-400">
 <h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
 {% if request.user.is_superuser %}
 Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user }}</a>
@@ -9,27 +9,20 @@ Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lec
 <br>
 {% endif %}
 
-<a href="{% url 'edziennik:name_group_check' group.id %}">Sprawdź obecność</a>
-<a href="{% url 'edziennik:group_grades' group.id %}">Dodaj oceny</a>
-<a href="{% url 'edziennik:name_attendance_by_group' group.id %}">Pokaż frekwencje</a>
-<a href="{% url 'edziennik:show_group_grades' group.id %}">Pokaż oceny</a>
+<ul class="no-indent">
+  <li class="large-btn">
+      <a href="{% url 'edziennik:name_group_check' group.id %}">Sprawdź obecność</a>
+  </li>
+  <li class="large-btn">
+      <a href="{% url 'edziennik:group_grades' group.id %}">Dodaj oceny</a>
+  </li>
+  <li class="large-btn">
+      <a href="{% url 'edziennik:name_attendance_by_group' group.id %}">Pokaż frekwencje</a>  
+  </li>
+  <li class="large-btn">
+      <a href="{% url 'edziennik:show_group_grades' group.id %}">Pokaż oceny</a>    
+  </li>
+</ul>
 
-
-
-
-  <!-- <table>
-    <tr>
-      {% for i in table_header %}
-      <th>{{ i }}</th>
-      {% endfor %}
-    </tr>
-    {% for i in table_content %}
-    <tr>
-      {% for j in i %}
-      <td>{{ j }}</td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
-  </table> -->
-
+</section>
 {% endblock content %}
