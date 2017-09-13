@@ -3,13 +3,18 @@
 <section class="center-400">
 <h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
 {% if request.user.is_superuser %}
-Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user }}</a>
-<br>
-<a href="{% url 'edziennik:add_quizlet' group.id %}">Dodaj quizlet</a>
-<br>
+<h1>
+  <small class='helper'>Lektor prowadzący: </small>
+  <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user }}</a>
+</h1>
 {% endif %}
 
 <ul class="no-indent">
+    {% if request.user.is_superuser %}
+    <li class="large-btn">
+      <a href="{% url 'edziennik:add_quizlet' group.id %}">Dodaj quizlet</a>
+    </li>
+    {% endif %}
   <li class="large-btn">
       <a href="{% url 'edziennik:name_group_check' group.id %}">Sprawdź obecność</a>
   </li>
