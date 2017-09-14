@@ -7,11 +7,13 @@ Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lec
 {% endif %}
 
   <table>
-    <tr>
-      {% for i in table_header %}
-      <th>{{ i }}</th>
-      {% endfor %}
-    </tr>
+      <tr>
+          <th>data</th>
+          <th>za co</th>
+          {% for student in students %}
+          <th><a href="{% url 'edziennik:name_student' student.id %}">{{ student.name }}</a></th>
+          {% endfor %}
+        </tr>
     {% for i in table_content %}
     <tr>
       {% for j in i %}

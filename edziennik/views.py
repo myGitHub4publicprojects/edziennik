@@ -132,7 +132,6 @@ def show_group_grades(request, pk):
         if (grade.date_of_test, grade.name) not in dates_grades:
             dates_grades.append((grade.date_of_test, grade.name))
 
-    table_header = ['data', 'za co'] + list(students)
     table_content = []
     for grade in dates_grades:
         grade_date_name_score = [grade[0].strftime("%d/%m/%Y"), grade[1]]
@@ -145,9 +144,9 @@ def show_group_grades(request, pk):
         table_content.append(grade_date_name_score)
 
     context = {
+        'students': students,
         'group': group,
         'lector': lector,
-        'table_header': table_header,
         'table_content': table_content,
     }
     return render(request, 'edziennik/show_group_grades.html', context)
