@@ -232,7 +232,7 @@ def attendance_by_group(request, group_id):
 
     context = {
         'group': group,
-        'table_header': table_header,
+        'students': students,
         'table_content': table_content,
         }
     return render(request, 'edziennik/attendance_by_group.html', context)

@@ -7,8 +7,10 @@
 
   <table>
     <tr>
-      {% for i in table_header %}
-      <th>{{ i }}</th>
+      <th>data</th>
+      <th>temat</th>
+      {% for student in students %}
+      <th><a href="{% url 'edziennik:name_student' student.id %}">{{ student.name }}</a></th>
       {% endfor %}
     </tr>
     

@@ -1,18 +1,18 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
-
+<section class="center-400">
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <h1>Lektor: {{ lector.user.username }}</h1>
 
 {% if lectors_groups %}
     <p>Obecne grupy:</p>
-    <ul>
+    <ul class="no-indent">
     {% for group in lectors_groups %}
-        <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
+    <li class="large-btn"><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
     <p>Nie ma żadnych grup</p>
 {% endif %}
-
+</section>
 {% endblock content %}
