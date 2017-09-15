@@ -50,7 +50,8 @@ def lector(request, pk):
         raise Http404
     lector = get_object_or_404(Lector, pk=pk)
     lectors_groups = lector.group_set.all()
-    return render(request, 'edziennik/lector.html', {'lector': lector, 'lectors_groups': lectors_groups})
+    context = {'lector': lector, 'lectors_groups': lectors_groups}
+    return render(request, 'edziennik/lector.html', context)
 
 def student(request, pk):
     '''displays info about a given student'''

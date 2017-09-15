@@ -199,7 +199,7 @@ class IndexViewTests(TestCase):
 class LectorViewTests(TestCase):
     def test_lector_view_for_not_admin(self):
         """
-        if setup is correct - status code 404
+        non admin user should not have access - status code 404
         """
         client = Client()
         user_john = User.objects.create_user(username='john',
@@ -211,21 +211,24 @@ class LectorViewTests(TestCase):
 
     def test_lector_view_for_admin(self):
         """
-        if setup is correct - status code 200
+        should display only groups associated with one lector
         """
         client = Client()
-        user_john = User.objects.create_user(username='john',
-                                 email='jlennon@beatles.com',
-                                 password='glassonion')
-        lector = Lector.objects.create(user=user_john)
-        
+        lector = mixer.blend('edziennik.Lector')
+        lector2 = mixer.blend('edziennik.Lector')
+        group1 = Group.objects.create(name='group1', lector=lector)
+        group2 = Group.objects.create(name='group2', lector=lector)
+        group3 = Group.objects.create(name='group3', lector=lector2)
         user_admin = User.objects.create_superuser(username='admin',
                                  email='jlennon@beatles.com',
                                  password='glassonion')
-        self.client.login(username='admin', password='glassonion')
-
+        logged_in = self.client.login(username='admin', password='glassonion')
         response = self.client.get(reverse('edziennik:name_lektor', args=(lector.id,)))
+        self.assertTrue(logged_in)
+
         self.assertEqual(response.status_code, 200)
+        response_lector_groups= list(response.context['lectors_groups'])
+        self.assertEqual(len(response_lector_groups), 2)
 
 class StudentViewTests(TestCase):
     def test_student_view_noerror(self):
