@@ -1,6 +1,6 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
-
+<section class="center-400">
 {% if not request.user.is_authenticated %}
     <h2>Zaloguj się</h2>
     <form method="POST" action="{% url 'auth_login' %}" >{% csrf_token %}
@@ -66,5 +66,5 @@
     {% endif %}
 
 {% endif %}
-
+</section>
 {% endblock content %}
