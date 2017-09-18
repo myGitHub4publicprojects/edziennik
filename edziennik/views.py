@@ -237,15 +237,20 @@ def attendance_by_group(request, group_id):
     table_header = ['data', 'temat'] + list(students)
     table_content = []
     classes_in_group = ClassDate.objects.filter(student__in=students).distinct().order_by('date_of_class')
+
     for i in classes_in_group:
         row = [i.date_of_class.strftime("%d/%m/%Y"), i.subject]
         for s in students:
             if s in i.student.all():
-                img_url = static('img/check_sign_icon_green.png')
+                if s.has_homework.filter(date_of_class=i.date_of_class):
+                    img_url = static('img/check_sign_icon_green.png')
+                else:
+                    img_url = static('img/green_on_red.png')
             else:
                 img_url = static('img/x-mark-red.png')
             row.append('<img src=%s>' % img_url)
         table_content.append(row)
+_content.append((date.date_of_class.strftime("%d/%m/%Y"), '-'))
 
     context = {
         'group': group,
