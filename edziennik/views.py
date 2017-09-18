@@ -250,7 +250,7 @@ def attendance_by_group(request, group_id):
                 img_url = static('img/x-mark-red.png')
             row.append('<img src=%s>' % img_url)
         table_content.append(row)
-_content.append((date.date_of_class.strftime("%d/%m/%Y"), '-'))
+
 
     context = {
         'group': group,
