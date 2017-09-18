@@ -57,8 +57,10 @@ def student(request, pk):
     '''displays info about a given student'''
     student = get_object_or_404(Student, pk = pk)
     lector = student.group.lector
+    parents = [parent.user for parent in Parent.objects.all()]
     group = student.group
-    if not request.user.is_superuser and request.user != lector.user:
+    if not (request.user.is_superuser) and (request.user != lector.user) and not (
+        request.user in parents):
         raise Http404
     grades = Grades.objects.filter(student=student)
     grade_list = [(g.date_of_test.strftime("%d/%m/%Y"), g.name, g.score) for g in grades]

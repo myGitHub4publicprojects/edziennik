@@ -240,6 +240,10 @@ class StudentViewTests(TestCase):
         """
         client = Client()
         student = mixer.blend('edziennik.Student')
+        user_admin = User.objects.create_superuser(username='admin',
+                                 email='jlennon@beatles.com',
+                                 password='glassonion')
+        logged_in = self.client.login(username='admin', password='glassonion')
         response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
         self.assertEqual(response.status_code, 200)
     
