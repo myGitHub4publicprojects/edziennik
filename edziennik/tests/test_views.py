@@ -6,7 +6,7 @@ from django.contrib import auth
 from mixer.backend.django import mixer
 import pytest
 from datetime import datetime, timedelta
-
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from edziennik.models import Lector, Group, Parent, Student, ClassDate
 pytestmark = pytest.mark.django_db
 today = datetime.today().date()
@@ -326,7 +326,8 @@ class StudentViewTests(TestCase):
         response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
 
         response_attendance_table_content= list(response.context['attendance_table_content'])
-        self.assertEqual(response_attendance_table_content[0][1], '+')
+        present_sign = '<img src=%s>' % static('img/check_sign_icon_green.png')
+        self.assertEqual(response_attendance_table_content[0][2], present_sign)
 
     def test_student_view_absent_admin(self):
         """
@@ -347,7 +348,8 @@ class StudentViewTests(TestCase):
         response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
 
         response_attendance_table_content= list(response.context['attendance_table_content'])
-        self.assertEqual(response_attendance_table_content[0][1], '-')
+        absent_sign = '<img src=%s>' % static('img/x-mark-red.png')
+        self.assertEqual(response_attendance_table_content[0][2], absent_sign)
 
 class TestGroupView(TestCase):
     def test_group_view_for_non_staff(self):
