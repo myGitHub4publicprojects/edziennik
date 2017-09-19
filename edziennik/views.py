@@ -71,14 +71,21 @@ def student(request, pk):
     attendence_table_header = ['data', 'obecnosc']
     attendance_table_content = []
     for date in all_classes:
+        date_string = date.date_of_class.strftime("%d/%m/%Y")
         if student.student.filter(date_of_class=date.date_of_class):
             if  not student.has_homework.filter(date_of_class=date.date_of_class):
-                attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '+n'))
+                img_url = static('img/green_on_red.png')
+                row = [date_string,]
+                attendance_table_content.append(row)
             else:
-                attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '+'))
+                img_url = static('img/check_sign_icon_green.png')
+                row = [date_string,]
+                attendance_table_content.append(row)
         else:
-            attendance_table_content.append((date.date_of_class.strftime("%d/%m/%Y"), '-'))
-
+            img_url = static('img/x-mark-red.png')
+            row = [date_string,]
+            attendance_table_content.append(row)
+        row.append('<img src=%s>' % img_url)
     context = {
         'student': student,
         'lector': lector,
