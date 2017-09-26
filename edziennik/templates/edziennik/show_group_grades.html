@@ -3,7 +3,7 @@
 
 <h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
 {% if request.user.is_superuser %}
-Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user }}</a>
+Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.get_full_name }}</a>
 {% endif %}
 
   <table>

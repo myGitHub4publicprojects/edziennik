@@ -5,7 +5,7 @@
 {% if request.user.is_superuser %}
 <h1>
   <small class='helper'>Lektor prowadzący: </small>
-  <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user }}</a>
+  <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.get_full_name }}</a>
 </h1>
 {% endif %}
 

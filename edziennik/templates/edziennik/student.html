@@ -15,7 +15,7 @@
     {% if request.user.is_superuser or request.user == lector.user or request.user == student.parent.user  %}
 
     <h1>{{ student.name }}</h1>
-    <p><small>Grupa: {{ group.name }}</small>, <small>Lektor: {{ lector.user.username}}</small></p>
+    <p><small>Grupa: {{ group.name }}</small>, <small>Lektor: {{ lector.user.get_full_name}}</small></p>
 
 
     <h2>Oceny:</h2>

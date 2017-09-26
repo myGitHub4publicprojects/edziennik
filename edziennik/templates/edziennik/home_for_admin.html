@@ -12,7 +12,7 @@
                 <ul class="no-indent">
                 {% for lector in lectors %}
                 <li class="large-btn">
-                    <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.username }}</a>
+                    <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.get_full_name }}</a>
                 </li>
                 {% endfor %}
                  </ul>
