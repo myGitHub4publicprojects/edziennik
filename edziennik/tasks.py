@@ -6,12 +6,15 @@ from twilio.rest import Client
 
 from celery.decorators import task
 from celery.utils.log import get_task_logger
+from celery.task.schedules import crontab
+from celery.decorators import periodic_task
 
 from edziennik.models import SMS, Student
 
+from edziennik.utils2 import generate_weekly_admin_report
+
 logger = get_task_logger(__name__)
 
-#twilio sms
 def admin_email(mail_title, mail_body):
     send_mail(mail_title,
         mail_body,
@@ -19,6 +22,17 @@ def admin_email(mail_title, mail_body):
         [settings.ADMIN_EMAIL],
         fail_silently=False)
 
+@periodic_task(
+    run_every=(crontab(minute=1, hour=1)),
+    name="weekly_email_admin",
+    ignore_result=True
+)
+def weekly_admin_email():
+    email_title, email_body = generate_weekly_admin_report()
+    admin_email(email_title, email_body)
+    logger.info("email to admin has been sent")
+
+#twilio sms
 @task(name='twilio_first_sms_status_check_task')
 def twilio_first_sms_status_check_task():
     ''' after time specified in call parameter checks msg status with sms provider '''

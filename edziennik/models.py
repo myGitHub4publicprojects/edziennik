@@ -78,3 +78,10 @@ class SMS(models.Model):
 
     def __str__(self):
         return self.service + self.addressee.username + str(self.timestamp)
+
+# class AdminNote(models.Model):
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#     published = models.DateField(auto_now=False, auto_now_add=False)
+#     body = models.TextField(max_length=1600)
+#     student = models.ManyToManyField(Student)
+#     group = models.ManyToManyField(Group)

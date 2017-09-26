@@ -60,8 +60,10 @@ def student_absence(student):
     message = male_student_msg if student.gender == 'M' else female_student_msg
     
     # send sms via SmsApi.pl
+    # uncomment the line below to start using this service
     # send_sms_smsapi(parent_phone, message)
 
     # send sms via twilio
+    # uncomment the line below to start using this service
     # send_sms_twilio(parent, message)
 
