@@ -130,7 +130,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = ['*']
 
-DEBUG = True
+DEBUG = False
 
 # for smsapi.pl
 SMS_API_PASS = os.environ.get('SMS_API_PASS')
