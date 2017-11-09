@@ -9,8 +9,6 @@ PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-ALLOWED_HOSTS = []
-
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 5 * 60 * 60
 
