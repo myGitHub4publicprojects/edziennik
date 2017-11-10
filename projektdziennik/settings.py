@@ -1,5 +1,5 @@
 import os
-
+# these settings are for Digital Ocean deplyment
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # This is from heroku docs:
