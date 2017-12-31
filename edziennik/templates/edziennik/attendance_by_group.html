@@ -3,9 +3,9 @@
 {% block content %}
 
 {% if table_content %}
-  <h1><small class='helper'>obecność w grupie: </small>{{ group.name }}</h1>
+  <p>Obecność w grupie: <b>{{ group.name }}</b></p>
 
-  <table>
+  <table class="table">
     <tr>
       <th>data</th>
       <th>temat</th>
@@ -22,7 +22,7 @@
     </tr>
     {% endfor %}
   </table>
-  <table>
+  <table class="table">
     <tr>
       <td><img src="{% static 'img/x-mark-red.png' %}"></td>
       <td><img src="{% static 'img/check_sign_icon_green.png' %}"></td>
@@ -36,7 +36,7 @@
   </table>
 
 {% else %}
-    <p>No data is available.</p>
+    <p>Nie ma żadnych danych do wyświetlenia.</p>
 {% endif %}
 
 {% endblock content %}

@@ -2,11 +2,11 @@
 
 {% block content %}
 
-<h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
+<p>Nazwa grupy: <b>{{ group.name }}</b></p>
 
 <form action="{% url 'edziennik:process_quizlet' %}" method="post">
 	{% csrf_token %}
-    <table>
+    <table class="table">
             <tr>
                 <th>Uczeń</th>
                 <th>Dodaj pieczątkę za quizlet</th>

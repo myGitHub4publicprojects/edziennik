@@ -1,7 +1,7 @@
 {% extends "edziennik/base.html" %}
 {% load staticfiles %}
 {% block content %}
-<section class="center-400">
+<section>
 {% if not request.user.is_authenticated %}
     <h2>Zaloguj się</h2>
     <form method="POST" action="{% url 'auth_login' %}" >{% csrf_token %}
@@ -15,14 +15,14 @@
     {% if request.user.is_superuser or request.user == lector.user or request.user == student.parent.user  %}
 
     <h1>{{ student.name }}</h1>
-    <p><small>Grupa: {{ group.name }}</small>, <small>Lektor: {{ lector.user.get_full_name}}</small></p>
+    <p>Grupa: <b>{{ group.name }}</b>, Lektor: <b>{{ lector.user.get_full_name}}</b></p>
 
 
     <h2>Oceny:</h2>
 
         {% if grade_list %}
         
-        <table>
+        <table class="table">
             <tr>
                 <th>Data</th>
                 <th>Za co</th>
@@ -43,13 +43,13 @@
 
     {% else %}
 
-    nie masz uprawnien
+    nie masz uprawnień
 
     {% endif %}
 
     {% if request.user.is_superuser or request.user == lector.user %}
     <h2>Frekwencja</h2>
-    <table>
+    <table class="table">
         <tr>
         {% for i in attendence_table_header %}
         <td>{{ i }}</td>
@@ -65,7 +65,7 @@
         {% endfor %}
     </table>
 
-    <table>
+    <table class="table">
             <tr>
                 <td><img src="{% static 'img/x-mark-red.png' %}"></td>
                 <td><img src="{% static 'img/check_sign_icon_green.png' %}"></td>

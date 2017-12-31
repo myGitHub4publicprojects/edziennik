@@ -1,44 +1,32 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 
-<div id="user_credentials">
-    <span class="descriptor">Zalogowano jako: </span><span id="username">{{ user.get_username }}</span>
-</div>
+<p class="text-center"><small>Zalogowano jako:</small> <b>{{ user.get_username }}</b></p>
 
-<section class="center-400">
-        <div class="select-group fl-left">
-           <h2>Lektorzy:</h2>
-            {% if lectors %}
-                <ul class="no-indent">
-                {% for lector in lectors %}
-                <li class="large-btn">
-                    <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.get_full_name }}</a>
-                </li>
-                {% endfor %}
-                 </ul>
-            {% else %}
-                <p>Nie masz zadnych lektorow</p>
-            {% endif %}
-        </div>
+<section>
+    <div><h2>Lektorzy: </h2>
+    {% if lectors %}
+    {% for lector in lectors %}
+    <a href="{% url 'edziennik:name_lektor' lector.id %}">
+        <button class="btn btn-lg blue-btn">{{ lector.user.get_full_name }}</button>
+    </a>
+    {% endfor %}
+    {% else %}
+        <p>Nie masz żadnych lektorów</p>
+    {% endif %}
+    </div>
 
-        <div class="select-group fl-left">
-           <h2>Grupy:</h2>
-            
-            {% if groups %}
-                <ul class="no-indent">
-                {% for group in groups %}
-                    <li class="large-btn">
-                        <a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a>
-                    </li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <p>No group available.</p>
-            {% endif %}
-        </div>
-    
-      
-    <div class="clear"></div>
-    </section>
+    <div><h2>Grupy: </h2>
+    {% if groups %}
+    {% for group in groups %}
+    <a href="{% url 'edziennik:name_group' group.id %}">
+        <button class="btn btn-lg blue-btn">{{ group.name }}</button>
+    </a>    
+    {% endfor %}
+    {% else %}
+        <p>Nie masz żadnych grup</p>
+    {% endif %}
+    </div>
+</section>
     
 {% endblock content %}

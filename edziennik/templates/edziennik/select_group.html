@@ -4,14 +4,13 @@
 <p>Wybierz grupę:</p>
 
 {% if groups %}
-    <ul>
     {% for group in groups %}
-        <li><a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a></li>
+        <a href="{% url 'edziennik:name_group' group.id %}">
+            <button class="btn btn-lg blue-btn">{{ group.name }}</button>
+        </a
     {% endfor %}
-    </ul>
 {% else %}
     <p>No group available.</p>
 {% endif %}
-
 
 {% endblock content %}

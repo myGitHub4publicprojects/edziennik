@@ -1,33 +1,33 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
-<section class="center-400">
-<h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
-{% if request.user.is_superuser %}
-<h1>
-  <small class='helper'>Lektor prowadzący: </small>
-  <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.get_full_name }}</a>
-</h1>
-{% endif %}
-
-<ul class="no-indent">
+<section>
+    <p>Nazwa grupy: <b>{{ group.name }}</b>
     {% if request.user.is_superuser %}
-    <li class="large-btn">
-      <a href="{% url 'edziennik:add_quizlet' group.id %}">Dodaj quizlet</a>
-    </li>
+        , Lektor prowadzący: 
+        <a href="{% url 'edziennik:name_lektor' lector.id %}">
+            <b>{{ lector.user.get_full_name }}</b>
+        </a>
     {% endif %}
-  <li class="large-btn">
-      <a href="{% url 'edziennik:name_group_check' group.id %}">Sprawdź obecność</a>
-  </li>
-  <li class="large-btn">
-      <a href="{% url 'edziennik:group_grades' group.id %}">Dodaj oceny</a>
-  </li>
-  <li class="large-btn">
-      <a href="{% url 'edziennik:name_attendance_by_group' group.id %}">Pokaż frekwencje</a>  
-  </li>
-  <li class="large-btn">
-      <a href="{% url 'edziennik:show_group_grades' group.id %}">Pokaż oceny</a>    
-  </li>
-</ul>
+    </p>
+
+    {% if request.user.is_superuser %}
+    <a href="{% url 'edziennik:add_quizlet' group.id %}">
+        <button class="btn btn-lg blue-btn">Dodaj quizlet</button>
+    </a>
+    {% endif %}
+
+    <a href="{% url 'edziennik:name_group_check' group.id %}">
+        <button class="btn btn-lg blue-btn">Sprawdź obecność</button>
+    </a>
+    <a href="{% url 'edziennik:group_grades' group.id %}">
+        <button class="btn btn-lg blue-btn">Dodaj oceny</button>
+    </a>
+    <a href="{% url 'edziennik:name_attendance_by_group' group.id %}">
+        <button class="btn btn-lg blue-btn">Pokaż frekwencje</button>
+    </a>
+    <a href="{% url 'edziennik:show_group_grades' group.id %}">
+        <button class="btn btn-lg blue-btn">Pokaż oceny</button>
+    </a>
 
 </section>
 {% endblock content %}

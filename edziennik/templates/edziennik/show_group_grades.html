@@ -1,26 +1,30 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 
-<h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
+<p>Nazwa grupy: <b>{{ group.name }}</b></p>
 {% if request.user.is_superuser %}
-Lektor prowadzący: <a href="{% url 'edziennik:name_lektor' lector.id %}">{{ lector.user.get_full_name }}</a>
+<p>Lektor prowadzący: 
+  <a href="{% url 'edziennik:name_lektor' lector.id %}">
+    <b>{{ lector.user.get_full_name }}</b>
+  </a>
+</p>
 {% endif %}
 
-  <table>
-      <tr>
-          <th>data</th>
-          <th>za co</th>
-          {% for student in students %}
-          <th><a href="{% url 'edziennik:name_student' student.id %}">{{ student.name }}</a></th>
-          {% endfor %}
-        </tr>
-    {% for i in table_content %}
+<table class="table">
     <tr>
-      {% for j in i %}
-      <td>{{ j }}</td>
-      {% endfor %}
-    </tr>
+        <th>data</th>
+        <th>za co</th>
+        {% for student in students %}
+        <th><a href="{% url 'edziennik:name_student' student.id %}">{{ student.name }}</a></th>
+        {% endfor %}
+      </tr>
+  {% for i in table_content %}
+  <tr>
+    {% for j in i %}
+    <td>{{ j }}</td>
     {% endfor %}
-  </table>
+  </tr>
+  {% endfor %}
+</table>
 
 {% endblock content %}

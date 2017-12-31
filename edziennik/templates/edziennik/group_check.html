@@ -2,59 +2,57 @@
 {% load staticfiles %}
 {% block content %}
 
-	<h2><small class='helper'>Obecność słuchaczy w dniu </small>{% now "d m Y" %}</h2>
+<p>Obecność słuchaczy w dniu <b>{% now "d m Y" %}</b></p>
+<p>Nazwa grupy: <b>{{ group.name }}</b></p>
 
-	<h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
+{% if error_message %}
+<h2>{{ error_message }}</h2>
 
+{% else %}
 
-	{% if error_message %}
-	<h2>{{ error_message }}</h2>
-	
-	{% else %}
+<form action="{% url 'edziennik:name_attendance_check' group.id %}" method="post">
+{% csrf_token %}
+Temat lekcji: <input type="text" name="class_subject" required />
 
-	<form action="{% url 'edziennik:name_attendance_check' group.id %}" method="post">
-	{% csrf_token %}
-	Temat lekcji: <input type="text" name="class_subject" required />
-
-	<fieldset>
-	<table>
-		<tr>
-			<th>Uczeń</th>
-			<th>Obecność</th>
-			<th>Zadanie domowe</th>
-			<th>Quizlet</th>
-		</tr>
-		{% for student in students %}
-		<tr>
-			<td>
-				<label for="student{{ forloop.counter }}">{{ student.name }}</label><br />
-			</td>
-			<td>
-					<input type="checkbox"
-					name="student"
-					id="student{{ forloop.counter }}"
-					value="{{ student.id }}" />
-			</td>
-			<td>
+<fieldset>
+<table class="table">
+	<tr>
+		<th>Uczeń</th>
+		<th>Obecność</th>
+		<th>Zadanie domowe</th>
+		<th>Quizlet</th>
+	</tr>
+	{% for student in students %}
+	<tr>
+		<td>
+			<label for="student{{ forloop.counter }}">{{ student.name }}</label><br />
+		</td>
+		<td>
 				<input type="checkbox"
-				name="homework"
-				id="homework{{ forloop.counter }}"
+				name="student"
+				id="student{{ forloop.counter }}"
 				value="{{ student.id }}" />
-				<label for="homework{{ forloop.counter }}"></label><br />
-			</td>
-			<td>
-				{% if student.quizlet %}
-				<img src="{% static 'img/check_sign_icon_green.png' %}">
-				{% else %}
-				{% endif %}
-			</td>
-		</tr>
-		{% endfor %}
-		
-	</table>
-	<input type="submit" value="Zatwierdzam" />
-	</fieldset>
-	</form>
-	{% endif %}
+		</td>
+		<td>
+			<input type="checkbox"
+			name="homework"
+			id="homework{{ forloop.counter }}"
+			value="{{ student.id }}" />
+			<label for="homework{{ forloop.counter }}"></label><br />
+		</td>
+		<td>
+			{% if student.quizlet %}
+			<img src="{% static 'img/check_sign_icon_green.png' %}">
+			{% else %}
+			{% endif %}
+		</td>
+	</tr>
+	{% endfor %}
+	
+</table>
+<input type="submit" value="Zatwierdzam" />
+</fieldset>
+</form>
+{% endif %}
 
 {% endblock content %}

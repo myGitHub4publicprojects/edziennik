@@ -9,14 +9,14 @@
 </ul>
 {% endif %}
 
-<h1><small class='helper'>Nazwa grupy: </small>{{ group.name }}</h1>
+<p>Nazwa grupy: <b>{{ group.name }}</b><p>
 
 <form action="{% url 'edziennik:add_grades' group.id %}" method="post">
 	{% csrf_token %}
 	Za co ocena: <input type="text" name="grade_name" required /><br>
 	Data testu: <input type="date" name="date_of_test" />(jeśli nie podasz zostanie wybrana dzisiejsza data)<br>
 
-	<table>
+	<table class="table">
 	{% for student in students %}
 		<tr>
 	    	<td><label for="student{{ forloop.counter }}">{{ student.name }}</label></td>
