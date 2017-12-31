@@ -1,25 +1,17 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 
-<div id="user_credentials">
-    <span class="descriptor">Zalogowano jako: </span><span id="username">{{ user.get_full_name }}</span>
-</div>
-        
-    <section class="center-400">
-
+<p>Zalogowano jako: <b>{{ user.get_full_name }}</b></p>    
+    <section>
     <h2>Wybierz grupę:</h2>
-    
     {% if groups %}
-        <ul class="no-indent">
         {% for group in groups %}
-            <li class="large-btn">
-                <a href="{% url 'edziennik:name_group' group.id %}">{{ group.name }}</a>
-            </li>
+        <a href="{% url 'edziennik:name_group' group.id %}">
+            <button class="btn btn-lg blue-btn">{{ group.name }}</button>
+        </a>
         {% endfor %}
-        </ul>
     {% else %}
         <p>No group available.</p>
     {% endif %}
     </section>
-    
 {% endblock content %}
