@@ -65,14 +65,7 @@ WSGI_APPLICATION = 'projektdziennik.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# in local settings
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -119,12 +112,6 @@ REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-
-# STATICFILES_STORAGE='whitenoise.django.GzipManifestStaticFilesStorage'
-# if the above line is active heroku freaks out
-
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
