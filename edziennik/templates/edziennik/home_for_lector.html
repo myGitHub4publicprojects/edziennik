@@ -6,7 +6,7 @@
     <h2>Wybierz grupę:</h2>
     {% if groups %}
         {% for group in groups %}
-        <a href="{% url 'edziennik:name_group' group.id %}">
+        <a href="{% url 'edziennik:group' group.id %}">
             <button class="btn btn-lg blue-btn">{{ group.name }}</button>
         </a>
         {% endfor %}

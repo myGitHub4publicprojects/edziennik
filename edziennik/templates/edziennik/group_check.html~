@@ -10,7 +10,7 @@
 {% endif %}
 
 {% if not error_message %}
-<form action="{% url 'edziennik:name_attendance_check' groupp.id %}" method="post">
+<form action="{% url 'edziennik:attendance_check' groupp.id %}" method="post">
 
 {% csrf_token %}
 <fieldset>

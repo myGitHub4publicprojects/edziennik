@@ -7,7 +7,7 @@
     <div><h2>Lektorzy: </h2>
     {% if lectors %}
     {% for lector in lectors %}
-    <a href="{% url 'edziennik:name_lektor' lector.id %}">
+    <a href="{% url 'edziennik:lector' lector.id %}">
         <button class="btn btn-lg blue-btn">{{ lector.user.get_full_name }}</button>
     </a>
     {% endfor %}
@@ -19,7 +19,7 @@
     <div><h2>Grupy: </h2>
     {% if groups %}
     {% for group in groups %}
-    <a href="{% url 'edziennik:name_group' group.id %}">
+    <a href="{% url 'edziennik:group' group.id %}">
         <button class="btn btn-lg blue-btn">{{ group.name }}</button>
     </a>    
     {% endfor %}

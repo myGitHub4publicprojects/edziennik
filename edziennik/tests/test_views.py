@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
@@ -180,7 +181,7 @@ class IndexViewTests(TestCase):
         response = self.client.get(reverse('edziennik:name_home'))
     
         self.assertTrue(logged_in)
-        expected_url = reverse('edziennik:name_student', args=(student.id,))
+        expected_url = reverse('edziennik:student', args=(student.id,))
         self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
 
     def test_home_view_others(self):
@@ -208,7 +209,7 @@ class LectorViewTests(TestCase):
                                  email='jlennon@beatles.com',
                                  password='glassonion')
         lector = Lector.objects.create(user=user_john)
-        response = self.client.get(reverse('edziennik:name_lektor', args=(lector.id,)))
+        response = self.client.get(reverse('edziennik:lector', args=(lector.id,)))
         self.assertEqual(response.status_code, 404)
 
     def test_lector_view_for_admin(self):
@@ -225,7 +226,7 @@ class LectorViewTests(TestCase):
                                  email='jlennon@beatles.com',
                                  password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
-        response = self.client.get(reverse('edziennik:name_lektor', args=(lector.id,)))
+        response = self.client.get(reverse('edziennik:lector', args=(lector.id,)))
         self.assertTrue(logged_in)
 
         self.assertEqual(response.status_code, 200)
@@ -244,7 +245,7 @@ class StudentViewTests(TestCase):
                                  email='jlennon@beatles.com',
                                  password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
-        response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
+        response = self.client.get(reverse('edziennik:student', args=(student.id,)))
         self.assertEqual(response.status_code, 200)
     
     def test_student_view_parent(self):
@@ -259,7 +260,7 @@ class StudentViewTests(TestCase):
         student = mixer.blend('edziennik.Student', name='little_john', parent=parent)
         logged_in = self.client.login(username='john', password='glassonion')
         self.assertTrue(logged_in)
-        response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
+        response = self.client.get(reverse('edziennik:student', args=(student.id,)))
         self.assertContains(response, 'little_john', status_code=200)
 
     def test_student_view_other_parent(self):
@@ -275,8 +276,8 @@ class StudentViewTests(TestCase):
         student2 = mixer.blend('edziennik.Student', name='myname')
         logged_in = self.client.login(username='john', password='glassonion')
         self.assertTrue(logged_in)
-        response = self.client.get(reverse('edziennik:name_student', args=(student2.id,)))
-        self.assertContains(response, 'nie masz uprawnien', status_code=200)
+        response = self.client.get(reverse('edziennik:student', args=(student2.id,)))
+        self.assertContains(response, 'nie masz uprawnień', status_code=200)
 
     def test_student_view_admin(self):
         """
@@ -298,7 +299,7 @@ class StudentViewTests(TestCase):
                                  password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
         self.assertTrue(logged_in)
-        response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
+        response = self.client.get(reverse('edziennik:student', args=(student.id,)))
         response_grade_list= list(response.context['grade_list'])
         # student has grade1 and grade2
         self.assertEqual(len(response_grade_list), 2)
@@ -323,7 +324,7 @@ class StudentViewTests(TestCase):
                                  password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
         self.assertTrue(logged_in)
-        response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
+        response = self.client.get(reverse('edziennik:student', args=(student.id,)))
 
         response_attendance_table_content= list(response.context['attendance_table_content'])
         present_sign = '<img src=%s>' % static('img/check_sign_icon_green.png')
@@ -345,7 +346,7 @@ class StudentViewTests(TestCase):
                                  password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
         self.assertTrue(logged_in)
-        response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
+        response = self.client.get(reverse('edziennik:student', args=(student.id,)))
 
         response_attendance_table_content= list(response.context['attendance_table_content'])
         absent_sign = '<img src=%s>' % static('img/x-mark-red.png')
@@ -358,7 +359,7 @@ class TestGroupView(TestCase):
         """
         client = Client()
         group = mixer.blend('edziennik.Group')
-        response = self.client.get(reverse('edziennik:name_group', args=(group.id,)))
+        response = self.client.get(reverse('edziennik:group', args=(group.id,)))
         self.assertEqual(response.status_code, 404)
 
     def test_group_view_for_staff(self):
@@ -383,7 +384,7 @@ class TestGroupView(TestCase):
         
 
         logged_in = self.client.login(username='admin', password='glassonion')
-        response = self.client.get(reverse('edziennik:name_group', args=(group1.id,)))
+        response = self.client.get(reverse('edziennik:group', args=(group1.id,)))
         self.assertTrue(logged_in)
 
         self.assertEqual(response.status_code, 200)

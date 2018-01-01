@@ -4,7 +4,7 @@
 <p>Nazwa grupy: <b>{{ group.name }}</b></p>
 {% if request.user.is_superuser %}
 <p>Lektor prowadzący: 
-  <a href="{% url 'edziennik:name_lektor' lector.id %}">
+  <a href="{% url 'edziennik:lector' lector.id %}">
     <b>{{ lector.user.get_full_name }}</b>
   </a>
 </p>
@@ -15,7 +15,7 @@
         <th>data</th>
         <th>za co</th>
         {% for student in students %}
-        <th><a href="{% url 'edziennik:name_student' student.id %}">{{ student.name }}</a></th>
+        <th><a href="{% url 'edziennik:student' student.id %}">{{ student.name }}</a></th>
         {% endfor %}
       </tr>
   {% for i in table_content %}

@@ -1,3 +1,8 @@
 {
-  "edziennik/tests/test_utils2.py::Testgenerate_eekly_admin_report::()::test_no_students": true
+  "edziennik/tests/test_utils2.py::Testgenerate_eekly_admin_report::()::test_no_students": true, 
+  "edziennik/tests/test_views.py::IndexViewTests": true, 
+  "edziennik/tests/test_views.py::LectorViewTests": true, 
+  "edziennik/tests/test_views.py::StudentViewTests": true, 
+  "edziennik/tests/test_views.py::TestCase": true, 
+  "edziennik/tests/test_views.py::TestGroupView": true
 }

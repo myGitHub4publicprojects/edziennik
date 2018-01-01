@@ -4,7 +4,7 @@
     <p>Nazwa grupy: <b>{{ group.name }}</b>
     {% if request.user.is_superuser %}
         , Lektor prowadzący: 
-        <a href="{% url 'edziennik:name_lektor' lector.id %}">
+        <a href="{% url 'edziennik:lector' lector.id %}">
             <b>{{ lector.user.get_full_name }}</b>
         </a>
     {% endif %}
@@ -16,13 +16,13 @@
     </a>
     {% endif %}
 
-    <a href="{% url 'edziennik:name_group_check' group.id %}">
+    <a href="{% url 'edziennik:group_check' group.id %}">
         <button class="btn btn-lg blue-btn">Sprawdź obecność</button>
     </a>
     <a href="{% url 'edziennik:group_grades' group.id %}">
         <button class="btn btn-lg blue-btn">Dodaj oceny</button>
     </a>
-    <a href="{% url 'edziennik:name_attendance_by_group' group.id %}">
+    <a href="{% url 'edziennik:attendance_by_group' group.id %}">
         <button class="btn btn-lg blue-btn">Pokaż frekwencje</button>
     </a>
     <a href="{% url 'edziennik:show_group_grades' group.id %}">

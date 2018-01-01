@@ -39,7 +39,7 @@ def index(request):
         # redirect to student view
         parent = Parent.objects.get(user=request.user)
         student = Student.objects.get(parent=parent)
-        return redirect('edziennik:name_student', pk=student.id)
+        return redirect('edziennik:student', pk=student.id)
 
     else:
         raise Http404
@@ -226,7 +226,7 @@ def attendance_check(request, pk):
 
     messages.success(request, "Obecnosc w grupie %s sprawdzona" % group.name)
     # return redirect('edziennik:name_home')
-    return redirect(reverse('edziennik:name_group', args=(group.id,)))
+    return redirect(reverse('edziennik:group', args=(group.id,)))
 
 def attendance_by_group(request, group_id):
     ''' displays attendance results in a given group'''
@@ -304,7 +304,7 @@ def add_grades(request, pk):
                 )
 
     messages.success(request, "Oceny w grupie %s dodane" % group.name)
-    return redirect(reverse('edziennik:name_group', args=(group.id,)))
+    return redirect(reverse('edziennik:group', args=(group.id,)))
 
 def add_quizlet(request, pk):
     '''enables selecting students that should get rewards for quizlet activity'''

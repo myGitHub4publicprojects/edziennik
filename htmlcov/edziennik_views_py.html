@@ -441,7 +441,7 @@
 <p id="t39" class="pln">        <span class="com"># redirect to student view</span><span class="strut">&nbsp;</span></p>
 <p id="t40" class="stm run hide_run">        <span class="nam">parent</span> <span class="op">=</span> <span class="nam">Parent</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">user</span><span class="op">=</span><span class="nam">request</span><span class="op">.</span><span class="nam">user</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t41" class="stm run hide_run">        <span class="nam">student</span> <span class="op">=</span> <span class="nam">Student</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">parent</span><span class="op">=</span><span class="nam">parent</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t42" class="stm run hide_run">        <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="str">'edziennik:name_student'</span><span class="op">,</span> <span class="nam">pk</span><span class="op">=</span><span class="nam">student</span><span class="op">.</span><span class="nam">id</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t42" class="stm run hide_run">        <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="str">'edziennik:student'</span><span class="op">,</span> <span class="nam">pk</span><span class="op">=</span><span class="nam">student</span><span class="op">.</span><span class="nam">id</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t43" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t44" class="pln">    <span class="key">else</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t45" class="stm run hide_run">        <span class="key">raise</span> <span class="nam">Http404</span><span class="strut">&nbsp;</span></p>
@@ -628,7 +628,7 @@
 <p id="t226" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t227" class="stm mis">    <span class="nam">messages</span><span class="op">.</span><span class="nam">success</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="str">"Obecnosc w grupie %s sprawdzona"</span> <span class="op">%</span> <span class="nam">group</span><span class="op">.</span><span class="nam">name</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t228" class="pln">    <span class="com"># return redirect('edziennik:name_home')</span><span class="strut">&nbsp;</span></p>
-<p id="t229" class="stm mis">    <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="nam">reverse</span><span class="op">(</span><span class="str">'edziennik:name_group'</span><span class="op">,</span> <span class="nam">args</span><span class="op">=</span><span class="op">(</span><span class="nam">group</span><span class="op">.</span><span class="nam">id</span><span class="op">,</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t229" class="stm mis">    <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="nam">reverse</span><span class="op">(</span><span class="str">'edziennik:group'</span><span class="op">,</span> <span class="nam">args</span><span class="op">=</span><span class="op">(</span><span class="nam">group</span><span class="op">.</span><span class="nam">id</span><span class="op">,</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t230" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t231" class="stm run hide_run"><span class="key">def</span> <span class="nam">attendance_by_group</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">group_id</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t232" class="pln">    <span class="str">''' displays attendance results in a given group'''</span><span class="strut">&nbsp;</span></p>
@@ -706,7 +706,7 @@
 <p id="t304" class="pln">                <span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t305" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t306" class="stm mis">    <span class="nam">messages</span><span class="op">.</span><span class="nam">success</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="str">"Oceny w grupie %s dodane"</span> <span class="op">%</span> <span class="nam">group</span><span class="op">.</span><span class="nam">name</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t307" class="stm mis">    <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="nam">reverse</span><span class="op">(</span><span class="str">'edziennik:name_group'</span><span class="op">,</span> <span class="nam">args</span><span class="op">=</span><span class="op">(</span><span class="nam">group</span><span class="op">.</span><span class="nam">id</span><span class="op">,</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t307" class="stm mis">    <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="nam">reverse</span><span class="op">(</span><span class="str">'edziennik:group'</span><span class="op">,</span> <span class="nam">args</span><span class="op">=</span><span class="op">(</span><span class="nam">group</span><span class="op">.</span><span class="nam">id</span><span class="op">,</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t308" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t309" class="stm run hide_run"><span class="key">def</span> <span class="nam">add_quizlet</span><span class="op">(</span><span class="nam">request</span><span class="op">,</span> <span class="nam">pk</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t310" class="pln">    <span class="str">'''enables selecting students that should get rewards for quizlet activity'''</span><span class="strut">&nbsp;</span></p>
@@ -740,7 +740,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.4.1</a>,
-            created at 2017-09-23 18:12
+            created at 2018-01-01 14:27
         </p>
     </div>
 </div>

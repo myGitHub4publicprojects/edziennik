@@ -168,7 +168,7 @@ class LectorViewTests(TestCase):
                                  email='jlennon@beatles.com',
                                  password='glassonion')
         lector = Lector.objects.create(user=user_john)
-        response = self.client.get(reverse('edziennik:name_lektor', args=(lector.id,)))
+        response = self.client.get(reverse('edziennik:lector', args=(lector.id,)))
         self.assertEqual(response.status_code, 404)
 
     def test_lector_view_for_admin(self):
@@ -186,7 +186,7 @@ class LectorViewTests(TestCase):
                                  password='glassonion')
         self.client.login(username='admin', password='glassonion')
 
-        response = self.client.get(reverse('edziennik:name_lektor', args=(lector.id,)))
+        response = self.client.get(reverse('edziennik:lector', args=(lector.id,)))
         self.assertEqual(response.status_code, 200)
 
 class StudentViewTests(TestCase):
@@ -205,5 +205,5 @@ class StudentViewTests(TestCase):
         group = Group.objects.create(name='group1', lector=lector)
         parent = Parent.objects.create(user=user_john2, phone_number=123456789)
         student = Student.objects.create(name='student1', group=group, parent=parent, gender='M')
-        response = self.client.get(reverse('edziennik:name_student', args=(student.id,)))
+        response = self.client.get(reverse('edziennik:student', args=(student.id,)))
         self.assertEqual(response.status_code, 200)
