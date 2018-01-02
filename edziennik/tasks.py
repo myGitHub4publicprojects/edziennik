@@ -23,6 +23,16 @@ def admin_email(mail_title, mail_body):
         fail_silently=False)
 
 @periodic_task(
+    run_every=(crontab()),
+    name="test_email_admin",
+    ignore_result=True
+)
+def test_admin_email():
+    email_title, email_body = ('test title', 'test body')
+    admin_email(email_title, email_body)
+    logger.info("email to admin has been sent")
+
+@periodic_task(
     run_every=(crontab(minute=1, hour=1)),
     name="weekly_email_admin",
     ignore_result=True
