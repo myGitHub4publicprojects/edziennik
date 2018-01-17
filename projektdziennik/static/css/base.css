@@ -58,3 +58,10 @@ body {
   background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
   background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
 }
+
+@media only screen and (max-width: 800px) {
+  .blue-btn {
+    width: 100%;
+    font-size: 2em;
+  }
+}
