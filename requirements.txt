@@ -3,7 +3,7 @@ anyjson==0.3.3
 appdirs==1.4.3
 asn1crypto==0.22.0
 backports.shutil-get-terminal-size==1.0.0
-billiard==3.3.0.23
+billiard==3.5
 celery==4
 cffi==1.10.0
 coverage==4.4.1
