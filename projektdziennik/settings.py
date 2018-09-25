@@ -65,8 +65,12 @@ WSGI_APPLICATION = 'projektdziennik.wsgi.application'
 
 
 # Database
-# in local settings
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -104,6 +108,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
+
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+
+# for Heroku
+import dj_database_url
+DATABASES['default'] = dj_database_url.config()
 
 
 # Django Registration Redux settings:
