@@ -50,7 +50,25 @@ def lector(request, pk):
         raise Http404
     lector = get_object_or_404(Lector, pk=pk)
     lectors_groups = lector.group_set.all()
-    context = {'lector': lector, 'lectors_groups': lectors_groups}
+    # lectors hours
+    today = datetime.date.today()
+    # for dates between Sep and Dec
+    if today.month in range(9,13):
+        start_date = datetime.date(year=today.year, month=9, day=1)
+        end_date = datetime.date(year=today.year + 1, month=6, day=30)
+    # for dates between Jan and Jun
+    else:
+        start_date = datetime.date(year=today.year - 1, month=9, day=1)
+        end_date = datetime.date(year=today.year, month=6, day=30)
+    all_hours = ClassDate.objects.filter(lector=lector)
+    hours_in_current_year = all_hours.filter(
+        date_of_class__range=[start_date, end_date])
+
+
+    context = {
+        'lector': lector,
+        'lectors_groups': lectors_groups,
+        'total_hours_year': len(hours_in_current_year)}
     return render(request, 'edziennik/lector.html', context)
 
 def student(request, pk):

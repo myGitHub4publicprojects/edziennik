@@ -6,8 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 from mixer.backend.django import mixer
 import pytest
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from freezegun import freeze_time
 from edziennik.models import Lector, Group, Parent, Student, ClassDate
 pytestmark = pytest.mark.django_db
 today = datetime.today().date()
@@ -200,15 +201,16 @@ class IndexViewTests(TestCase):
 
 
 class LectorViewTests(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+            
     def test_lector_view_for_not_admin(self):
         """
         non admin user should not have access - status code 404
         """
         client = Client()
-        user_john = User.objects.create_user(username='john',
-                                 email='jlennon@beatles.com',
-                                 password='glassonion')
-        lector = Lector.objects.create(user=user_john)
+        lector = mixer.blend('edziennik.Lector')
         response = self.client.get(reverse('edziennik:lector', args=(lector.id,)))
         self.assertEqual(response.status_code, 404)
 
@@ -222,9 +224,6 @@ class LectorViewTests(TestCase):
         group1 = Group.objects.create(name='group1', lector=lector)
         group2 = Group.objects.create(name='group2', lector=lector)
         group3 = Group.objects.create(name='group3', lector=lector2)
-        user_admin = User.objects.create_superuser(username='admin',
-                                 email='jlennon@beatles.com',
-                                 password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
         response = self.client.get(reverse('edziennik:lector', args=(lector.id,)))
         self.assertTrue(logged_in)
@@ -233,6 +232,77 @@ class LectorViewTests(TestCase):
         response_lector_groups= list(response.context['lectors_groups'])
         self.assertEqual(len(response_lector_groups), 2)
 
+    def test_lector_hours_0(self):
+        """
+        should have no hours
+        """
+        client = Client()
+        lector = mixer.blend('edziennik.Lector')
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.get(
+            reverse('edziennik:lector', args=(lector.id,)))
+        self.assertEqual(response.context['total_hours_year'], 0)
+
+    def test_lector_hours_1(self):
+        """
+        one lector should have no hours, second lector should have 1 hour
+        """
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        lector2 = mixer.blend('edziennik.Lector')
+        class_date = mixer.blend(
+            'edziennik.ClassDate',
+            lector=lector2,
+            date_of_class=date.today())
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.get(
+            reverse('edziennik:lector', args=(lector2.id,)))
+        self.assertEqual(response.context['total_hours_year'], 1)
+
+    def test_lector_hours_current_1(self):
+        """
+        one lector should have only 1 hour in current school year
+        """
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        class_date1 = mixer.blend(
+            'edziennik.ClassDate',
+            lector=lector1,
+            date_of_class=date.today())
+        class_date2 = mixer.blend(
+            'edziennik.ClassDate',
+            lector=lector1,
+            date_of_class=date(year=date.today().year -1, month=1, day=1))
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.get(
+            reverse('edziennik:lector', args=(lector1.id,)))
+        self.assertEqual(response.context['total_hours_year'], 1)
+
+    @freeze_time('2018-03-10')
+    def test_lector_hours_in_march(self):
+        """
+        one lector should have only 2 hour in current school year (one in dec one in feb),
+        tested in march to see if school year definition is correct
+        """
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        class_date1 = mixer.blend(
+            'edziennik.ClassDate',
+            lector=lector1,
+            date_of_class=date(year=2018, month=2, day=20))
+        class_date2 = mixer.blend(
+            'edziennik.ClassDate',
+            lector=lector1,
+            date_of_class=date(year=2017, month=12, day=20))
+        # this should be out of range - previous school year
+        class_date2=mixer.blend(
+            'edziennik.ClassDate',
+            lector = lector1,
+            date_of_class=date(year=2017, month=2, day=20))
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.get(
+            reverse('edziennik:lector', args=(lector1.id,)))
+        self.assertEqual(response.context['total_hours_year'], 2)
 
 class StudentViewTests(TestCase):
     def test_student_view_noerror(self):
@@ -451,38 +521,3 @@ class TestAttendance_CheckView(TestCase):
 
 
 
-    # def test_logged_in(self):
-    #     self.client.login(username='john', password='glassonion')
-    #     data = {'fname': 'Adam',
-    #             'lname': 'Atkins',
-    #             'bday': '2000-01-01',
-    #             'usrtel': 1,
-    #             'location': 'some_location',
-    #             'left_ha': 'model1_family1_brand1',
-    #             'right_ha': 'model2_family2_brand2',
-    #             'left_purchase_date': '1999-01-01',
-    #             'right_purchase_date': '1999-01-02',
-    #             'left_NFZ_new': '2001-01-01',
-    #             'right_NFZ_new': '2001-01-01',
-    #             'left_NFZ_confirmed_date': '2001-01-01',
-    #             'right_NFZ_confirmed_date': '2002-02-02',
-    #             'left_pcpr_ha': 'model3_f3_b3',
-    #             'right_pcpr_ha': 'b4_f4_m4',
-    #             'left_PCPR_date': '2003-01-01',
-    #             'right_PCPR_date': '2004-01-01',
-    #             'note': 'p1_note',
-    #             }
-    #     url = reverse('crm:store')
-    #     # id of new patient should be 1
-    #     expected_url = reverse('crm:edit', args=(1,))
-    #     response = self.client.post(url, data, follow=True)
-    #     # should give code 200 as follow is set to True
-    #     assert response.status_code == 200
-    #     self.assertRedirects(response, expected_url,
-    #                          status_code=302, target_status_code=200)
-    #     self.assertEqual(len(Patient.objects.all()), 1)
-    #     self.assertEqual(len(NFZ_New.objects.all()), 2)
-    #     self.assertEqual(len(NFZ_Confirmed.objects.all()), 2)
-    #     self.assertEqual(len(PCPR_Estimate.objects.all()), 2)
-    #     self.assertEqual(len(Hearing_Aid.objects.all()), 2)
-    #     self.assertEqual(len(Reminder.objects.all()), 6)
