@@ -393,3 +393,96 @@ class TestGroupView(TestCase):
         # table_content[0] shows first row where two first items are fixed and then students
         self.assertEqual(len(response_table_content[0]), 2+2)
 
+
+class TestAttendance_CheckView(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+
+    def test_attendance_check_view_for_non_staff(self):
+        """
+        non staff user should not have access - status code 404
+        """
+        client = Client()
+        group = mixer.blend('edziennik.Group')
+        response = self.client.get(
+            reverse('edziennik:attendance_check', args=(group.id,)))
+        self.assertEqual(response.status_code, 404)
+
+    def test_attendance_check_view_for_staff(self):
+        """
+        staff user should have access - status code 200
+        """
+        data = {
+            'student': [1, 2],
+            'class_subject': 'test_subject',
+            'homework' : [1,]
+        }
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        lector2 = mixer.blend('edziennik.Lector')
+        group1 = mixer.blend('edziennik.Group', lector = lector1)
+        student1 = mixer.blend('edziennik.Student', group=group1)
+        student2 = mixer.blend('edziennik.Student', group=group1)
+        student3 = mixer.blend('edziennik.Student', group=group1)
+        logged_in = self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:attendance_check', args=(group1.id,))
+
+        expected_url = reverse('edziennik:group', args=(group1.id,))
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # one ClassDate object should be created
+        assert len(ClassDate.objects.all()) == 1
+
+        # only lector1 sould have one hour
+        assert len(lector1.classdate_set.all()) == 1
+
+        # lector2 should have no hours
+        assert len(lector2.classdate_set.all()) == 0
+
+        # two of the three students should have attendance
+        class_date = ClassDate.objects.first()
+        assert len(class_date.student.all()) == 2
+
+        # one of the three students should have homework
+        assert len(class_date.has_homework.all()) == 1
+
+
+
+    # def test_logged_in(self):
+    #     self.client.login(username='john', password='glassonion')
+    #     data = {'fname': 'Adam',
+    #             'lname': 'Atkins',
+    #             'bday': '2000-01-01',
+    #             'usrtel': 1,
+    #             'location': 'some_location',
+    #             'left_ha': 'model1_family1_brand1',
+    #             'right_ha': 'model2_family2_brand2',
+    #             'left_purchase_date': '1999-01-01',
+    #             'right_purchase_date': '1999-01-02',
+    #             'left_NFZ_new': '2001-01-01',
+    #             'right_NFZ_new': '2001-01-01',
+    #             'left_NFZ_confirmed_date': '2001-01-01',
+    #             'right_NFZ_confirmed_date': '2002-02-02',
+    #             'left_pcpr_ha': 'model3_f3_b3',
+    #             'right_pcpr_ha': 'b4_f4_m4',
+    #             'left_PCPR_date': '2003-01-01',
+    #             'right_PCPR_date': '2004-01-01',
+    #             'note': 'p1_note',
+    #             }
+    #     url = reverse('crm:store')
+    #     # id of new patient should be 1
+    #     expected_url = reverse('crm:edit', args=(1,))
+    #     response = self.client.post(url, data, follow=True)
+    #     # should give code 200 as follow is set to True
+    #     assert response.status_code == 200
+    #     self.assertRedirects(response, expected_url,
+    #                          status_code=302, target_status_code=200)
+    #     self.assertEqual(len(Patient.objects.all()), 1)
+    #     self.assertEqual(len(NFZ_New.objects.all()), 2)
+    #     self.assertEqual(len(NFZ_Confirmed.objects.all()), 2)
+    #     self.assertEqual(len(PCPR_Estimate.objects.all()), 2)
+    #     self.assertEqual(len(Hearing_Aid.objects.all()), 2)
+    #     self.assertEqual(len(Reminder.objects.all()), 6)

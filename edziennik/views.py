@@ -183,7 +183,7 @@ def group_check(request, pk):
     return render(request, 'edziennik/group_check.html', context)
 
 def attendance_check(request, pk):
-    ''' handles checked attendance of a group
+    ''' handles checked attendance of a group, adds one hour to a lector,
     and generates error message if attendance was checked earlier that day'''
     if not request.user.is_staff:
         raise Http404

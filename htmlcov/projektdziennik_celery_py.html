@@ -77,10 +77,10 @@
 <p id="n8" class="stm run hide_run"><a href="#n8">8</a></p>
 <p id="n9" class="pln"><a href="#n9">9</a></p>
 <p id="n10" class="pln"><a href="#n10">10</a></p>
-<p id="n11" class="pln"><a href="#n11">11</a></p>
-<p id="n12" class="stm run hide_run"><a href="#n12">12</a></p>
-<p id="n13" class="stm run hide_run"><a href="#n13">13</a></p>
-<p id="n14" class="pln"><a href="#n14">14</a></p>
+<p id="n11" class="stm run hide_run"><a href="#n11">11</a></p>
+<p id="n12" class="pln"><a href="#n12">12</a></p>
+<p id="n13" class="pln"><a href="#n13">13</a></p>
+<p id="n14" class="stm run hide_run"><a href="#n14">14</a></p>
 <p id="n15" class="pln"><a href="#n15">15</a></p>
 <p id="n16" class="stm run hide_run"><a href="#n16">16</a></p>
 <p id="n17" class="pln"><a href="#n17">17</a></p>
@@ -88,7 +88,7 @@
 
             </td>
             <td class="text">
-<p id="t1" class="stm run hide_run"><span class="key">from</span> <span class="nam">__future__</span> <span class="key">import</span> <span class="nam">absolute_import</span><span class="strut">&nbsp;</span></p>
+<p id="t1" class="stm run hide_run"><span class="key">from</span> <span class="nam">__future__</span> <span class="key">import</span> <span class="nam">absolute_import</span><span class="op">,</span> <span class="nam">unicode_literals</span><span class="strut">&nbsp;</span></p>
 <p id="t2" class="stm run hide_run"><span class="key">import</span> <span class="nam">os</span><span class="strut">&nbsp;</span></p>
 <p id="t3" class="stm run hide_run"><span class="key">from</span> <span class="nam">celery</span> <span class="key">import</span> <span class="nam">Celery</span><span class="strut">&nbsp;</span></p>
 <p id="t4" class="stm run hide_run"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">conf</span> <span class="key">import</span> <span class="nam">settings</span><span class="strut">&nbsp;</span></p>
@@ -97,11 +97,11 @@
 <p id="t7" class="stm run hide_run"><span class="nam">os</span><span class="op">.</span><span class="nam">environ</span><span class="op">.</span><span class="nam">setdefault</span><span class="op">(</span><span class="str">'DJANGO_SETTINGS_MODULE'</span><span class="op">,</span> <span class="str">'projektdziennik.settings'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t8" class="stm run hide_run"><span class="nam">app</span> <span class="op">=</span> <span class="nam">Celery</span><span class="op">(</span><span class="str">'projektdziennik'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t9" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t10" class="pln"><span class="com"># Using a string here means the worker will not have to</span><span class="strut">&nbsp;</span></p>
-<p id="t11" class="pln"><span class="com"># pickle the object when using Windows.</span><span class="strut">&nbsp;</span></p>
-<p id="t12" class="stm run hide_run"><span class="nam">app</span><span class="op">.</span><span class="nam">config_from_object</span><span class="op">(</span><span class="str">'django.conf:settings'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t13" class="stm run hide_run"><span class="nam">app</span><span class="op">.</span><span class="nam">autodiscover_tasks</span><span class="op">(</span><span class="key">lambda</span><span class="op">:</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">INSTALLED_APPS</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t14" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t10" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t11" class="stm run hide_run"><span class="nam">app</span><span class="op">.</span><span class="nam">config_from_object</span><span class="op">(</span><span class="str">'django.conf:settings'</span><span class="op">,</span> <span class="nam">namespace</span><span class="op">=</span><span class="str">'CELERY'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t12" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t13" class="pln"><span class="com"># Load task modules from all registered Django app configs.</span><span class="strut">&nbsp;</span></p>
+<p id="t14" class="stm run hide_run"><span class="nam">app</span><span class="op">.</span><span class="nam">autodiscover_tasks</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t15" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t16" class="stm run hide_run"><span class="op">@</span><span class="nam">app</span><span class="op">.</span><span class="nam">task</span><span class="op">(</span><span class="nam">bind</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t17" class="pln"><span class="key">def</span> <span class="nam">debug_task</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
@@ -116,7 +116,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.4.1</a>,
-            created at 2017-09-10 16:38
+            created at 2018-11-21 07:27
         </p>
     </div>
 </div>
