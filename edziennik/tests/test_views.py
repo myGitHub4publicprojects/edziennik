@@ -304,6 +304,36 @@ class LectorViewTests(TestCase):
             reverse('edziennik:lector', args=(lector1.id,)))
         self.assertEqual(response.context['total_hours_year'], 2)
 
+    @freeze_time('2018-03-10')
+    def test_lector_hours_in_month(self):
+        """
+        there should be hours as follows: Oct: 1, Nov: 2, Dec: 0, Jan: 17, Feb:1
+        """
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        mixer.blend(
+            'edziennik.ClassDate',
+            lector=lector1,
+            date_of_class=date(year=2017, month=10, day=20))
+        for i in range(2):
+            mixer.blend(
+                'edziennik.ClassDate',
+                lector=lector1,
+                date_of_class=date(year=2017, month=11, day=20))
+        for i in range(17):
+            mixer.blend(
+                'edziennik.ClassDate',
+                lector=lector1,
+                date_of_class=date(year=2018, month=1, day=20))
+        mixer.blend(
+            'edziennik.ClassDate',
+            lector=lector1,
+            date_of_class=date(year=2018, month=2, day=20))
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.get(
+            reverse('edziennik:lector', args=(lector1.id,)))
+        self.assertEqual(response.context['hours_in_month'], 1)
+
 class StudentViewTests(TestCase):
     def test_student_view_noerror(self):
         """
