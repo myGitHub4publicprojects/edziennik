@@ -14,5 +14,24 @@
     {% else %}
     <p>Nie ma żadnych grup</p>
     {% endif %}
+
+    <h2>Godziny</h2>
+    <table class="table table-striped">
+        <thead>
+            <th>Miesiąc</th>
+            <th>liczba godzin</th>
+        </thead>
+        <tbody>
+            {% for i in hours_in_month_list %}
+            <tr>
+                <td>{{ i.0 }}</td>
+                <td>{{ i.1 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>Łączna liczba godzin w tym roku szkolnym 
+        <small>(wrzesień - czerwiec)</small>: {{ total_hours_year }}</p>
+    
 </section>
 {% endblock content %}
