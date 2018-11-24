@@ -65,28 +65,27 @@ def lector(request, pk):
         date_of_class__range=[start_date, end_date])
     hours_in_month = {}
     for i in hours_in_current_year:
-        hours_in_month[i.date_of_class.month] = hours_in_month.get(
-            i.date_of_class.month, 0) + 1
+        hours_in_month[
+            str(i.date_of_class.month)+'.'+str(i.date_of_class.year)
+            ] = hours_in_month.get(
+                str(i.date_of_class.month)+'.'+str(i.date_of_class.year), 0) + 1
 
     # res = {}
     # for i in hours_in_current_year:
     #         res[str(i.month)+'.'+str(i.year)
     #             ] = res.get(str(i.month)+'.'+str(i.year), 0) + 1
-    # w = []
-    # for i in res.items():
-    #     m, y = i[0].split('.')[0], i[0].split('.')[1]
-    #     w.append((m, y, i[1]))
-    # uu = sorted(res.items(), key=lambda i: (int(i[0][-4:]), int(i[0].split('.')[0])))
+
+    # uu = sorted(res.items(), key=lambda i: (i[0][-4:], i[0].split('.')[0]))
     # print(uu)
 
-    uu = sorted(res.items(), key=lambda i: (i[0][-4:], i[0].split('.')[0]))
-    print(uu)
+    hours_in_month_list = sorted(
+        hours_in_month.items(), key=lambda i: (i[0][-4:], i[0].split('.')[0]))
 
     context = {
         'lector': lector,
         'lectors_groups': lectors_groups,
         'total_hours_year': len(hours_in_current_year),
-        'hours_in_month': hours_in_month}
+        'hours_in_month_list': hours_in_month_list}
 
     return render(request, 'edziennik/lector.html', context)
 

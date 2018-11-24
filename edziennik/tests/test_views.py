@@ -332,7 +332,10 @@ class LectorViewTests(TestCase):
         logged_in = self.client.login(username='admin', password='glassonion')
         response = self.client.get(
             reverse('edziennik:lector', args=(lector1.id,)))
-        self.assertEqual(response.context['hours_in_month'], 1)
+        expeced_hours = [
+            ('10.2017', 1), ('11.2017', 2), ('1.2018', 17), ('2.2018', 1) ]
+        self.assertEqual(
+            response.context['hours_in_month_list'], expeced_hours)
 
 class StudentViewTests(TestCase):
     def test_student_view_noerror(self):
