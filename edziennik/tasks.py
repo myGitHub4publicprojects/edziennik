@@ -33,7 +33,7 @@ def test_admin_email():
     logger.info("email to admin has been sent")
 
 @periodic_task(
-    run_every=(crontab(minute=1, hour=1)),
+    run_every=(crontab(minute=0, hour=2, day_of_week='sunday')),
     name="weekly_email_admin",
     ignore_result=True
 )
