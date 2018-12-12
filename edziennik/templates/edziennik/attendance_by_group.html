@@ -4,7 +4,7 @@
 
 {% if table_content %}
   <p>Obecność w grupie: <b>{{ group.name }}</b></p>
-
+  <div class = "table-responsive">
   <table class="table">
     <tr>
       <th>data</th>
@@ -22,6 +22,7 @@
     </tr>
     {% endfor %}
   </table>
+  </div>
   <table class="table">
     <tr>
       <td><img src="{% static 'img/x-mark-red.png' %}"></td>
