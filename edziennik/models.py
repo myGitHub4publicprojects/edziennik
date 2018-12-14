@@ -24,6 +24,7 @@ class Parent(models.Model):
         return self.user.username
 
 class Student(models.Model):
+    # user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     name = models.CharField(max_length=200)
     group = models.ForeignKey(Group)
     parent = models.ForeignKey(Parent)
@@ -33,6 +34,7 @@ class Student(models.Model):
         )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     quizlet = models.BooleanField(default=False) # give student reward for activity on quizlet
+    # quizlet_username = models.CharField(max_length=30, blank=True)
 
     def __str__(self):              
         return self.name.encode("utf-8")
