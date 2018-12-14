@@ -201,7 +201,7 @@
 <p id="t33" class="stm mis">    <span class="nam">logger</span><span class="op">.</span><span class="nam">info</span><span class="op">(</span><span class="str">"email to admin has been sent"</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t34" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t35" class="stm run hide_run"><span class="op">@</span><span class="nam">periodic_task</span><span class="op">(</span><span class="strut">&nbsp;</span></p>
-<p id="t36" class="pln">    <span class="nam">run_every</span><span class="op">=</span><span class="op">(</span><span class="nam">crontab</span><span class="op">(</span><span class="nam">minute</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">hour</span><span class="op">=</span><span class="num">1</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
+<p id="t36" class="pln">    <span class="nam">run_every</span><span class="op">=</span><span class="op">(</span><span class="nam">crontab</span><span class="op">(</span><span class="nam">minute</span><span class="op">=</span><span class="num">0</span><span class="op">,</span> <span class="nam">hour</span><span class="op">=</span><span class="num">2</span><span class="op">,</span> <span class="nam">day_of_week</span><span class="op">=</span><span class="str">'sunday'</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
 <p id="t37" class="pln">    <span class="nam">name</span><span class="op">=</span><span class="str">"weekly_email_admin"</span><span class="op">,</span><span class="strut">&nbsp;</span></p>
 <p id="t38" class="pln">    <span class="nam">ignore_result</span><span class="op">=</span><span class="nam">True</span><span class="strut">&nbsp;</span></p>
 <p id="t39" class="pln"><span class="op">)</span><span class="strut">&nbsp;</span></p>
@@ -272,7 +272,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.4.1</a>,
-            created at 2018-11-22 11:03
+            created at 2018-12-14 15:10
         </p>
     </div>
 </div>
