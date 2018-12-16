@@ -6,7 +6,7 @@ import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse, Http404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from edziennik.utils import student_absence
@@ -14,7 +14,7 @@ from edziennik.utils import student_absence
 
 def index(request):
     '''displays either a login prompt or a button to check attendance, for logged in users'''
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render(request, 'edziennik/home_for_others.html')
 
     lector_users = [lector.user for lector in Lector.objects.all()]

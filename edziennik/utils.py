@@ -27,7 +27,7 @@ def send_sms_smsapi(parent_phone, message):
             id: %s, points: %s, status: %s' % (parent_phone, message, r.id, r.points, r.status)
             mail_title = 'SMS wyslany do %s' % parent_phone
             admin_email(mail_title, mail_body)
-    except ApiError, e:
+    except ApiError as e:
         # print '%s - %s' % (e.code, e.message)
         mail_body = 'Blad wysylania smsa do %s, o tresci: %s \n\
         kod bledu: %s, tresc bledu: %s, points: %s' % (parent_phone, message, r.id, r.status, r.points)
