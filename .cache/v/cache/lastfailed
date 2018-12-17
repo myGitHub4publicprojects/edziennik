@@ -1,4 +1,0 @@
-{
-  "edziennik/tests/test_utils2.py::Testgenerate_eekly_admin_report::()::test_no_students": true, 
-  "edziennik/tests/test_views.py::TestAttendance_CheckView::test_logged_in": true
-}
