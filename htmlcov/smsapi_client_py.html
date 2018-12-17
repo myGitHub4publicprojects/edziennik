@@ -192,7 +192,7 @@
 <p id="t7" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t8" class="stm run hide_run"><span class="key">class</span> <span class="nam">SmsAPI</span><span class="op">(</span><span class="nam">object</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t9" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t10" class="stm run hide_run">    <span class="key">def</span> <span class="nam">__init__</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">username</span><span class="op">=</span><span class="nam">None</span><span class="op">,</span> <span class="nam">password</span><span class="op">=</span><span class="nam">None</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t10" class="stm run hide_run">    <span class="key">def</span> <span class="nam">__init__</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">username</span><span class="op">=</span><span class="key">None</span><span class="op">,</span> <span class="nam">password</span><span class="op">=</span><span class="key">None</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t11" class="stm mis">        <span class="nam">super</span><span class="op">(</span><span class="nam">SmsAPI</span><span class="op">,</span> <span class="nam">self</span><span class="op">)</span><span class="op">.</span><span class="nam">__init__</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t12" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t13" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">api_url</span> <span class="op">=</span> <span class="str">'https://api.smsapi.pl/'</span><span class="strut">&nbsp;</span></p>
@@ -205,11 +205,11 @@
 <p id="t20" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t21" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">auth_token</span> <span class="op">=</span> <span class="nam">kwargs</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">'auth_token'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t22" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t23" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_service</span> <span class="op">=</span> <span class="nam">None</span><span class="strut">&nbsp;</span></p>
+<p id="t23" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_service</span> <span class="op">=</span> <span class="key">None</span><span class="strut">&nbsp;</span></p>
 <p id="t24" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t25" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_action</span> <span class="op">=</span> <span class="nam">None</span><span class="strut">&nbsp;</span></p>
+<p id="t25" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_action</span> <span class="op">=</span> <span class="key">None</span><span class="strut">&nbsp;</span></p>
 <p id="t26" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t27" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_reset</span> <span class="op">=</span> <span class="nam">True</span><span class="strut">&nbsp;</span></p>
+<p id="t27" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_reset</span> <span class="op">=</span> <span class="key">True</span><span class="strut">&nbsp;</span></p>
 <p id="t28" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t29" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_proxy</span> <span class="op">=</span> <span class="nam">ApiHttpProxy</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">api_url</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t30" class="pln"><span class="strut">&nbsp;</span></p>
@@ -223,7 +223,7 @@
 <p id="t38" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t39" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t40" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t41" class="stm run hide_run">    <span class="key">def</span> <span class="nam">action</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">action</span><span class="op">=</span><span class="nam">None</span><span class="op">,</span> <span class="nam">data</span><span class="op">=</span><span class="nam">None</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t41" class="stm run hide_run">    <span class="key">def</span> <span class="nam">action</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">action</span><span class="op">=</span><span class="key">None</span><span class="op">,</span> <span class="nam">data</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t42" class="stm mis">        <span class="key">if</span> <span class="key">not</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_service</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t43" class="stm mis">            <span class="key">raise</span> <span class="nam">RuntimeError</span><span class="op">(</span><span class="str">'Choose service first.'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t44" class="pln"><span class="strut">&nbsp;</span></p>
@@ -247,7 +247,7 @@
 <p id="t62" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">username</span> <span class="op">=</span> <span class="nam">username</span><span class="strut">&nbsp;</span></p>
 <p id="t63" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t64" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t65" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_password</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">password</span><span class="op">,</span> <span class="nam">encode</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t65" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_password</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">password</span><span class="op">,</span> <span class="nam">encode</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t66" class="stm mis">        <span class="key">if</span> <span class="nam">encode</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t67" class="stm mis">            <span class="nam">self</span><span class="op">.</span><span class="nam">password</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">hash</span><span class="op">(</span><span class="nam">password</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t68" class="pln">        <span class="key">else</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
@@ -266,7 +266,7 @@
 <p id="t81" class="stm mis">        <span class="nam">string</span> <span class="op">=</span> <span class="nam">string</span><span class="op">.</span><span class="nam">encode</span><span class="op">(</span><span class="str">'utf-8'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t82" class="stm mis">        <span class="key">return</span> <span class="nam">hashlib</span><span class="op">.</span><span class="nam">md5</span><span class="op">(</span><span class="nam">string</span><span class="op">)</span><span class="op">.</span><span class="nam">hexdigest</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t83" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t84" class="stm run hide_run">    <span class="key">def</span> <span class="nam">reset</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">reset</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t84" class="stm run hide_run">    <span class="key">def</span> <span class="nam">reset</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">reset</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t85" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_reset</span> <span class="op">=</span> <span class="nam">reset</span><span class="strut">&nbsp;</span></p>
 <p id="t86" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t87" class="pln"><span class="strut">&nbsp;</span></p>
@@ -286,7 +286,7 @@
 <p id="t101" class="stm mis">            <span class="nam">self</span><span class="op">.</span><span class="nam">_action</span><span class="op">.</span><span class="nam">clear</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t102" class="stm mis">            <span class="nam">self</span><span class="op">.</span><span class="nam">_proxy</span><span class="op">.</span><span class="nam">data</span><span class="op">.</span><span class="nam">clear</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t103" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t104" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_reset</span> <span class="op">=</span> <span class="nam">True</span><span class="strut">&nbsp;</span></p>
+<p id="t104" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_reset</span> <span class="op">=</span> <span class="key">True</span><span class="strut">&nbsp;</span></p>
 <p id="t105" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t106" class="stm mis">        <span class="key">return</span> <span class="nam">result</span><span class="strut">&nbsp;</span></p>
 <p id="t107" class="pln"><span class="strut">&nbsp;</span></p>
@@ -305,8 +305,8 @@
 <div id="footer">
     <div class="content">
         <p>
-            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.4.1</a>,
-            created at 2018-11-22 11:03
+            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.2</a>,
+            created at 2018-12-17 06:20
         </p>
     </div>
 </div>

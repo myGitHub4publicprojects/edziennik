@@ -2,7 +2,21 @@
 __pycache__
 myvenv
 db.sqlite3
-/static
+projektdziennik/static/
 .DS_Store
 local_settings.py
-/htmlcov/
+
+
+# migrations
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml

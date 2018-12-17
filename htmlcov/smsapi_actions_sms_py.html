@@ -249,7 +249,7 @@
 <p id="t20" class="stm run hide_run">    <span class="key">def</span> <span class="nam">__init__</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">proxy</span><span class="op">,</span> <span class="nam">uri</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t21" class="stm mis">        <span class="nam">super</span><span class="op">(</span><span class="nam">SendAction</span><span class="op">,</span> <span class="nam">self</span><span class="op">)</span><span class="op">.</span><span class="nam">__init__</span><span class="op">(</span><span class="nam">proxy</span><span class="op">,</span> <span class="nam">uri</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t22" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t23" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">wap_push</span> <span class="op">=</span> <span class="nam">False</span><span class="strut">&nbsp;</span></p>
+<p id="t23" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">wap_push</span> <span class="op">=</span> <span class="key">False</span><span class="strut">&nbsp;</span></p>
 <p id="t24" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t25" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_from</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">sender_name</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t26" class="stm mis">        <span class="nam">self</span><span class="op">.</span><span class="nam">_data</span><span class="op">[</span><span class="str">'from'</span><span class="op">]</span> <span class="op">=</span> <span class="nam">sender_name</span><span class="strut">&nbsp;</span></p>
@@ -272,7 +272,7 @@
 <p id="t43" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t44" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t45" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t46" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_details</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">details</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t46" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_details</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">details</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t47" class="stm mis">        <span class="key">if</span> <span class="key">not</span> <span class="nam">details</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t48" class="stm mis">            <span class="key">try</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t49" class="stm mis">                <span class="key">del</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_data</span><span class="op">[</span><span class="str">'details'</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
@@ -283,7 +283,7 @@
 <p id="t54" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t55" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t56" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t57" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_date_validate</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">date_validate</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t57" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_date_validate</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">date_validate</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t58" class="stm mis">        <span class="key">if</span> <span class="key">not</span> <span class="nam">date_validate</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t59" class="stm mis">            <span class="key">try</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t60" class="stm mis">                <span class="key">del</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_data</span><span class="op">[</span><span class="str">'date_validate'</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
@@ -294,7 +294,7 @@
 <p id="t65" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t66" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t67" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t68" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_eco</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">eco</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t68" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_eco</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">eco</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t69" class="stm mis">        <span class="key">if</span> <span class="key">not</span> <span class="nam">eco</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t70" class="stm mis">            <span class="key">try</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t71" class="stm mis">                <span class="key">del</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_data</span><span class="op">[</span><span class="str">'eco'</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
@@ -305,7 +305,7 @@
 <p id="t76" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t77" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t78" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t79" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_nounicode</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">nounicode</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t79" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_nounicode</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">nounicode</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t80" class="stm mis">        <span class="key">if</span> <span class="key">not</span> <span class="nam">nounicode</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t81" class="stm mis">            <span class="key">try</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t82" class="stm mis">                <span class="key">del</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_data</span><span class="op">[</span><span class="str">'nounicode'</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
@@ -316,7 +316,7 @@
 <p id="t87" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t88" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t89" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t90" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_normalize</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">normalize</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t90" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_normalize</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">normalize</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t91" class="stm mis">        <span class="key">if</span> <span class="key">not</span> <span class="nam">normalize</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t92" class="stm mis">            <span class="key">try</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t93" class="stm mis">                <span class="key">del</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_data</span><span class="op">[</span><span class="str">'normalize'</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
@@ -327,7 +327,7 @@
 <p id="t98" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t99" class="stm mis">        <span class="key">return</span> <span class="nam">self</span><span class="strut">&nbsp;</span></p>
 <p id="t100" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t101" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_fast</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">fast</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t101" class="stm run hide_run">    <span class="key">def</span> <span class="nam">set_fast</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">fast</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t102" class="stm mis">        <span class="key">if</span> <span class="key">not</span> <span class="nam">fast</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t103" class="stm mis">            <span class="key">try</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t104" class="stm mis">                <span class="key">del</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_data</span><span class="op">[</span><span class="str">'fast'</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
@@ -354,7 +354,7 @@
 <p id="t125" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t126" class="stm mis">        <span class="nam">index</span> <span class="op">=</span> <span class="num">1</span><span class="strut">&nbsp;</span></p>
 <p id="t127" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t128" class="stm mis">        <span class="nam">params</span> <span class="op">=</span> <span class="nam">None</span><span class="strut">&nbsp;</span></p>
+<p id="t128" class="stm mis">        <span class="nam">params</span> <span class="op">=</span> <span class="key">None</span><span class="strut">&nbsp;</span></p>
 <p id="t129" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t130" class="stm mis">        <span class="key">for</span> <span class="nam">arg</span> <span class="key">in</span> <span class="nam">args</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t131" class="stm mis">            <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">arg</span><span class="op">,</span> <span class="op">(</span><span class="nam">tuple</span><span class="op">,</span> <span class="nam">list</span><span class="op">)</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
@@ -393,8 +393,8 @@
 <div id="footer">
     <div class="content">
         <p>
-            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.4.1</a>,
-            created at 2018-11-22 11:03
+            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.2</a>,
+            created at 2018-12-17 06:20
         </p>
     </div>
 </div>
