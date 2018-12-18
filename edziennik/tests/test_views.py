@@ -7,9 +7,9 @@ from django.contrib import auth
 from mixer.backend.django import mixer
 import pytest
 from datetime import date, datetime, timedelta
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from freezegun import freeze_time
-from edziennik.models import Lector, Group, Parent, Student, ClassDate
+from edziennik.models import Lector, Group, Parent, Student, ClassDate, Admin_Profile
 pytestmark = pytest.mark.django_db
 today = datetime.today().date()
 
@@ -387,14 +387,15 @@ class StudentViewTests(TestCase):
         admin should have access to student's grades and attendance
         """
         client = Client()
-
+        lector1 = mixer.blend('edziennik.Lector')
         student = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         grade1 = mixer.blend('edziennik.Grades', student=student, date_of_test=today)
         grade2 = mixer.blend('edziennik.Grades', student=student, date_of_test=today)
         grade3 = mixer.blend('edziennik.Grades', student=student2, date_of_test=today)
 
-        date_of_class = ClassDate.objects.create(date_of_class=today)
+        date_of_class = ClassDate.objects.create(date_of_class=today,
+                                                lector=lector1)
         date_of_class.student.add(student, student2)
 
         user_admin = User.objects.create_superuser(username='admin',
@@ -417,17 +418,21 @@ class StudentViewTests(TestCase):
         """
         client = Client()
 
-        student = mixer.blend('edziennik.Student')
-        date_of_class = ClassDate.objects.create(date_of_class=today)
-        date_of_class.student.add(student)
-        date_of_class.has_homework.add(student)
+        lector1 = mixer.blend('edziennik.Lector')
+        group1 = mixer.blend('edziennik.Group', lector = lector1)
+        student1 = mixer.blend('edziennik.Student', group=group1)
+
+        date_of_class = ClassDate.objects.create(date_of_class=today,
+                                                lector=lector1)
+        date_of_class.student.add(student1)
+        date_of_class.has_homework.add(student1)
 
         user_admin = User.objects.create_superuser(username='admin',
                                  email='jlennon@beatles.com',
                                  password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
         self.assertTrue(logged_in)
-        response = self.client.get(reverse('edziennik:student', args=(student.id,)))
+        response = self.client.get(reverse('edziennik:student', args=(student1.id,)))
 
         response_attendance_table_content= list(response.context['attendance_table_content'])
         present_sign = '<img src=%s>' % static('img/check_sign_icon_green.png')
@@ -438,10 +443,12 @@ class StudentViewTests(TestCase):
         should display '-' in attendance table
         """
         client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
         group=mixer.blend('edziennik.Group')
         student = mixer.blend('edziennik.Student', group=group)
         student2 = mixer.blend('edziennik.Student', group=group)
-        date_of_class = ClassDate.objects.create(date_of_class=today-timedelta(1))
+        date_of_class = ClassDate.objects.create(date_of_class=today-timedelta(1),
+                                                lector=lector1)
         date_of_class.student.add(student2)
 
         user_admin = User.objects.create_superuser(username='admin',
@@ -501,7 +508,8 @@ class TestAttendance_CheckView(TestCase):
     def setUp(self):
         User.objects.create_superuser(
             username='admin', email='jlennon@beatles.com', password='glassonion')
-
+        User.objects.create_user(
+            'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
     def test_attendance_check_view_for_non_staff(self):
         """
         non staff user should not have access - status code 404
@@ -528,10 +536,11 @@ class TestAttendance_CheckView(TestCase):
         student1 = mixer.blend('edziennik.Student', group=group1)
         student2 = mixer.blend('edziennik.Student', group=group1)
         student3 = mixer.blend('edziennik.Student', group=group1)
-        logged_in = self.client.login(username='admin', password='glassonion')
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
         url = reverse('edziennik:attendance_check', args=(group1.id,))
-
         expected_url = reverse('edziennik:group', args=(group1.id,))
+
         response = self.client.post(url, data, follow=True)
         # should give code 200 as follow is set to True
         assert response.status_code == 200
@@ -553,4 +562,61 @@ class TestAttendance_CheckView(TestCase):
         assert len(class_date.has_homework.all()) == 1
 
 
+class TestAdvanced_SettingsView(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+        username='admin', email='jlennon@beatles.com', password='glassonion')
+        User.objects.create_user(
+        'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
+    def test_advanced_settings_unauthorized(self):
+        '''should return 404 error for unauthorized users'''
+        client = Client()
+        url = reverse('edziennik:advanced_settings', args=(1,))
+        response = self.client.get(url, follow=True)
+        # should give code 404 as follow is set to True
+        assert response.status_code == 404
+    
+    def test_advanced_settings_non_admin(self):
+        '''should return 404 error for non admin users'''
+        client = Client()
+        logged_in = self.client.login(
+            username='john', password='johnpassword')
+        url = reverse('edziennik:advanced_settings', args=(1,))
+        response = self.client.get(url, follow=True)
+        # should give code 404 as follow is set to True
+        assert response.status_code == 404
 
+    def test_advanced_settings_admin_first_time(self):
+        '''should be accesible for admin user (status code: 200),
+        should create one instance of Admin_Profile class,
+        should use proper template (advanced_settings.html)'''
+        client = Client()
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:advanced_settings', args=(1,))
+        response = self.client.get(url, follow=True)
+
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+        # should use proper tempate
+        self.assertEqual(
+            response.templates[0].name, 'edziennik/advanced_settings.html')
+        # there should be one instance when visited for the first time
+        instances = len(Admin_Profile.objects.all())
+        self.assertEqual(instances, 1)
+
+    def test_advanced_settings_admin_again(self):
+        '''should not create new instance of Admin_Profile class,
+        should use proper template (advanced_settings.html)'''
+        client = Client()
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:advanced_settings', args=(1,))
+        response = self.client.get(url, follow=True)
+
+        # should use proper tempate
+        self.assertEqual(
+            response.templates[0].name, 'edziennik/advanced_settings.html')
+        # there should be only one instance
+        instances = len(Admin_Profile.objects.all())
+        self.assertEqual(instances, 1)

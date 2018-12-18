@@ -1,0 +1,67 @@
+/*projektdziennik\projektdziennik\static\css*/
+
+body {
+  background: #4193FF;
+}
+
+#head-img {
+  max-width: 100%;
+}
+
+.main {
+  padding-top: 1%;
+  padding-bottom: 1%;
+  background-color: #d2d2f7;
+}
+
+.top-btn {
+  background: #ff8400;
+  background-image: -webkit-linear-gradient(top, #ff8400, #fa3232);
+  background-image: -moz-linear-gradient(top, #ff8400, #fa3232);
+  background-image: -ms-linear-gradient(top, #ff8400, #fa3232);
+  background-image: -o-linear-gradient(top, #ff8400, #fa3232);
+  background-image: linear-gradient(to bottom, #ff8400, #fa3232);
+  text-shadow: 1px 1px 0px #666666;
+  color: #9a9ff1;
+  cursor: pointer;
+}
+
+.top-btn:hover {
+  background: #e60a03;
+  background-image: -webkit-linear-gradient(top, #e60a03, #e0d500);
+  background-image: -moz-linear-gradient(top, #e60a03, #e0d500);
+  background-image: -ms-linear-gradient(top, #e60a03, #e0d500);
+  background-image: -o-linear-gradient(top, #e60a03, #e0d500);
+  background-image: linear-gradient(to bottom, #e60a03, #e0d500);
+}
+
+.blue-btn {
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  margin-top: 1%;
+  cursor: pointer;
+  text-shadow: 1px 1px 0px #666666;
+  color: #ffffff;
+}
+
+
+
+.blue-btn:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+}
+
+@media only screen and (max-width: 800px) {
+  .blue-btn {
+    width: 100%;
+    font-size: 2em;
+  }
+}

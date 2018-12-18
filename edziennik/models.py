@@ -86,17 +86,21 @@ class SMS(models.Model):
 
 
 class Admin_Profile(models.Model):
-    user = models.OneToOneField(Lector, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     quizlet_username = models.CharField(max_length=30, blank=True)
     quizlet_password = models.CharField(max_length=30, blank=True)
     twilio_account_sid = models.CharField(max_length=30, blank=True)
     twilio_auth_token = models.CharField(max_length=30, blank=True)
-    sms_when_absent = models.BooleanField()
-    sms_when_no_homework = models.BooleanField()
+    sms_when_absent = models.BooleanField(default=False)
+    sms_when_no_homework = models.BooleanField(default=False)
     sms_message_absence = models.CharField(max_length=300, blank=True)
     sms_message_no_homework = models.CharField(max_length=400, blank=True)
-    school_admin_email = models.BooleanField()
-    send_email_weekly_attendance_report = models.BooleanField()
+    school_admin_email = models.EmailField(
+        max_length=70, null=True, blank=True)
+    send_email_weekly_attendance_report = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username

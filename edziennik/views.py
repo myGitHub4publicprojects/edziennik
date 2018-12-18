@@ -1,13 +1,14 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
-from edziennik.models import Lector, Group, Parent, Student, ClassDate, Grades
+from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
+    Admin_Profile)
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.urls import reverse
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 
 from edziennik.utils import student_absence
 
@@ -238,7 +239,8 @@ def attendance_check(request, pk):
     selected_student_list = request.POST.getlist('student') # wazne - getlist!!! - bierze liste wynikow a nie pojedynczy
     class_subject = request.POST.get('class_subject')
     class_date = ClassDate.objects.create(  date_of_class=datetime.datetime.today(),
-                                            subject = class_subject)
+                                            subject = class_subject,
+                                            lector = group.lector)
     have_homework = request.POST.getlist('homework')
     for id in selected_student_list:
         student = Student.objects.get(id=id)
@@ -364,3 +366,40 @@ def process_quizlet(request):
         student_object.save()
     messages.success(request, "Punkty za quizlet w grupie %s dodane" % student_object.group.name)
     return redirect('edziennik:name_home')
+
+
+def advanced_settings(request, pk):
+    '''displays admin user advanced settings (Admin_Profile class),
+    enables updating details'''
+    if not request.user.is_superuser:
+        raise Http404
+    if request.method == 'GET':
+        obj, created = Admin_Profile.objects.get_or_create(
+            user = request.user,
+        )
+        if not created:
+            form = 1
+            # fetch data and create form
+
+            context = {}
+            return render(request, 'edziennik/advanced_settings.html', context)
+        
+        else:
+            form = 1
+            # display empty form
+
+            context = {}
+            return render(request, 'edziennik/advanced_settings.html', context)
+
+    if request.method == 'POST':
+        profile = Admin_Profile.objects.get(user=request.user)
+
+        # update profile
+
+        messages.success(request, "Ustawienia zachowane")
+        return redirect(reverse('edziennik:name_home'))
+
+        
+    
+
+

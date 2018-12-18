@@ -38,4 +38,6 @@ urlpatterns = [
     path('process_quizlet/', views.process_quizlet, name='process_quizlet'),
     path('<int:pk>/show_group_grades/',
          views.show_group_grades, name='show_group_grades'),
+    path('<int:pk>/advanced_settings/',
+         views.advanced_settings, name='advanced_settings'),
 ]
