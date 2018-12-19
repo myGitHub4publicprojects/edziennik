@@ -1,8 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
-from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
-    Admin_Profile)
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
@@ -10,7 +8,12 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.urls import reverse
 from django.templatetags.static import static
 
+from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
+                              Admin_Profile)
+from .forms import AdminProfileForm
+
 from edziennik.utils import student_absence
+
 
 
 def index(request):
@@ -368,38 +371,26 @@ def process_quizlet(request):
     return redirect('edziennik:name_home')
 
 
-def advanced_settings(request, pk):
+def advanced_settings(request):
     '''displays admin user advanced settings (Admin_Profile class),
     enables updating details'''
     if not request.user.is_superuser:
         raise Http404
     if request.method == 'GET':
         obj, created = Admin_Profile.objects.get_or_create(
-            user = request.user,
+            pk=1,
+            defaults={'user':request.user},
         )
-        if not created:
-            form = 1
-            # fetch data and create form
-
-            context = {}
-            return render(request, 'edziennik/advanced_settings.html', context)
-        
-        else:
-            form = 1
-            # display empty form
-
-            context = {}
-            return render(request, 'edziennik/advanced_settings.html', context)
+        # display newly created or previous object in form
+        form = AdminProfileForm(instance=obj)
+        context = {'form': form}
+        return render(request, 'edziennik/advanced_settings.html', context)
 
     if request.method == 'POST':
-        profile = Admin_Profile.objects.get(user=request.user)
+        profile = Admin_Profile.objects.get(pk=1)
+        form = AdminProfileForm(request.POST, instance = profile)
+        if form.is_valid():
+            form.save()
 
-        # update profile
-
-        messages.success(request, "Ustawienia zachowane")
-        return redirect(reverse('edziennik:name_home'))
-
-        
-    
-
-
+            messages.success(request, "Ustawienia zachowane")
+            return redirect(reverse('edziennik:name_home'))

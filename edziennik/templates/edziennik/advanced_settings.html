@@ -1,1 +1,10 @@
-hi
+{% extends "edziennik/base.html" %}
+{% block content %}
+
+<form action="{% url 'edziennik:advanced_settings' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Zatwierdzam" />
+</form>
+
+{% endblock content %}

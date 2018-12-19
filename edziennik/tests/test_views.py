@@ -571,7 +571,7 @@ class TestAdvanced_SettingsView(TestCase):
     def test_advanced_settings_unauthorized(self):
         '''should return 404 error for unauthorized users'''
         client = Client()
-        url = reverse('edziennik:advanced_settings', args=(1,))
+        url = reverse('edziennik:advanced_settings')
         response = self.client.get(url, follow=True)
         # should give code 404 as follow is set to True
         assert response.status_code == 404
@@ -581,7 +581,7 @@ class TestAdvanced_SettingsView(TestCase):
         client = Client()
         logged_in = self.client.login(
             username='john', password='johnpassword')
-        url = reverse('edziennik:advanced_settings', args=(1,))
+        url = reverse('edziennik:advanced_settings')
         response = self.client.get(url, follow=True)
         # should give code 404 as follow is set to True
         assert response.status_code == 404
@@ -593,7 +593,7 @@ class TestAdvanced_SettingsView(TestCase):
         client = Client()
         logged_in = self.client.login(
             username='admin', password='glassonion')
-        url = reverse('edziennik:advanced_settings', args=(1,))
+        url = reverse('edziennik:advanced_settings')
         response = self.client.get(url, follow=True)
 
         # should give code 200 as follow is set to True
@@ -608,10 +608,16 @@ class TestAdvanced_SettingsView(TestCase):
     def test_advanced_settings_admin_again(self):
         '''should not create new instance of Admin_Profile class,
         should use proper template (advanced_settings.html)'''
+
+        Admin_Profile.objects.create(
+            user = User.objects.get(username='admin'),
+            quizlet_username='testuser',
+            quizlet_password='testpass'
+        )
         client = Client()
         logged_in = self.client.login(
             username='admin', password='glassonion')
-        url = reverse('edziennik:advanced_settings', args=(1,))
+        url = reverse('edziennik:advanced_settings')
         response = self.client.get(url, follow=True)
 
         # should use proper tempate
@@ -620,3 +626,64 @@ class TestAdvanced_SettingsView(TestCase):
         # there should be only one instance
         instances = len(Admin_Profile.objects.all())
         self.assertEqual(instances, 1)
+        # instance properties should not change
+        instance = Admin_Profile.objects.get(pk=1)
+        self.assertEqual(instance.quizlet_username, 'testuser')
+        self.assertEqual(instance.quizlet_password, 'testpass')
+
+    def test_advanced_settings_admin_with_other_admin(self):
+        '''should not create new instance of Admin_Profile class,
+        should have access to instance previously created by another admin'''
+        # another admin
+        User.objects.create_superuser(
+            username='admin2', email='jlennon@beatles.com', password='glassonion')
+        # instance created by another user
+        Admin_Profile.objects.create(
+            user=User.objects.get(username='admin2'),
+            quizlet_username='testuser',
+            quizlet_password='testpass'
+        )
+        client = Client()
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:advanced_settings')
+        response = self.client.get(url, follow=True)
+
+        # there should be only one instance
+        instances = len(Admin_Profile.objects.all())
+        self.assertEqual(instances, 1)
+        # instance properties set by another admin should not change
+        old = Admin_Profile.objects.get(pk=1)
+        self.assertEqual(old.quizlet_username, 'testuser')
+        self.assertEqual(old.quizlet_password, 'testpass')
+
+    def test_advanced_settings_admin_post(self):
+        '''should not create new instance of Admin_Profile class,
+        should update fields'''
+        # instance created by GET call
+        Admin_Profile.objects.create(
+            user=User.objects.get(username='admin'),
+        )
+        client = Client()
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:advanced_settings')
+
+        data = {
+            'quizlet_username': 'testuser',
+            'quizlet_password': 'testpass'
+        }
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+        # should use proper tempate
+        self.assertEqual(
+            response.templates[0].name, 'edziennik/home_for_admin.html')
+
+        # there should be only one instance
+        instances = len(Admin_Profile.objects.all())
+        self.assertEqual(instances, 1)
+        # instance properties set by another admin should not change
+        updated = Admin_Profile.objects.get(pk=1)
+        self.assertEqual(updated.quizlet_username, 'testuser')
+        self.assertEqual(updated.quizlet_password, 'testpass')
