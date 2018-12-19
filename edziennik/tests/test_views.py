@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib.messages import get_messages
 from mixer.backend.django import mixer
 import pytest
 from datetime import date, datetime, timedelta
@@ -687,3 +688,6 @@ class TestAdvanced_SettingsView(TestCase):
         updated = Admin_Profile.objects.get(pk=1)
         self.assertEqual(updated.quizlet_username, 'testuser')
         self.assertEqual(updated.quizlet_password, 'testpass')
+        all_messages = [msg for msg in get_messages(response.wsgi_request)]
+        self.assertEqual(all_messages[0].tags, "success")
+        self.assertEqual(all_messages[0].message, 'Ustawienia zachowane')
