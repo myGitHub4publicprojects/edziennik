@@ -3,7 +3,16 @@
 
 <form action="{% url 'edziennik:advanced_settings' %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <p>{{ form.quizlet_username }}</p>
+    <p>{{ form.quizlet_password }}</p>
+    <p>{{ form.twilio_account_sid }}</p>
+    <p>{{ form.twilio_auth_token }}</p>
+    <p>{{ form.sms_when_absent }}</p>
+    <p>{{ form.sms_when_no_homework }}</p>
+    <p>{{ form.sms_message_absence }}</p>
+    <p>{{ form.sms_message_no_homework }}</p>
+    <p>{{ form.school_admin_email }}</p>
+    <p>{{ form.send_email_weekly_attendance_report }}</p>
     <input type="submit" value="Zatwierdzam" />
 </form>
 

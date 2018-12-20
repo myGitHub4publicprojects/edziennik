@@ -92,6 +92,7 @@ class Admin_Profile(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     quizlet_username = models.CharField(max_length=30, blank=True)
     quizlet_password = models.CharField(max_length=30, blank=True)
+    check_quizlet_automatically = models.BooleanField(default=False)
     twilio_account_sid = models.CharField(max_length=30, blank=True)
     twilio_auth_token = models.CharField(max_length=30, blank=True)
     sms_when_absent = models.BooleanField(default=False)
