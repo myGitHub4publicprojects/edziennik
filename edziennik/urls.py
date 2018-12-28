@@ -22,4 +22,6 @@ urlpatterns = [
          views.show_group_grades, name='show_group_grades'),
     path('advanced_settings/',
          views.advanced_settings, name='advanced_settings'),
+    path('quizlet_test_email/',
+         views.quizlet_test_email, name='quizlet_test_email'),
 ]

@@ -1,10 +1,9 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
-from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.urls import reverse
 from django.templatetags.static import static
 
@@ -394,3 +393,17 @@ def advanced_settings(request):
 
             messages.success(request, "Ustawienia zachowane")
             return redirect(reverse('edziennik:name_home'))
+
+
+def quizlet_test_email(request):
+    '''Accepts ajax call with quizlet username, password and school
+    admin email. Make call to check quizlet and return success or error'''
+    username = request.POST.get('username', None)
+
+    # run quizlet check and send email to an admin
+
+    
+    data = {
+        'result': 'Success!'
+    }
+    return JsonResponse(data)

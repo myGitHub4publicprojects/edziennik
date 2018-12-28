@@ -3,17 +3,119 @@
 
 <form action="{% url 'edziennik:advanced_settings' %}" method="post">
     {% csrf_token %}
-    <p>{{ form.quizlet_username }}</p>
-    <p>{{ form.quizlet_password }}</p>
-    <p>{{ form.twilio_account_sid }}</p>
-    <p>{{ form.twilio_auth_token }}</p>
-    <p>{{ form.sms_when_absent }}</p>
-    <p>{{ form.sms_when_no_homework }}</p>
-    <p>{{ form.sms_message_absence }}</p>
-    <p>{{ form.sms_message_no_homework }}</p>
-    <p>{{ form.school_admin_email }}</p>
-    <p>{{ form.send_email_weekly_attendance_report }}</p>
+    <div id='Quizlet'>
+        <h1>Quizlet</h1>
+        <div class="fieldWrapper">
+            {{ form.quizlet_username.errors }}
+            {{ form.quizlet_username.label_tag }}
+            {{ form.quizlet_username }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.quizlet_password.errors }}
+            {{ form.quizlet_password.label_tag }}
+            {{ form.quizlet_password }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.check_quizlet_automatically.errors }}
+            {{ form.check_quizlet_automatically.label_tag }}
+            {{ form.check_quizlet_automatically }}
+        </div>
+        <button id="btnQuizletTest" class="btn btn-warning" type="button">
+            <p>Sprawdź teraz</p>
+            <P>Email zostanie wysłany adminowi</P>
+        </button>
+    </div>
+
+    <div>
+        <h1>SMS</h1>
+        <div class="fieldWrapper">
+            {{ form.twilio_account_sid.errors }}
+            {{ form.twilio_account_sid.label_tag }}
+            {{ form.twilio_account_sid }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.twilio_auth_token.errors }}
+            {{ form.twilio_auth_token.label_tag }}
+            {{ form.twilio_auth_token }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.sms_when_absent.errors }}
+            {{ form.sms_when_absent.label_tag }}
+            {{ form.sms_when_absent }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.sms_when_no_homework.errors }}
+            {{ form.sms_when_no_homework.label_tag }}
+            {{ form.sms_when_no_homework }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.sms_message_absence.errors }}
+            {{ form.sms_message_absence.label_tag }}
+            {{ form.sms_message_absence }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.sms_message_no_homework.errors }}
+            {{ form.sms_message_no_homework.label_tag }}
+            {{ form.sms_message_no_homework }}
+        </div>
+    </div>
+
+    <div>
+        <h1>Email</h1>
+        <div class="fieldWrapper">
+            {{ form.school_admin_email.errors }}
+            {{ form.school_admin_email.label_tag }}
+            {{ form.school_admin_email }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.send_email_weekly_attendance_report.errors }}
+            {{ form.send_email_weekly_attendance_report.label_tag }}
+            {{ form.send_email_weekly_attendance_report }}
+        </div>
+    </div>
+
+    
     <input type="submit" value="Zatwierdzam" />
 </form>
 
 {% endblock content %}
+
+{% block javascript %}
+<script>
+let btnQuizletTest = document.getElementById('btnQuizletTest')
+btnQuizletTest.addEventListener('click', function () {
+    console.log('it works');
+    let quizlet_username = document.getElementById('id_quizlet_username').value;
+    let quizlet_password = document.getElementById('id_quizlet_password').value;
+    let admin_email = document.getElementById('id_school_admin_email').value;
+    if (admin_email=='') {
+        alert('najpierw podaj adres email (u dołu)');
+        return;
+        }
+
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function(){
+        let response = JSON.parse(this.responseText);
+        if (response.result=='Success!'){
+        btnQuizletTest.className = 'btn btn-success';
+        btnQuizletTest.innerHTML = '<p>Sprawdzam quizlet i wyślę email</p>';
+        }
+        if (response.result=='Error'){
+        btnQuizletTest.innerHTML = '<p>Wystąpił błąd</p>';
+        }
+    }
+    
+    xhr.open('POST', '{% url "edziennik:quizlet_test_email" %}', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    xhr.setRequestHeader("X-CSRFToken", token);
+    xhr.send('username=' + quizlet_username);
+
+    // show user that the request was accepted
+    btnQuizletTest.classList.remove('btn-warning');
+    btnQuizletTest.classList.add('btn-danger');
+    btnQuizletTest.innerHTML = '<p>Rządanie przyjęte</p>';
+})
+</script>
+
+{% endblock javascript %}
