@@ -12,7 +12,7 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
 from .forms import AdminProfileForm
 
 from edziennik.utils import student_absence
-
+from .tasks import quizlet_check_task
 
 
 def index(request):
@@ -399,10 +399,15 @@ def quizlet_test_email(request):
     '''Accepts ajax call with quizlet username, password and school
     admin email. Make call to check quizlet and return success or error'''
     username = request.POST.get('username', None)
+    password = 'pass'
 
     # run quizlet check and send email to an admin
+    quizlet_check_task(username, password)
 
-    
+    # # test async
+    # import time
+    # time.sleep(5)
+
     data = {
         'result': 'Success!'
     }

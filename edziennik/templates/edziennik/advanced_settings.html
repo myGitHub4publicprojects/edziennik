@@ -92,29 +92,31 @@ btnQuizletTest.addEventListener('click', function () {
         alert('najpierw podaj adres email (u dołu)');
         return;
         }
-
+    // show user that the request was accepted
+    btnQuizletTest.className = 'btn btn-danger';
+    btnQuizletTest.innerHTML = '<p>Rządanie przyjęte</p>';
+    
     const xhr = new XMLHttpRequest();
     xhr.onload = function(){
-        let response = JSON.parse(this.responseText);
-        if (response.result=='Success!'){
-        btnQuizletTest.className = 'btn btn-success';
-        btnQuizletTest.innerHTML = '<p>Sprawdzam quizlet i wyślę email</p>';
-        }
-        if (response.result=='Error'){
-        btnQuizletTest.innerHTML = '<p>Wystąpił błąd</p>';
+        if (this.status == 200) {
+            let response = JSON.parse(this.responseText);
+            if (response.result=='Success!'){
+                btnQuizletTest.className = 'btn btn-success';
+                btnQuizletTest.innerHTML = '<p>Sprawdzam quizlet i wyślę email</p>';
+            }
+            if (response.result=='Error'){
+                btnQuizletTest.innerHTML = '<p>Wystąpił błąd</p>';
+            }
         }
     }
-    
     xhr.open('POST', '{% url "edziennik:quizlet_test_email" %}', true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     xhr.setRequestHeader("X-CSRFToken", token);
     xhr.send('username=' + quizlet_username);
-
-    // show user that the request was accepted
-    btnQuizletTest.classList.remove('btn-warning');
-    btnQuizletTest.classList.add('btn-danger');
-    btnQuizletTest.innerHTML = '<p>Rządanie przyjęte</p>';
+    xhr.onerror = function () {
+        console.log(xhr.statusText);
+    }
 })
 </script>
 
