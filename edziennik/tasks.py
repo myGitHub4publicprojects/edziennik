@@ -8,7 +8,7 @@ from celery.decorators import task
 from celery.utils.log import get_task_logger
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
-from edziennik.models import SMS, Student
+from edziennik.models import SMS, Student, Admin_Profile
 
 from edziennik.utils2 import generate_weekly_admin_report
 from edziennik.automatic_quizlet_check import quizlet_check
@@ -29,10 +29,6 @@ def admin_email(mail_title, mail_body):
 @task(name='quizlet_check_task')
 def quizlet_check_task(username, password):
     quizlet_check(username, password)
-    # aa(1, 2)
-
-    email_title = username + password
-    admin_email('pierwszy' + email_title, 'quiz')
 
 
 # @periodic_task(
@@ -47,13 +43,36 @@ def quizlet_check_task(username, password):
 
 @periodic_task(
     run_every=(crontab(minute=0, hour=2, day_of_week='sunday')),
+    name="quizlet_weekly_check",
+    ignore_result=True
+)
+def quizlet_weekly_check():
+    profile = Admin_Profile.objects.all().first()
+    if not profile:
+        logger.info(
+            "Weekly quizlet check aborted due to lack of Admin_Profile instance")
+        return None
+    username = profile.quizlet_username
+    password = profile.quizlet_password
+    if not username or not password:
+        logger.info(
+            "Weekly quizlet check aborted due to lack of username or password")
+        return None
+
+    unique_students = quizlet_check(username, password)
+    admin_email('Weekly quizlet check results', unique_students)
+    logger.info("Weekly quizlet check results email to admin has been sent")
+
+
+@periodic_task(
+    run_every=(crontab(minute=0, hour=2, day_of_week='sunday')),
     name="weekly_email_admin",
     ignore_result=True
 )
 def weekly_admin_email():
     email_title, email_body = generate_weekly_admin_report()
     admin_email(email_title, email_body)
-    logger.info("email to admin has been sent")
+    logger.info("Weekly atendance and grades email to admin has been sent")
 
 #twilio sms
 @task(name='twilio_first_sms_status_check_task')

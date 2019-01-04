@@ -119,7 +119,7 @@ def quizlet_check(username, password):
 			for row in rows:
 				username = row.find_element_by_class_name('UserLink-username')
 				activity = row.find_elements_by_css_selector('div.ClassProgressModeActivity.has-finished')
-				if activity:
+				if len(activity) >= 2:
 					students.append(username.text)
 			return students
 		except Exception as e:
@@ -158,8 +158,6 @@ def quizlet_check(username, password):
 				all_active_students += group_students
 
 			unique_students = list(set(all_active_students))
-			email_body = ','.join(unique_students)
-			admin_email('quizlet_done3', email_body)
 
 			# close browser
 			driver.close()
@@ -174,4 +172,7 @@ def quizlet_check(username, password):
 	
 	username = settings.QUIZLET_USERNAME
 	password = settings.QUIZLET_PASSWORD
-	get_all_active(username, password)
+	unique_students = get_all_active(username, password)
+	email_body = ','.join(unique_students)
+	admin_email('Quizlet checked', email_body)
+	return unique_students
