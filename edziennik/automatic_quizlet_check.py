@@ -10,17 +10,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as wait
 
-
-def admin_email(mail_title, mail_body):
-    send_mail(mail_title,
-              mail_body,
-              settings.EMAIL_HOST_USER,
-              [settings.ADMIN_EMAIL],
-              fail_silently=False)
-
+from edziennik.models import Student, Admin_Profile
 
 def quizlet_check(username, password):
-
 
 	# open browser
 	driver = webdriver.Chrome()
@@ -173,6 +165,5 @@ def quizlet_check(username, password):
 	username = settings.QUIZLET_USERNAME
 	password = settings.QUIZLET_PASSWORD
 	unique_students = get_all_active(username, password)
-	email_body = ','.join(unique_students)
-	admin_email('Quizlet checked', email_body)
+
 	return unique_students

@@ -399,10 +399,19 @@ def quizlet_test_email(request):
     '''Accepts ajax call with quizlet username, password and school
     admin email. Make call to check quizlet and return success or error'''
     username = request.POST.get('username', None)
-    password = 'pass'
+    password = request.POST.get('password', None)
+    admin_email = request.POST.get('adminEmail', None)
 
+    data = {}
+    # rougly validate email address
+    if not '@' in admin_email or not '.' in admin_email:
+        data['result'] = 'Invalid_email'
+        return JsonResponse(data)
+
+    # save email addres in Admin_Profile instance
     # run quizlet check and send email to an admin
-    quizlet_check_task(username, password)
+    quizlet_check_task(username, password, admin_email)
+    print(username, password, admin_email)
 
     # # test async
     # import time

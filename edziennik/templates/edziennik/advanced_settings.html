@@ -104,6 +104,11 @@ btnQuizletTest.addEventListener('click', function () {
                 btnQuizletTest.className = 'btn btn-success';
                 btnQuizletTest.innerHTML = '<p>Sprawdzam quizlet i wyślę email</p>';
             }
+            if (response.result == 'Invalid_email') {
+                alert('Podaj prawidłowy adres email');
+                btnQuizletTest.innerHTML = '<p>Sprawdź teraz</p>';
+                btnQuizletTest.className = 'btn btn-warning';
+            }
             if (response.result=='Error'){
                 btnQuizletTest.innerHTML = '<p>Wystąpił błąd</p>';
             }
@@ -113,7 +118,10 @@ btnQuizletTest.addEventListener('click', function () {
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     xhr.setRequestHeader("X-CSRFToken", token);
-    xhr.send('username=' + quizlet_username);
+    data = ('username=' + quizlet_username +
+            '&password=' + quizlet_password +
+            '&adminEmail=' + admin_email)
+    xhr.send(data);
     xhr.onerror = function () {
         console.log(xhr.statusText);
     }

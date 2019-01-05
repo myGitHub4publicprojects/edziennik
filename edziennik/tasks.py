@@ -18,17 +18,29 @@ logger = get_task_logger(__name__)
 
 
 
-def admin_email(mail_title, mail_body):
+def admin_email(mail_title, mail_body, email=None):
+    if not email:
+        recipient = settings.ADMIN_EMAIL
+        admin_profile = Admin_Profile.objects.all().first()
+        if admin_profile:
+            if admin_profile.school_admin_email:
+                recipient = admin_profile.school_admin_email
+    else:
+        recipient = email
     send_mail(mail_title,
-        mail_body,
-        settings.EMAIL_HOST_USER,
-        [settings.ADMIN_EMAIL],
-        fail_silently=False)
+              mail_body,
+              settings.EMAIL_HOST_USER,
+              [recipient],
+              fail_silently=False)
 
 
 @task(name='quizlet_check_task')
-def quizlet_check_task(username, password):
-    quizlet_check(username, password)
+def quizlet_check_task(username, password, email):
+    unique_students = quizlet_check(username, password)
+    intro = 'Oto lista uczniów którzy zrobili 2 zadania quizlet w zeszłym tygodniu: '
+    email_body = intro + ','.join(unique_students)
+    admin_email('Quizlet checked', email_body)
+
 
 
 # @periodic_task(
@@ -60,6 +72,9 @@ def quizlet_weekly_check():
         return None
 
     unique_students = quizlet_check(username, password)
+
+    # update students quzlet status
+
     admin_email('Weekly quizlet check results', unique_students)
     logger.info("Weekly quizlet check results email to admin has been sent")
 
