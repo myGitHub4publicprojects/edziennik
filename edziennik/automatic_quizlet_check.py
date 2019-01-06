@@ -167,3 +167,13 @@ def quizlet_check(username, password):
 	unique_students = get_all_active(username, password)
 
 	return unique_students
+
+# def update_students_quizlet_status(unique_students):
+# 	'''updates Student.quizlet field if student's quizlet username is in
+# 	unique_students list.
+# 	Accepts list of unique student usernames'''
+# 	students = Student.objects.all()
+# 	for s in students:
+# 		if s.quizlet_username in unique_students:
+# 			s.quizlet = True
+# 			s.save()

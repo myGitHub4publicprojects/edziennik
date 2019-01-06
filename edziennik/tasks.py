@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.core.mail import send_mail
+# from django.core.mail import send_mail
 
 from twilio.rest import Client
 
@@ -8,38 +8,19 @@ from celery.decorators import task
 from celery.utils.log import get_task_logger
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
-from edziennik.models import SMS, Student, Admin_Profile
 
-from edziennik.utils2 import generate_weekly_admin_report
+from edziennik.models import SMS, Student, Admin_Profile
+from edziennik.utils import admin_email, generate_weekly_admin_report
 from edziennik.automatic_quizlet_check import quizlet_check
-# from edziennik.a_usun import aa
 
 logger = get_task_logger(__name__)
-
-
-
-def admin_email(mail_title, mail_body, email=None):
-    if not email:
-        recipient = settings.ADMIN_EMAIL
-        admin_profile = Admin_Profile.objects.all().first()
-        if admin_profile:
-            if admin_profile.school_admin_email:
-                recipient = admin_profile.school_admin_email
-    else:
-        recipient = email
-    send_mail(mail_title,
-              mail_body,
-              settings.EMAIL_HOST_USER,
-              [recipient],
-              fail_silently=False)
-
 
 @task(name='quizlet_check_task')
 def quizlet_check_task(username, password, email):
     unique_students = quizlet_check(username, password)
     intro = 'Oto lista uczniów którzy zrobili 2 zadania quizlet w zeszłym tygodniu: '
     email_body = intro + ','.join(unique_students)
-    admin_email('Quizlet checked', email_body)
+    admin_email('Quizlet on demand automatic checked', email_body, email)
 
 
 
@@ -54,7 +35,7 @@ def quizlet_check_task(username, password, email):
 #     logger.info("email to admin has been sent")
 
 @periodic_task(
-    run_every=(crontab(minute=0, hour=2, day_of_week='sunday')),
+    run_every=(crontab(minute=0, hour=2, day_of_week='monday')),
     name="quizlet_weekly_check",
     ignore_result=True
 )
@@ -74,8 +55,12 @@ def quizlet_weekly_check():
     unique_students = quizlet_check(username, password)
 
     # update students quzlet status
+    # update_students_quizlet_status(unique_students)
 
-    admin_email('Weekly quizlet check results', unique_students)
+    intro1 = 'Status quizlet w edzienniku został zaktualizowany.\n'
+    intro2 = 'Oto lista uczniów którzy zrobili 2 zadania quizlet w zeszłym tygodniu:\n'
+    email_body = intro1 + intro2 + ','.join(unique_students)
+    admin_email('Weekly quizlet check results', email_body)
     logger.info("Weekly quizlet check results email to admin has been sent")
 
 

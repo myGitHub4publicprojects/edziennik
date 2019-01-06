@@ -11,8 +11,9 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile)
 from .forms import AdminProfileForm
 
-from edziennik.utils import student_absence
-from .tasks import quizlet_check_task
+from edziennik.utils import send_sms_twilio
+
+from .tasks import quizlet_check_task, twilio_first_sms_status_check_task, twilio_second_sms_status_check_task
 
 
 def index(request):
@@ -262,7 +263,16 @@ def attendance_check(request, pk):
     # notify parents of absence
     absentees = group.student_set.exclude(id__in=selected_student_list)
     for student in absentees:
-        student_absence(student)
+        parent = student.parent
+        male_student_msg = 'Informujemy ze %s nie byl dzis obecny' % student.name
+        female_student_msg = 'Informujemy ze %s nie byla dzis obecna na lekcji jezyka angielskiego w szkole Energy' % student.name
+        message = male_student_msg if student.gender == 'M' else female_student_msg
+       
+        # send sms via twilio
+        # uncomment the line below to start using this service
+        # send_sms_twilio(parent, message)
+        # twilio_first_sms_status_check_task.apply_async(countdown=300)
+        # twilio_second_sms_status_check_task.apply_async(countdown=1200)
 
     messages.success(request, "Obecnosc w grupie %s sprawdzona" % group.name)
     # return redirect('edziennik:name_home')

@@ -1,38 +1,27 @@
 # -*- coding: utf-8 -*-
+import datetime
 from django.conf import settings
-from smsapi.client import SmsAPI
-from smsapi.responses import ApiError
+from django.core.mail import send_mail
+
 from twilio.rest import Client
 
-from edziennik.models import SMS, Student
-from edziennik.tasks import twilio_first_sms_status_check_task,\
-                            twilio_second_sms_status_check_task,\
-                            admin_email
+from edziennik.models import SMS, Admin_Profile
 
-# smsapi.pl
-def send_sms_smsapi(parent_phone, message):
-    api = SmsAPI()
-    # autoryzacyja standardowa
-    api.set_username(settings.SMS_API_USERNAME)
-    api.set_password(settings.SMS_API_PASS)
-    try:
-        api.service('sms').action('send')
-        api.set_content(message)
-        api.set_to(parent_phone)
-        api.set_from('Info')
-        result = api.execute()
-        for r in result:
-            # print r.id, r.points, r.status
-            mail_body = 'Wyslano sms do %s o tresci: %s \n\
-            id: %s, points: %s, status: %s' % (parent_phone, message, r.id, r.points, r.status)
-            mail_title = 'SMS wyslany do %s' % parent_phone
-            admin_email(mail_title, mail_body)
-    except ApiError as e:
-        # print '%s - %s' % (e.code, e.message)
-        mail_body = 'Blad wysylania smsa do %s, o tresci: %s \n\
-        kod bledu: %s, tresc bledu: %s, points: %s' % (parent_phone, message, r.id, r.status, r.points)
-        mail_title = 'Blad SMSa do %s' % parent_phone
-        admin_email(mail_title, mail_body)
+
+def admin_email(mail_title, mail_body, email=None):
+    if not email:
+        recipient = settings.ADMIN_EMAIL
+        admin_profile = Admin_Profile.objects.all().first()
+        if admin_profile:
+            if admin_profile.school_admin_email:
+                recipient = admin_profile.school_admin_email
+    else:
+        recipient = email
+    send_mail(mail_title,
+              mail_body,
+              settings.EMAIL_HOST_USER,
+              [recipient],
+              fail_silently=False)
 
 # twilio
 def send_sms_twilio(parent, message):
@@ -50,20 +39,41 @@ def send_sms_twilio(parent, message):
                        addressee=parent.user,
                        twilio_message_sid=twilio_message.sid)
 
-    twilio_first_sms_status_check_task.apply_async(countdown=300)
-    twilio_second_sms_status_check_task.apply_async(countdown=1200)
 
-def student_absence(student):
-    parent = student.parent
-    male_student_msg = 'Informujemy ze %s nie byl dzis obecny na lekcji jezyka angielskiego w szkole Energy' % student.name
-    female_student_msg = 'Informujemy ze %s nie byla dzis obecna na lekcji jezyka angielskiego w szkole Energy' % student.name
-    message = male_student_msg if student.gender == 'M' else female_student_msg
-    
-    # send sms via SmsApi.pl
-    # uncomment the line below to start using this service
-    # send_sms_smsapi(parent_phone, message)
+def generate_weekly_admin_report():
+    ''' genereates raport for last week '''
+    today = datetime.date.today()
+    title = 'Attendance and grades report'
+    class_dates = ClassDate.objects.filter(
+        date_of_class__gte=today-datetime.timedelta(7))
+    output = 'Attendance has not been checked this week\n'
+    if class_dates:
+        output = ''
+    for class_date in class_dates:
+        students = class_date.student.all()
+        group = students.first().group
+        date = class_date.date_of_class
+        head = 'On %s\nin group: %s\n' % (str(date), group.name)
+        f = 'the following students were present:'
+        s = ''.join(['\n' + s.name for s in students])
+        end = '\n--------------------------------\n'
+        section = head + f + s + end
+        output += section
 
-    # send sms via twilio
-    # uncomment the line below to start using this service
-    # send_sms_twilio(parent, message)
+    grades = Grades.objects.filter(
+        timestamp__date__gte=today-datetime.timedelta(7))
+    output2 = 'No grades have been given last week'
+    if grades:
+        output2 = '\n' + 'Last week the following grades were given:\n'
+    for g in grades:
+        date = g.timestamp.date()
+        student = g.student
+        group = student.group.name
+        name = g.name
+        score = g.score
+        g_str = ' '.join([str(date), 'group:', group, 'student:', student.name,
+                          'for:', name, 'score:', str(score), '\n'])
+        output2 += g_str
 
+    body = output + output2
+    return (title, body)
