@@ -11,9 +11,10 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile)
 from .forms import AdminProfileForm
 
-from edziennik.utils import send_sms_twilio
+from edziennik.utils import send_sms_twilio, generate_test_sms_msg
 
-from .tasks import quizlet_check_task, twilio_first_sms_status_check_task, twilio_second_sms_status_check_task
+from .tasks import (quizlet_check_task,
+    twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
 
 
 def index(request):
@@ -418,16 +419,43 @@ def quizlet_test_email(request):
         data['result'] = 'Invalid_email'
         return JsonResponse(data)
 
-    # save email addres in Admin_Profile instance
     # run quizlet check and send email to an admin
     quizlet_check_task(username, password, admin_email)
     print(username, password, admin_email)
+    data['result'] = 'Success!'
+    return JsonResponse(data)
 
-    # # test async
-    # import time
-    # time.sleep(5)
+def sms_test(request):
+    '''Accepts ajax call with Twilio credentials, absence and no homework messages
+    Makes call to send sms and return success or error'''
+    twilio_account_sid = request.POST.get('account_sid', None)
+    twilio_auth_token = request.POST.get('auth_token', None)
+    message_no_homework = request.POST.get('message_no_homework', None)
+    message_absence = request.POST.get('message_absence', None)
+    test_tel = '+48' + str(request.POST.get('test_tel', None))
 
-    data = {
-        'result': 'Success!'
-    }
+    message_no_homework_final = message_no_homework
+    message_absence_final = message_absence
+
+    
+
+    # send sms and check delivery status
+    # sms_test_task(twilio_account_sid, twilio_auth_token, test_tel, message_absence_final)
+    # sms_test_task(twilio_account_sid, twilio_auth_token,test_tel, message_no_homework_final)
+    # twilio_first_sms_status_check_task.apply_async(countdown=300)
+    # twilio_second_sms_status_check_task.apply_async(countdown=1200)
+
+    print(test_tel, message_absence_final, message_no_homework_final)
+    data = {'result': 'Success!'}
+    return JsonResponse(data)
+
+def absence_message_test(request):
+    '''Accepts ajax call with a user input message and return processed messages
+    in two versions: male and female with a test student name'''
+    msg = request.POST.get('msg', None)
+    print(msg)
+    male_msg = generate_test_sms_msg('male', msg, 'Jan Kowalski')
+    female_msg = generate_test_sms_msg('female', msg, 'Ola Kowalska')
+    data = {'male_msg': male_msg,
+            'female_msg': female_msg}
     return JsonResponse(data)

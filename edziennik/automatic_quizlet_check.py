@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import time, sys, os
 
-from django.conf import settings
-from django.core.mail import send_mail
-
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -11,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as wait
 
 from edziennik.models import Student, Admin_Profile
+from edziennik.utils import admin_email
 
 def quizlet_check(username, password):
 
@@ -162,18 +160,16 @@ def quizlet_check(username, password):
 			print(message)
 			admin_email('Quizlet check error', message)
 	
-	username = settings.QUIZLET_USERNAME
-	password = settings.QUIZLET_PASSWORD
 	unique_students = get_all_active(username, password)
 
 	return unique_students
 
-# def update_students_quizlet_status(unique_students):
-# 	'''updates Student.quizlet field if student's quizlet username is in
-# 	unique_students list.
-# 	Accepts list of unique student usernames'''
-# 	students = Student.objects.all()
-# 	for s in students:
-# 		if s.quizlet_username in unique_students:
-# 			s.quizlet = True
-# 			s.save()
+def update_students_quizlet_status(unique_students):
+	'''Updates Student.quizlet field if student's quizlet username is in
+	unique_students list.
+	Accepts a list of unique student usernames'''
+	students = Student.objects.all()
+	for s in students:
+		if s.quizlet_username in unique_students:
+			s.quizlet = True
+			s.save()

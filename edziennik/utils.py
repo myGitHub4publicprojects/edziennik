@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import re
 import datetime
 from django.conf import settings
 from django.core.mail import send_mail
 
 from twilio.rest import Client
 
-from edziennik.models import SMS, Admin_Profile
+from edziennik.models import ClassDate, Grades, SMS, Admin_Profile
 
 
 def admin_email(mail_title, mail_body, email=None):
@@ -39,6 +40,14 @@ def send_sms_twilio(parent, message):
                        addressee=parent.user,
                        twilio_message_sid=twilio_message.sid)
 
+
+def test_sms_twilio(twilio_account_sid, twilio_auth_token, phone_no, message):
+    '''accepts four strings, phone no (+48111222333)'''
+    client = Client(twilio_account_sid, twilio_auth_token)
+    client.messages.create(to=phone_no,
+                            # from_=settings.TWILIO_TEST_PHONE_NO,
+                            messaging_service_sid=settings.MESSAGING_SERVICE_SID,
+                            body=message)
 
 def generate_weekly_admin_report():
     ''' genereates raport for last week '''
@@ -77,3 +86,26 @@ def generate_weekly_admin_report():
 
     body = output + output2
     return (title, body)
+
+
+def generate_test_sms_msg(sex, user_msg, test_name):
+    '''Accepts three strings, sex of a student (either 'male' or 'female'),
+    message that user inuts in a form, name used for tests.
+    {{name}} is replaced with student name and <<...#...>> is replaced with
+    proper grammar form according to gender of a student.
+    Returns str, message containing proper name and grammar form'''
+    # validate grammar part
+    if re.search('<<(.+?)>>', user_msg):
+        if sex == 'male':
+            grammar = re.search('<<(.+?)#', user_msg).group(1)
+        if sex == 'female':
+            grammar = re.search('#(.+?)>>', user_msg).group(1)
+        # male = re.search('<<(.+?)#', st).group(1)
+        grammar_choices = re.search('<<(.+?)>>', user_msg).group(0)
+        user_msg = user_msg.replace(grammar_choices, grammar)
+    # validate name part
+    if not re.search('{{(.+?)}}', user_msg):
+        return user_msg
+    name_part = re.search('{{(.+?)}}', user_msg).group(0)
+    final_msg = user_msg.replace(name_part, test_name)
+    return final_msg

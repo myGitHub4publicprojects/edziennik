@@ -25,6 +25,7 @@
             <P>Email zostanie wysłany adminowi</P>
         </button>
     </div>
+    <hr>
 
     <div>
         <h1>SMS</h1>
@@ -39,6 +40,11 @@
             {{ form.twilio_auth_token }}
         </div>
         <div class="fieldWrapper">
+            {{ form.twilio_messaging_service_sid.errors }}
+            {{ form.twilio_messaging_service_sid.label_tag }}
+            {{ form.twilio_messaging_service_sid }}
+        </div>
+        <div class="fieldWrapper">
             {{ form.sms_when_absent.errors }}
             {{ form.sms_when_absent.label_tag }}
             {{ form.sms_when_absent }}
@@ -49,14 +55,37 @@
             {{ form.sms_when_no_homework }}
         </div>
         <div class="fieldWrapper">
+            <p>w treści możesz podać nazwę (imię i nazwisko) ucznia wpisując
+                 {% templatetag openvariable %}name{% templatetag closevariable %} oraz
+                formę gramatyczną dla wersji męskiej i żeńskiej wpisując w miejsce gwiazdek męską
+                a następnie żeńską formę w znaczniku &lt;&lt;***#***&gt;&gt;.
+            </p>
+            <p>przykład:</p>
+            <p>'Informujemy, że {% templatetag openvariable %}name{% templatetag closevariable %} 
+                &lt;&lt;nie był dziś obecny#nie była dziś obecna&gt;&gt; na zajęciach językowych w Szkole Energy.'</p>
             {{ form.sms_message_absence.errors }}
             {{ form.sms_message_absence.label_tag }}
             {{ form.sms_message_absence }}
+        </div>
+        <button id='btnShowAbsence' class="btn btn-warning" type="button">podgląd</button>
+        <div id="absenceMsg">
+            <h3>męska wersja</h3>
+            <p id="maleAbsenceMsg"></p>
+            <h3>żeńska wersja</h3>
+            <p id="femaleAbsenceMsg"></p>
         </div>
         <div class="fieldWrapper">
             {{ form.sms_message_no_homework.errors }}
             {{ form.sms_message_no_homework.label_tag }}
             {{ form.sms_message_no_homework }}
+        </div>
+        <button id="btnSMSTest" class="btn btn-warning" type="button">
+            <p>Sprawdź działanie SMSów</p>
+            <p><small>Zostaną wysłane SMSy z wiadomością o nieobecności i braku zadania</small></p>
+        </button>
+        <div class="fieldWrapper d-none" id="acceptPhone">
+            <input id="id_test_tel" type="tel" pattern="[0-9]{9}" name="test_tel">
+            <button id="btnAcceptPhoneNo" class="btn btn-warning" type="button">OK</button>
         </div>
     </div>
 
@@ -82,9 +111,12 @@
 
 {% block javascript %}
 <script>
-let btnQuizletTest = document.getElementById('btnQuizletTest')
+let btnQuizletTest = document.getElementById('btnQuizletTest');
+let btnShowAbsence = document.getElementById('btnShowAbsence');
+let btnSMSTest = document.getElementById('btnSMSTest');
+let btnAcceptPhoneNo = document.getElementById('btnAcceptPhoneNo');
+
 btnQuizletTest.addEventListener('click', function () {
-    console.log('it works');
     let quizlet_username = document.getElementById('id_quizlet_username').value;
     let quizlet_password = document.getElementById('id_quizlet_password').value;
     let admin_email = document.getElementById('id_school_admin_email').value;
@@ -125,6 +157,113 @@ btnQuizletTest.addEventListener('click', function () {
     xhr.onerror = function () {
         console.log(xhr.statusText);
     }
+})
+
+btnShowAbsence.addEventListener('click', function(){
+        
+    let message_absence = document.getElementById('id_sms_message_absence');
+    if (message_absence.value == '') {
+        alert('wpisz wiadomość w pole');
+        return;
+    }
+    // show user that the request was accepted
+    btnShowAbsence.className = 'btn btn-danger';
+    btnShowAbsence.innerHTML = '<p>Rządanie przyjęte</p>';
+
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (this.status == 200) {
+            let response = JSON.parse(this.responseText);
+            if (response.result == 'Success!') {
+                btnQuizletTest.className = 'btn btn-success';
+                btnQuizletTest.innerHTML = '<p>Sprawdzam quizlet i wyślę email</p>';
+            }
+
+            if (response.result == 'Error') {
+                btnShowAbsence.innerHTML = '<p>Wystąpił błąd</p>';
+            }
+        }
+    }
+    xhr.open('POST', '{% url "edziennik:absence_message_test" %}', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    xhr.setRequestHeader("X-CSRFToken", token);
+    data = ('msg=' + message_absence.value);
+    xhr.send(data);
+    xhr.onerror = function () {
+        console.log(xhr.statusText);
+    }
+})
+
+function verifiNotEmpty(s) {
+    if (s.value==""){
+        console.log(s);
+        s.style.border = '2px solid red'
+        alert('wypełnij wymagane pola - zaznaczone na czerwono')
+        return false
+    }
+    else {
+        return true
+    }
+}
+btnSMSTest.addEventListener('click', function () {
+    // display phone number input
+    document.getElementById('acceptPhone').className = '';
+})
+
+btnAcceptPhoneNo.addEventListener('click', function () {
+    let account_sid = document.getElementById('id_twilio_account_sid');
+    let auth_token = document.getElementById('id_twilio_auth_token');
+    let message_absence = document.getElementById('id_sms_message_absence');
+    let message_no_homework = document.getElementById('id_sms_message_no_homework');
+    let test_tel = document.getElementById('id_test_tel');
+
+
+
+    // validate inputs
+    for (let i of [account_sid, auth_token, message_absence, message_no_homework, id_test_tel]){
+        let s = verifiNotEmpty(i);
+        if (!s){
+            return;
+        }
+    }
+    if (account_sid.value=='' || auth_token.value=='' || message_absence.value == '' ||
+        message_no_homework.value=='' || id_test_tel.value==''){
+        console.log('aborted due to unsufficient input')
+        return;
+    }
+
+    // show user that the request was accepted
+    btnSMSTest.className = 'btn btn-danger';
+    btnSMSTest.innerHTML = '<p>Rządanie przyjęte</p>';
+
+    // hide phone number input
+    document.getElementById('acceptPhone').className = 'd-none';
+
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (this.status == 200) {
+            let response = JSON.parse(this.responseText);
+            if (response.result == 'Success!') {
+                btnQuizletTest.className = 'btn btn-success';
+                btnQuizletTest.innerHTML = '<p>Wysłano SMS</p>';
+            }
+        }
+    }
+    xhr.open('POST', '{% url "edziennik:sms_test" %}', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    xhr.setRequestHeader("X-CSRFToken", token);
+    data = ('account_sid=' + account_sid.value +
+        '&auth_token=' + auth_token.value +
+        '&message_no_homework=' + message_no_homework.value + 
+        '&message_absence=' + message_absence.value +
+        '&test_tel=' + test_tel.value)
+    xhr.send(data);
+    xhr.onerror = function () {
+        console.log(xhr.statusText);
+    }
+    
 })
 </script>
 

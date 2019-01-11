@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-# from django.core.mail import send_mail
 
 from twilio.rest import Client
 
@@ -10,8 +9,8 @@ from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 
 from edziennik.models import SMS, Student, Admin_Profile
-from edziennik.utils import admin_email, generate_weekly_admin_report
-from edziennik.automatic_quizlet_check import quizlet_check
+from edziennik.utils import admin_email, generate_weekly_admin_report, test_sms_twilio
+from edziennik.automatic_quizlet_check import quizlet_check, update_students_quizlet_status
 
 logger = get_task_logger(__name__)
 
@@ -23,6 +22,9 @@ def quizlet_check_task(username, password, email):
     admin_email('Quizlet on demand automatic checked', email_body, email)
 
 
+@task(name='sms_test_task')
+def sms_test_task(twilio_account_sid, twilio_auth_token, phone_no, message):
+    test_sms_twilio(twilio_account_sid, twilio_auth_token, phone_no, message)
 
 # @periodic_task(
 #     run_every=(crontab()),
@@ -55,7 +57,7 @@ def quizlet_weekly_check():
     unique_students = quizlet_check(username, password)
 
     # update students quzlet status
-    # update_students_quizlet_status(unique_students)
+    update_students_quizlet_status(unique_students)
 
     intro1 = 'Status quizlet w edzienniku został zaktualizowany.\n'
     intro2 = 'Oto lista uczniów którzy zrobili 2 zadania quizlet w zeszłym tygodniu:\n'
