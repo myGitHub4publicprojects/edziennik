@@ -25,6 +25,6 @@ urlpatterns = [
     path('quizlet_test_email/',
          views.quizlet_test_email, name='quizlet_test_email'),
     path('sms_test/', views.sms_test, name='sms_test'),
-    path('absence_message_test/', views.absence_message_test,
-         name='absence_message_test'),
+    path('message_test/', views.message_test,
+         name='message_test'),
 ]

@@ -449,7 +449,7 @@ def sms_test(request):
     data = {'result': 'Success!'}
     return JsonResponse(data)
 
-def absence_message_test(request):
+def message_test(request):
     '''Accepts ajax call with a user input message and return processed messages
     in two versions: male and female with a test student name'''
     msg = request.POST.get('msg', None)

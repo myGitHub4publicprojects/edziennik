@@ -21,8 +21,10 @@
             {{ form.check_quizlet_automatically }}
         </div>
         <button id="btnQuizletTest" class="btn btn-warning" type="button">
-            <p>Sprawdź teraz</p>
-            <P>Email zostanie wysłany adminowi</P>
+            <p>Sprawdź teraz
+                <br>
+                <small>Email zostanie wysłany adminowi</small>
+            </p>
         </button>
     </div>
     <hr>
@@ -54,40 +56,63 @@
             {{ form.sms_when_no_homework.label_tag }}
             {{ form.sms_when_no_homework }}
         </div>
+        <hr>
         <div class="fieldWrapper">
+            <h3>Wiadomość o nieobecności</h3>
             <p>w treści możesz podać nazwę (imię i nazwisko) ucznia wpisując
                  {% templatetag openvariable %}name{% templatetag closevariable %} oraz
                 formę gramatyczną dla wersji męskiej i żeńskiej wpisując w miejsce gwiazdek męską
-                a następnie żeńską formę w znaczniku &lt;&lt;***#***&gt;&gt;.
+                a następnie żeńską formę w znaczniku &lt;&lt;***#***&gt;&gt;. np:
             </p>
-            <p>przykład:</p>
             <p>'Informujemy, że {% templatetag openvariable %}name{% templatetag closevariable %} 
                 &lt;&lt;nie był dziś obecny#nie była dziś obecna&gt;&gt; na zajęciach językowych w Szkole Energy.'</p>
             {{ form.sms_message_absence.errors }}
-            {{ form.sms_message_absence.label_tag }}
+            <!-- {{ form.sms_message_absence.label_tag }} -->
             {{ form.sms_message_absence }}
         </div>
         <button id='btnShowAbsence' class="btn btn-warning" type="button">podgląd</button>
-        <div id="absenceMsg">
+        <div id="absenceMsg" class="d-none">
             <h3>męska wersja</h3>
             <p id="maleAbsenceMsg"></p>
             <h3>żeńska wersja</h3>
             <p id="femaleAbsenceMsg"></p>
         </div>
+        <hr>
         <div class="fieldWrapper">
+            <h3>Wiadomość o braku zadania domowego</h3>
+            <p>w treści możesz podać nazwę (imię i nazwisko) ucznia wpisując
+                {% templatetag openvariable %}name{% templatetag closevariable %} oraz
+                formę gramatyczną dla wersji męskiej i żeńskiej wpisując w miejsce gwiazdek męską
+                a następnie żeńską formę w znaczniku &lt;&lt;***#***&gt;&gt;. np:
+            </p>
+            <p>'Informujemy, że {% templatetag openvariable %}name{% templatetag closevariable %}
+                &lt;&lt;nie miał dziś zadania domowego#nie miała dziś zadania domowego&gt;&gt; na zajęciach językowych w Szkole Energy.'</p>
             {{ form.sms_message_no_homework.errors }}
-            {{ form.sms_message_no_homework.label_tag }}
+            <!-- {{ form.sms_message_no_homework.label_tag }} -->
             {{ form.sms_message_no_homework }}
         </div>
+        <button id='btnShowNoHomework' class="btn btn-warning" type="button">podgląd</button>
+        <div id="noHomeworkMsg" class="d-none">
+            <h3>męska wersja</h3>
+            <p id="maleNoHomeworkMsg"></p>
+            <h3>żeńska wersja</h3>
+            <p id="femaleNoHomeworkMsg"></p>
+        </div>
+        <hr>
+        <div>
+            <h2>Sprawdź działanie SMSów</h2>
+            <p>Kliknij w przycisk 'Sprawdź', podaj nr telefonu, na który chcesz otrzymać wiadomości. 
+                Otrzymasz 4 SMS (męską i żeńską wersję nieobecności i braku zadania domowego.</p>
+        </div>
         <button id="btnSMSTest" class="btn btn-warning" type="button">
-            <p>Sprawdź działanie SMSów</p>
-            <p><small>Zostaną wysłane SMSy z wiadomością o nieobecności i braku zadania</small></p>
-        </button>
+            <p>Sprawdź</p>
+                </button>
         <div class="fieldWrapper d-none" id="acceptPhone">
             <input id="id_test_tel" type="tel" pattern="[0-9]{9}" name="test_tel">
             <button id="btnAcceptPhoneNo" class="btn btn-warning" type="button">OK</button>
         </div>
     </div>
+    <hr>
 
     <div>
         <h1>Email</h1>
@@ -103,7 +128,7 @@
         </div>
     </div>
 
-    
+    <hr>
     <input type="submit" value="Zatwierdzam" />
 </form>
 
@@ -113,6 +138,7 @@
 <script>
 let btnQuizletTest = document.getElementById('btnQuizletTest');
 let btnShowAbsence = document.getElementById('btnShowAbsence');
+let btnShowNoHomework = document.getElementById('btnShowNoHomework');
 let btnSMSTest = document.getElementById('btnSMSTest');
 let btnAcceptPhoneNo = document.getElementById('btnAcceptPhoneNo');
 
@@ -160,7 +186,7 @@ btnQuizletTest.addEventListener('click', function () {
 })
 
 btnShowAbsence.addEventListener('click', function(){
-        
+    console.log(this)
     let message_absence = document.getElementById('id_sms_message_absence');
     if (message_absence.value == '') {
         alert('wpisz wiadomość w pole');
@@ -173,22 +199,56 @@ btnShowAbsence.addEventListener('click', function(){
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (this.status == 200) {
+            btnShowAbsence.className = 'btn btn-warning';
+            btnShowAbsence.innerHTML = '<p>Sprawdź ponownie</p>';
+            document.getElementById('absenceMsg').className = '';
             let response = JSON.parse(this.responseText);
-            if (response.result == 'Success!') {
-                btnQuizletTest.className = 'btn btn-success';
-                btnQuizletTest.innerHTML = '<p>Sprawdzam quizlet i wyślę email</p>';
-            }
-
-            if (response.result == 'Error') {
-                btnShowAbsence.innerHTML = '<p>Wystąpił błąd</p>';
-            }
+            let maleAbsenceMsg = document.getElementById('maleAbsenceMsg');
+            let femaleAbsenceMsg = document.getElementById('femaleAbsenceMsg');
+            maleAbsenceMsg.innerText = response.male_msg;
+            femaleAbsenceMsg.innerText = response.female_msg;
         }
     }
-    xhr.open('POST', '{% url "edziennik:absence_message_test" %}', true);
+    xhr.open('POST', '{% url "edziennik:message_test" %}', true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     xhr.setRequestHeader("X-CSRFToken", token);
     data = ('msg=' + message_absence.value);
+    xhr.send(data);
+    xhr.onerror = function () {
+        console.log(xhr.statusText);
+    }
+})
+
+btnShowNoHomework.addEventListener('click', function () {
+    console.log(this)
+    let message_no_homework = document.getElementById('id_sms_message_no_homework');
+    if (message_no_homework.value == '') {
+        alert('wpisz wiadomość w pole');
+        return;
+    }
+    // show user that the request was accepted
+    btnShowNoHomework.className = 'btn btn-danger';
+    btnShowNoHomework.innerHTML = '<p>Rządanie przyjęte</p>';
+
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (this.status == 200) {
+            btnShowNoHomework.className = 'btn btn-warning';
+            btnShowNoHomework.innerHTML = '<p>Sprawdź ponownie</p>';
+            document.getElementById('noHomeworkMsg').className = '';
+            let response = JSON.parse(this.responseText);
+            let maleNoHomeworkMsg = document.getElementById('maleNoHomeworkMsg');
+            let femaleNoHomeworkMsg = document.getElementById('femaleNoHomeworkMsg');
+            maleNoHomeworkMsg.innerText = response.male_msg;
+            femaleNoHomeworkMsg.innerText = response.female_msg;
+        }
+    }
+    xhr.open('POST', '{% url "edziennik:message_test" %}', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    xhr.setRequestHeader("X-CSRFToken", token);
+    data = ('msg=' + message_no_homework.value);
     xhr.send(data);
     xhr.onerror = function () {
         console.log(xhr.statusText);
