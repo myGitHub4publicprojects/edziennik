@@ -26,14 +26,29 @@ def admin_email(mail_title, mail_body, email=None):
 
 # twilio
 def send_sms_twilio(parent, message):
-    ACCOUNT_SID = settings.TWILIO_ACCOUNT_SID
-    AUTH_TOKEN = settings.TWILIO_AUTH_TOKEN
-    client = Client(ACCOUNT_SID, AUTH_TOKEN)
+    # verify Admin_Profile instance - if not do not notify admin
+    admin_profile = Admin_Profile.objects.all().first()
+    if not admin_profile:
+        mail_title = 'Problem z wiadomością SMS Twilio'
+        mail_body = ('Nie można było wysłać wiadomości SMS do ' + parent.user.username +
+                    ' o treści: ' + message + ' gdyż nie zostały wprowadzone ustawienia Twilio.')
+        admin_email(mail_title, mail_body)
+        return None
+    if (not admin_profile.twilio_account_sid or not admin_profile.twilio_auth_token
+        or not admin_profile.twilio_messaging_service_sid):
+        mail_title='Problem z wiadomością SMS Twilio'
+        mail_body=('Nie można było wysłać wiadomości SMS do ' + parent.user.username +
+                    ' o treści: ' + message + ' gdyż brakuje części ustawień Twilio.')
+        admin_email(mail_title, mail_body)
+        return None
+    client = Client(admin_profile.twilio_account_sid,
+                    admin_profile.twilio_auth_token)
     parent_phone_number = '+48' + str(parent.phone_number)
-    twilio_message = client.messages.create(to=parent_phone_number,
-                                    # from_=settings.TWILIO_TEST_PHONE_NO,
-                                    messaging_service_sid=settings.MESSAGING_SERVICE_SID,
-                                    body=message)
+    twilio_message = client.messages.create(
+        to=parent_phone_number,
+        # from_=settings.TWILIO_TEST_PHONE_NO,
+        messaging_service_sid=admin_profile.twilio_messaging_service_sid,
+        body=message)
 
     SMS.objects.create(service='twilio',
                        message=message,
