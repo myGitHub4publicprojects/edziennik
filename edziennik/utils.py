@@ -41,12 +41,12 @@ def send_sms_twilio(parent, message):
                        twilio_message_sid=twilio_message.sid)
 
 
-def test_sms_twilio(twilio_account_sid, twilio_auth_token, phone_no, message):
+def test_sms_twilio(twilio_account_sid, twilio_auth_token, messaging_service_sid, phone_no, message):
     '''accepts four strings, phone no (+48111222333)'''
     client = Client(twilio_account_sid, twilio_auth_token)
     client.messages.create(to=phone_no,
                             # from_=settings.TWILIO_TEST_PHONE_NO,
-                            messaging_service_sid=settings.MESSAGING_SERVICE_SID,
+                            messaging_service_sid=messaging_service_sid,
                             body=message)
 
 def generate_weekly_admin_report():

@@ -17,8 +17,11 @@
         </div>
         <div class="fieldWrapper">
             {{ form.check_quizlet_automatically.errors }}
-            {{ form.check_quizlet_automatically.label_tag }}
+            <label for="id_check_quizlet_automatically">Sprawdzaj quizlet automatycznie:</label>
             {{ form.check_quizlet_automatically }}
+            <p><small>Jeśli zaznaczysz powyższe pole Quizlet będzie sprawdzany automatycznie o 2:00 w poniedziałek. Uczniowie
+                 którzy ukończyli minimum 2 ćwiczenia zostaną oznaczeni aby otrzymać plus
+                  przy sprawdzaniu obecności. Aby ta funckcja działała poprawnie upewnij się że każdy z uczniów w edzienniku ma wpisany poprawny quizlet username</small></p>
         </div>
         <button id="btnQuizletTest" class="btn btn-warning" type="button">
             <p>Sprawdź teraz
@@ -48,12 +51,12 @@
         </div>
         <div class="fieldWrapper">
             {{ form.sms_when_absent.errors }}
-            {{ form.sms_when_absent.label_tag }}
+            <label for="id_sms_when_absent">Wyślij SMS rodzicowi jak nieobecny:</label>
             {{ form.sms_when_absent }}
         </div>
         <div class="fieldWrapper">
             {{ form.sms_when_no_homework.errors }}
-            {{ form.sms_when_no_homework.label_tag }}
+            <label for="id_sms_when_no_homework">Wyślij SMS rodzicowi jak brak zadania domowego:</label>
             {{ form.sms_when_no_homework }}
         </div>
         <hr>
@@ -123,7 +126,7 @@
         </div>
         <div class="fieldWrapper">
             {{ form.send_email_weekly_attendance_report.errors }}
-            {{ form.send_email_weekly_attendance_report.label_tag }}
+            <label for="id_send_email_weekly_attendance_report">Wyślij co tydzień (w niedzielę w nocy) raport o obecności i ocenach na Twoj email:</label>
             {{ form.send_email_weekly_attendance_report }}
         </div>
     </div>
@@ -274,6 +277,7 @@ btnSMSTest.addEventListener('click', function () {
 btnAcceptPhoneNo.addEventListener('click', function () {
     let account_sid = document.getElementById('id_twilio_account_sid');
     let auth_token = document.getElementById('id_twilio_auth_token');
+    let messaging_service_sid = document.getElementById('id_twilio_messaging_service_sid');
     let message_absence = document.getElementById('id_sms_message_absence');
     let message_no_homework = document.getElementById('id_sms_message_no_homework');
     let test_tel = document.getElementById('id_test_tel');
@@ -281,14 +285,15 @@ btnAcceptPhoneNo.addEventListener('click', function () {
 
 
     // validate inputs
-    for (let i of [account_sid, auth_token, message_absence, message_no_homework, id_test_tel]){
+    for (let i of [account_sid, auth_token, message_absence, message_no_homework,
+                    id_test_tel, messaging_service_sid]){
         let s = verifiNotEmpty(i);
         if (!s){
             return;
         }
     }
     if (account_sid.value=='' || auth_token.value=='' || message_absence.value == '' ||
-        message_no_homework.value=='' || id_test_tel.value==''){
+        message_no_homework.value=='' || id_test_tel.value=='' || messaging_service_sid.value==''){
         console.log('aborted due to unsufficient input')
         return;
     }
@@ -316,6 +321,7 @@ btnAcceptPhoneNo.addEventListener('click', function () {
     xhr.setRequestHeader("X-CSRFToken", token);
     data = ('account_sid=' + account_sid.value +
         '&auth_token=' + auth_token.value +
+        '&messaging_service_sid=' + messaging_service_sid.value;
         '&message_no_homework=' + message_no_homework.value + 
         '&message_absence=' + message_absence.value +
         '&test_tel=' + test_tel.value)

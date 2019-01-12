@@ -23,8 +23,8 @@ def quizlet_check_task(username, password, email):
 
 
 @task(name='sms_test_task')
-def sms_test_task(twilio_account_sid, twilio_auth_token, phone_no, message):
-    test_sms_twilio(twilio_account_sid, twilio_auth_token, phone_no, message)
+def sms_test_task(twilio_account_sid, twilio_auth_token, messaging_service_sid, phone_no, message):
+    test_sms_twilio(twilio_account_sid, twilio_auth_token, messaging_service_sid, phone_no, message)
 
 # @periodic_task(
 #     run_every=(crontab()),

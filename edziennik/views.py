@@ -430,22 +430,31 @@ def sms_test(request):
     Makes call to send sms and return success or error'''
     twilio_account_sid = request.POST.get('account_sid', None)
     twilio_auth_token = request.POST.get('auth_token', None)
-    message_no_homework = request.POST.get('message_no_homework', None)
-    message_absence = request.POST.get('message_absence', None)
+    messaging_service_sid = request.POST.get('messaging_service_sid', None)
+    msg_no_homework = request.POST.get('message_no_homework', None)
+    msg_absence = request.POST.get('message_absence', None)
     test_tel = '+48' + str(request.POST.get('test_tel', None))
 
-    message_no_homework_final = message_no_homework
-    message_absence_final = message_absence
+    male_no_homework = generate_test_sms_msg(
+        'male', msg_no_homework, 'Jan Kowalski')
+    female_no_homework = generate_test_sms_msg(
+        'female', msg_no_homework, 'Ola Kowalska')
+    male_absence = generate_test_sms_msg(
+        'male', msg_absence, 'Jan Kowalski')
+    female_absence = generate_test_sms_msg(
+        'female', msg_absence, 'Jan Kowalski')
+    
 
     
 
     # send sms and check delivery status
-    # sms_test_task(twilio_account_sid, twilio_auth_token, test_tel, message_absence_final)
+    for msg in [male_no_homework, female_no_homework, male_absence, female_absence]:
+        sms_test_task(twilio_account_sid, twilio_auth_token, messaging_service_sid, test_tel, msg)
+        print(msg)
     # sms_test_task(twilio_account_sid, twilio_auth_token,test_tel, message_no_homework_final)
     # twilio_first_sms_status_check_task.apply_async(countdown=300)
     # twilio_second_sms_status_check_task.apply_async(countdown=1200)
 
-    print(test_tel, message_absence_final, message_no_homework_final)
     data = {'result': 'Success!'}
     return JsonResponse(data)
 
