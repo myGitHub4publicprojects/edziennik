@@ -39,7 +39,7 @@ def quizlet_check(username, password):
 		except Exception as e:
 			exc_tb = sys.exc_info()[2]
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-			message = 'Error: ' + repr(e) + 'w pliku:' + fname,'linia: ' + str(exc_tb.tb_lineno)
+			message = 'Error: ' + repr(e) + 'w pliku:' + fname + ' linia: ' + str(exc_tb.tb_lineno)
 			print(message)
 			admin_email('Quizlet check error', message)
 
@@ -62,7 +62,7 @@ def quizlet_check(username, password):
 		except Exception as e:
 			exc_tb = sys.exc_info()[2]
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-			message = 'Error: ' + repr(e) + 'w pliku:' + fname,'linia: ' + str(exc_tb.tb_lineno)
+			message = 'Error: ' + repr(e) + 'w pliku:' + fname + ' linia: ' + str(exc_tb.tb_lineno)
 			print(message)
 			admin_email('Quizlet check error', message)
 
@@ -115,7 +115,7 @@ def quizlet_check(username, password):
 		except Exception as e:
 			exc_tb = sys.exc_info()[2]
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-			message = 'Error: ' + repr(e) + 'w pliku:' + fname,'linia: ' + str(exc_tb.tb_lineno)
+			message = 'Error: ' + repr(e) + 'w pliku:' + fname + ' linia: ' + str(exc_tb.tb_lineno)
 			print(message)
 			admin_email('Quizlet check error', message)
 			
@@ -156,7 +156,7 @@ def quizlet_check(username, password):
 		except Exception as e:
 			exc_tb = sys.exc_info()[2]
 			fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-			message = 'Error: ' + repr(e) + 'w pliku:' + fname,'linia: ' + str(exc_tb.tb_lineno)
+			message = 'Error: ' + repr(e) + 'w pliku:' + fname + ' linia: ' + str(exc_tb.tb_lineno)
 			print(message)
 			admin_email('Quizlet check error', message)
 	

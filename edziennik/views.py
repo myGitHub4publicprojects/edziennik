@@ -11,7 +11,7 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile)
 from .forms import AdminProfileForm
 
-from edziennik.utils import send_sms_twilio, generate_test_sms_msg
+from edziennik.utils import admin_email, send_sms_twilio, generate_test_sms_msg
 
 from .tasks import (quizlet_check_task,
     twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
@@ -254,26 +254,58 @@ def attendance_check(request, pk):
             
         if id in have_homework:
             class_date.has_homework.add(student)
-        # else:
-        #     student_without_homework = Student.objects.get(id=id)
-        #     student_without_homework.no_homework += 1
-        #     if student_without_homework.no_homework > 1:
-        #         email admin
-        #         student_without_homework.no_homework = 0
+        else:
+            student_without_homework = Student.objects.get(id=id)
+            admin_profile = Admin_Profile.objects.all().first()
+            if admin_profile:
+                if admin_profile.sms_when_no_homework:
+                    if not admin_profile.sms_message_no_homework:
+                        mail_title = 'Problem z wiadomością SMS Twilio'
+                        mail_body = (
+                            'Nie można było wysłać wiadomości SMS o braku zadanie domowego z powodu braku wzoru w ustawieniach.')
+                        admin_email(mail_title, mail_body)
+                    else:
+                        parent = student_without_homework.parent
+                        if student_without_homework.gender == 'M':
+                            sex = 'male'
+                        if student_without_homework.gender == 'F':
+                            sex = 'female'
+                        msg_pattern = admin_profile.sms_message_no_homework
+                        message = generate_test_sms_msg(
+                            sex, msg_pattern, student_without_homework.name)
+                        print(message)
+                        # send sms via twilio
+                        # uncomment the line below to start using this service
+                        # send_sms_twilio(parent, message)
+                        # twilio_first_sms_status_check_task.apply_async(countdown=300)
+                        # twilio_second_sms_status_check_task.apply_async(countdown=1200)
+
         
     # notify parents of absence
     absentees = group.student_set.exclude(id__in=selected_student_list)
-    for student in absentees:
-        parent = student.parent
-        male_student_msg = 'Informujemy ze %s nie byl dzis obecny' % student.name
-        female_student_msg = 'Informujemy ze %s nie byla dzis obecna na lekcji jezyka angielskiego w szkole Energy' % student.name
-        message = male_student_msg if student.gender == 'M' else female_student_msg
-       
-        # send sms via twilio
-        # uncomment the line below to start using this service
-        # send_sms_twilio(parent, message)
-        # twilio_first_sms_status_check_task.apply_async(countdown=300)
-        # twilio_second_sms_status_check_task.apply_async(countdown=1200)
+    admin_profile = Admin_Profile.objects.all().first()
+    if admin_profile:
+        if admin_profile.sms_when_absent:
+            if not admin_profile.sms_message_absence:
+                mail_title = 'Problem z wiadomością SMS Twilio'
+                mail_body = ('Nie można było wysłać wiadomości SMS o absencji z powodu braku wzoru w ustawieniach.')
+                admin_email(mail_title, mail_body)
+            else:
+                for student in absentees:
+                    parent = student.parent
+                    if student.gender == 'M':
+                        sex = 'male'
+                    if student.gender == 'F':
+                        sex = 'female'
+                    msg_pattern = admin_profile.sms_message_absence
+                    message = generate_test_sms_msg(
+                        sex, msg_pattern, student.name)
+                    print(message)
+                    # send sms via twilio
+                    # uncomment the line below to start using this service
+                    # send_sms_twilio(parent, message)
+                    # twilio_first_sms_status_check_task.apply_async(countdown=300)
+                    # twilio_second_sms_status_check_task.apply_async(countdown=1200)
 
     messages.success(request, "Obecnosc w grupie %s sprawdzona" % group.name)
     # return redirect('edziennik:name_home')
@@ -449,11 +481,8 @@ def sms_test(request):
 
     # send sms and check delivery status
     for msg in [male_no_homework, female_no_homework, male_absence, female_absence]:
-        sms_test_task(twilio_account_sid, twilio_auth_token, messaging_service_sid, test_tel, msg)
+        # sms_test_task(twilio_account_sid, twilio_auth_token, messaging_service_sid, test_tel, msg)
         print(msg)
-    # sms_test_task(twilio_account_sid, twilio_auth_token,test_tel, message_no_homework_final)
-    # twilio_first_sms_status_check_task.apply_async(countdown=300)
-    # twilio_second_sms_status_check_task.apply_async(countdown=1200)
 
     data = {'result': 'Success!'}
     return JsonResponse(data)

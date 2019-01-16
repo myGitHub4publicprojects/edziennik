@@ -28,12 +28,6 @@ def admin_email(mail_title, mail_body, email=None):
 def send_sms_twilio(parent, message):
     # verify Admin_Profile instance - if not do not notify admin
     admin_profile = Admin_Profile.objects.all().first()
-    if not admin_profile:
-        mail_title = 'Problem z wiadomością SMS Twilio'
-        mail_body = ('Nie można było wysłać wiadomości SMS do ' + parent.user.username +
-                    ' o treści: ' + message + ' gdyż nie zostały wprowadzone ustawienia Twilio.')
-        admin_email(mail_title, mail_body)
-        return None
     if (not admin_profile.twilio_account_sid or not admin_profile.twilio_auth_token
         or not admin_profile.twilio_messaging_service_sid):
         mail_title='Problem z wiadomością SMS Twilio'
