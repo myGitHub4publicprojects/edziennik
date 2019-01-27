@@ -38,7 +38,7 @@ class Student(models.Model):
     quizlet_username = models.CharField(max_length=30, blank=True)
 
     def __str__(self):              
-        return self.name.encode("utf-8")
+        return self.name
 
 class ClassDate(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)

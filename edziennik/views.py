@@ -210,7 +210,7 @@ def show_group_grades(request, pk):
 
 def group_check(request, pk):
     ''' displays a group where attendance is checked'''
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
     lector = group.lector
