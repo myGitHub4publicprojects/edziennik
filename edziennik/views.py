@@ -33,7 +33,6 @@ def index(request):
 
     # home for admins
     if request.user.is_superuser:
-        groups = Group.objects.all()
         context = { 'groups': Group.objects.all(),
                     'lectors': Lector.objects.all(),}
         return render(request, 'edziennik/home_for_admin.html', context)
@@ -41,10 +40,11 @@ def index(request):
     # home for parents
     parent_users = [parent.user for parent in Parent.objects.all()]
     if request.user in parent_users:
-        # redirect to student view
         parent = Parent.objects.get(user=request.user)
-        student = Student.objects.get(parent=parent)
-        return redirect('edziennik:student', pk=student.id)
+        context = {
+            'students': Student.objects.filter(parent=parent)
+        }
+        return render(request, 'edziennik/home_for_parent.html', context)
 
     else:
         raise Http404
