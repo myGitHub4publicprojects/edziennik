@@ -171,7 +171,7 @@ class IndexViewTests(TestCase):
     
     def test_home_view_for_parent(self):
         """
-        should redirect to student view
+        should log in
         """
         user_john = User.objects.create_user(username='john',
                                  email='jlennon@beatles.com',
@@ -183,8 +183,7 @@ class IndexViewTests(TestCase):
         response = self.client.get(reverse('edziennik:name_home'))
     
         self.assertTrue(logged_in)
-        expected_url = reverse('edziennik:student', args=(student.id,))
-        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
+    
 
     def test_home_view_others(self):
         """

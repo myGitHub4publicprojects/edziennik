@@ -79,14 +79,6 @@ def lector(request, pk):
             ] = hours_in_month.get(
                 str(i.date_of_class.month)+'.'+str(i.date_of_class.year), 0) + 1
 
-    # res = {}
-    # for i in hours_in_current_year:
-    #         res[str(i.month)+'.'+str(i.year)
-    #             ] = res.get(str(i.month)+'.'+str(i.year), 0) + 1
-
-    # uu = sorted(res.items(), key=lambda i: (i[0][-4:], i[0].split('.')[0]))
-    # print(uu)
-
     hours_in_month_list = sorted(
         hours_in_month.items(), key=lambda i: (i[0][-4:], i[0].split('.')[0]))
 
