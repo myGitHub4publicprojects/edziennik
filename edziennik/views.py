@@ -33,8 +33,12 @@ def index(request):
 
     # home for admins
     if request.user.is_superuser:
-        context = { 'groups': Group.objects.all(),
-                    'lectors': Lector.objects.all(),}
+        context = {'groups': Group.objects.all(),
+                    'lectors': Lector.objects.all(), }
+        if request.GET.get('q'):
+            results = Student.objects.filter(name__icontains=request.GET['q'])
+            context['results'] = results                
+
         return render(request, 'edziennik/home_for_admin.html', context)
 
     # home for parents

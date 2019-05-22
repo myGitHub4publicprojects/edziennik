@@ -4,6 +4,18 @@
 <p class="text-center"><small>Zalogowano jako:</small> <b>{{ user.get_username }}</b></p>
 
 <section>
+    <div>
+        <form action="" method="GET">
+        <input type="text" name="q">
+        <input type="submit" value="szukaj ucznia">
+        </form>
+
+        <ul class="list-unstyled">
+        {% for r in results %}
+        <li><a href="{% url 'edziennik:student' r.id %}">{{ r }}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
     <div><h2>Lektorzy: </h2>
     {% if lectors %}
     {% for lector in lectors %}
