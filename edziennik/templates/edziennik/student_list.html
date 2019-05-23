@@ -1,0 +1,29 @@
+{% extends "edziennik/base.html" %}
+{% block content %}
+
+<section>
+    <h2>Lista uczniów:</h2>
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <td>
+                    Imię i nazwisko
+                </td>
+                <td>
+                    Grupa
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in student_list %}
+            <tr>
+                <td><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></td>
+                <td><a href="{% url 'edziennik:group' s.group.id %}">{{ s.group }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</section>
+{% endblock content %}

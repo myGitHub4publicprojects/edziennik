@@ -1,3 +1,4 @@
+from django.views.generic.list import ListView
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
@@ -130,6 +131,11 @@ def student(request, pk):
         }
     return render(request, 'edziennik/student.html', context)
 
+
+class StudentList(ListView):
+	model = Student
+
+
 def group(request, pk):
     ''' enables to select an action for a group '''
     if not request.user.is_staff:
@@ -137,9 +143,6 @@ def group(request, pk):
     group = get_object_or_404(Group, pk=pk)
     lector = group.lector
     if not request.user.is_superuser and request.user != lector.user:
-        print(request.user)
-        print(lector.user)
-        print(lector.user==request.user)
         raise Http404
     students = Student.objects.filter(group=group)
     grades_in_this_group = Grades.objects.filter(student__in=students)

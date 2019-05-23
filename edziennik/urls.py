@@ -15,6 +15,8 @@ urlpatterns = [
          views.attendance_by_group, name='attendance_by_group'),
     path('<int:pk>/lektor/', views.lector, name='lector'),
     path('<int:pk>/student/', views.student, name='student'),
+    path('student_list/',
+         views.StudentList.as_view(), name='student_list'),
     path('<int:pk>/group/', views.group, name='group'),
     path('<int:pk>/add_quizlet/', views.add_quizlet, name='add_quizlet'),
     path('process_quizlet/', views.process_quizlet, name='process_quizlet'),

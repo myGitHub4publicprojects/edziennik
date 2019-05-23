@@ -4,18 +4,40 @@
 <p class="text-center"><small>Zalogowano jako:</small> <b>{{ user.get_username }}</b></p>
 
 <section>
-    <div>
+    <div class="d-inline-block ">
         <form action="" method="GET">
         <input type="text" name="q">
         <input type="submit" value="szukaj ucznia">
         </form>
 
-        <ul class="list-unstyled">
-        {% for r in results %}
-        <li><a href="{% url 'edziennik:student' r.id %}">{{ r }}</a></li>
-        {% endfor %}
-        </ul>
+    {% if results %}
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <td>
+                    Imię i nazwisko
+                </td>
+                <td>
+                    Grupa
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in results %}
+            <tr>
+                <td><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></td>
+                <td><a href="{% url 'edziennik:group' s.group.id %}">{{ s.group }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    
     </div>
+    <a href="{% url 'edziennik:student_list' %}">
+        <button class="btn blue-btn ml-3 float-right">Uczniowie</button>
+
+    </a>
     <div><h2>Lektorzy: </h2>
     {% if lectors %}
     {% for lector in lectors %}
