@@ -1,3 +1,6 @@
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.forms import ModelForm, Textarea
 from .models import Admin_Profile, Student, Parent
 
@@ -15,7 +18,22 @@ class AdminProfileForm(ModelForm):
             'sms_message_no_homework': Textarea(attrs={'cols': 100, 'rows': 3}),
         }
 
+
+class SignUpForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=50)
+    email = forms.EmailField(max_length=254)
+
+
 class StudentForm(ModelForm):
     class Meta:
         model = Student
-        fields = ['first_name', 'last_name']
+        fields = ['first_name', 'last_name', 'date_of_birth', 'school',
+            'class_in_school', 'language_of_interest', 'language_at_school',
+            'experience', 'book', 'avaliability', 'other_classes', 'focus', 'gender']
+
+    
+class ParentForm(ModelForm):
+    class Meta:
+        model = Parent
+        fields = ['phone_number']

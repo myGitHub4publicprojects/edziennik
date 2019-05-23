@@ -1,4 +1,5 @@
 from django.views.generic.list import ListView
+from django.contrib.auth import login, authenticate
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
@@ -10,7 +11,7 @@ from django.templatetags.static import static
 
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile)
-from .forms import AdminProfileForm
+from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm
 
 from edziennik.utils import admin_email, send_sms_twilio, generate_test_sms_msg
 
@@ -504,3 +505,43 @@ def message_test(request):
     data = {'male_msg': male_msg,
             'female_msg': female_msg}
     return JsonResponse(data)
+
+def signup(request):
+    if request.method == 'POST':
+    
+        user_form = SignUpForm(request.POST)
+        parent_form = ParentForm(request.POST)
+        student_form = StudentForm(request.POST)
+
+        if user_form.is_valid() and parent_form.is_valid() and student_form.is_valid():
+
+            user = user_form.save()
+            parent = parent_form.save(commit=False)
+            parent.user = user
+            parent.save()
+            student = student_form.save(commit=False)
+            student.group = 1
+            student.parent = parent
+            student.save()
+
+            # login to parent home page
+            raw_password = user_form.cleaned_data.get('password1')
+            user = authenticate(username=user.username, password=raw_password)
+            login(request, user)
+            return redirect('edziennik:name_home')
+
+        else:
+            context = {
+                'user_form': user_form,
+                'parent_form': parent_form,
+                'student_form': student_form,
+            }
+
+    else:
+        context = {
+            'user_form': SignUpForm(),
+            'parent_form': ParentForm(),
+            'student_form': StudentForm(),
+        }
+
+    return render(request, 'edziennik/signup.html', context)

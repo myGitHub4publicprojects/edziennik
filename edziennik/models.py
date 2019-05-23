@@ -21,20 +21,38 @@ class Parent(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     phone_number = models.IntegerField()
-
+    # address
+    street = models.CharField(max_length=120, null=True, blank=True)
+    house_number = models.CharField(max_length=6, null=True)
+    apartment_number = models.CharField(max_length=6, null=True, blank=True)
+    city = models.CharField(max_length=120, null=True)
+    zip_code = models.CharField(max_length=6, null=True)
+   
     def __str__(self):              
         return self.user.username
 
 class Student(models.Model):
     first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    last_name = models.CharField(
+        max_length=100, verbose_name='Nazwisko ucznia')
+    date_of_birth = models.DateField(verbose_name='Data urodzenia')
+    school = models.CharField(max_length=100)
+    class_in_school = models.CharField(max_length=100)
+    language_of_interest = models.CharField(max_length=100, default='English')
+    language_at_school = models.BooleanField()
+    experience = models.CharField(max_length=200, null=True, blank=True)
+    book = models.CharField(max_length=200)
+    avaliability = models.CharField(max_length=400)
+    other_classes = models.CharField(max_length=200, null=True, blank=True)
+    focus = models.CharField(max_length=200)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
         )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(
+        max_length=1, choices=GENDER_CHOICES, verbose_name='Płeć ucznia')
     quizlet = models.BooleanField(default=False) # give student reward for activity on quizlet
     quizlet_username = models.CharField(max_length=30, blank=True)
 
