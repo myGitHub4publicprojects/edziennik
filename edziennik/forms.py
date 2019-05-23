@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Textarea
-from .models import Admin_Profile
+from .models import Admin_Profile, Student, Parent
 
 
 class AdminProfileForm(ModelForm):
