@@ -1,0 +1,17 @@
+{% extends "edziennik/base.html" %}
+{% block content %}
+
+<section>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        {{ parent_form.as_p }}
+        {{ student_form.as_p }}
+
+        <input type="submit" value="Zapisz">
+    </form>
+
+
+</section>
+{% endblock content %}
