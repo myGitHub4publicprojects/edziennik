@@ -36,11 +36,19 @@ def index(request):
     if request.user.is_superuser:
         context = {'groups': Group.objects.all(),
                     'lectors': Lector.objects.all(), }
-        if request.GET.get('q'):
-            results = Student.objects.filter(name__icontains=request.GET['q'])
-            context['results'] = results                
+    lname = request.GET.get('lname')
+    fname = request.GET.get('fname')
+    if lname or fname:
+        results = Student.objects.all()
+        if fname:
+            results = results.filter(
+                first_name__icontains=fname)
+        if lname:
+            results = results.filter(
+                last_name__icontains=lname)
+        context['results'] = results
 
-        return render(request, 'edziennik/home_for_admin.html', context)
+    return render(request, 'edziennik/home_for_admin.html', context)
 
     # home for parents
     parent_users = [parent.user for parent in Parent.objects.all()]

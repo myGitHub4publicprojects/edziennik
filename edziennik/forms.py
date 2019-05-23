@@ -14,3 +14,8 @@ class AdminProfileForm(ModelForm):
             'sms_message_absence': Textarea(attrs={'cols': 100, 'rows': 3}),
             'sms_message_no_homework': Textarea(attrs={'cols': 100, 'rows': 3}),
         }
+
+class StudentForm(ModelForm):
+    class Meta:
+        model = Student
+        fields = ['first_name', 'last_name']

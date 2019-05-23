@@ -6,7 +6,8 @@
 <section>
     <div class="d-inline-block ">
         <form action="" method="GET">
-        <input type="text" name="q">
+        <input type="text" name="fname" placeholder="imię ucznia">
+        <input type="text" name="lname" placeholder="nazwisko ucznia">
         <input type="submit" value="szukaj ucznia">
         </form>
 
@@ -32,7 +33,7 @@
         </tbody>
     </table>
     {% endif %}
-    
+
     </div>
     <a href="{% url 'edziennik:student_list' %}">
         <button class="btn blue-btn ml-3 float-right">Uczniowie</button>
