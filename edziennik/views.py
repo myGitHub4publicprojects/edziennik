@@ -37,19 +37,19 @@ def index(request):
     if request.user.is_superuser:
         context = {'groups': Group.objects.all(),
                     'lectors': Lector.objects.all(), }
-    lname = request.GET.get('lname')
-    fname = request.GET.get('fname')
-    if lname or fname:
-        results = Student.objects.all()
-        if fname:
-            results = results.filter(
-                first_name__icontains=fname)
-        if lname:
-            results = results.filter(
-                last_name__icontains=lname)
-        context['results'] = results
+        lname = request.GET.get('lname')
+        fname = request.GET.get('fname')
+        if lname or fname:
+            results = Student.objects.all()
+            if fname:
+                results = results.filter(
+                    first_name__icontains=fname)
+            if lname:
+                results = results.filter(
+                    last_name__icontains=lname)
+            context['results'] = results
 
-    return render(request, 'edziennik/home_for_admin.html', context)
+        return render(request, 'edziennik/home_for_admin.html', context)
 
     # home for parents
     parent_users = [parent.user for parent in Parent.objects.all()]
@@ -513,24 +513,30 @@ def signup(request):
         parent_form = ParentForm(request.POST)
         student_form = StudentForm(request.POST)
 
-        if user_form.is_valid() and parent_form.is_valid() and student_form.is_valid():
+        print('user: ', user_form.is_valid())
+        print('parent: ', parent_form.is_valid())
+        print('student: ', student_form.is_valid())
 
+        if user_form.is_valid() and parent_form.is_valid() and student_form.is_valid():
+            print('here1')
             user = user_form.save()
             parent = parent_form.save(commit=False)
             parent.user = user
             parent.save()
             student = student_form.save(commit=False)
-            student.group = 1
+            student.group = Group.objects.all().first()
             student.parent = parent
             student.save()
-
+            print('here2')
             # login to parent home page
             raw_password = user_form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             login(request, user)
+            print('here3')
             return redirect('edziennik:name_home')
 
         else:
+            print('here4')
             context = {
                 'user_form': user_form,
                 'parent_form': parent_form,
