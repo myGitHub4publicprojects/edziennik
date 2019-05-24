@@ -13,7 +13,8 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile)
 from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm
 
-from edziennik.utils import admin_email, send_sms_twilio, generate_test_sms_msg
+from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
+                             create_unique_username)
 
 from .tasks import (quizlet_check_task,
     twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
@@ -509,9 +510,9 @@ def message_test(request):
 def signup(request):
     if request.method == 'POST':
     
-        user_form = SignUpForm(request.POST)
+        user_form = SignUpForm(request.POST, prefix="user")
         parent_form = ParentForm(request.POST)
-        student_form = StudentForm(request.POST)
+        student_form = StudentForm(request.POST, prefix="student")
 
         print('user: ', user_form.is_valid())
         print('parent: ', parent_form.is_valid())
@@ -545,9 +546,9 @@ def signup(request):
 
     else:
         context = {
-            'user_form': SignUpForm(),
+            'user_form': SignUpForm(prefix="user"),
             'parent_form': ParentForm(),
-            'student_form': StudentForm(),
+            'student_form': StudentForm(prefix="student"),
         }
 
     return render(request, 'edziennik/signup.html', context)

@@ -5,10 +5,80 @@
 
     <form action="" method="POST">
         {% csrf_token %}
-        {{ user_form.as_p }}
-        {{ parent_form.as_p }}
-        {{ student_form.as_p }}
 
+        <h2 class="text-center">Dane klienta</h2>
+        <p><input type="text" name="user-username" maxlength="150" id="id_user-username" 
+            autofocus required placeholder="nazwa użytkownika">
+            <span class="helptext">Litery, cyfry i znaki @/./+/-/_ </span>
+        </p>
+        <p><input type="password" name="user-password1" id="id_user-password1"
+                required placeholder="hasło"> <span class="helptext">
+                Musi mieć minimum 8 znaków i składać się z liter i cyfr.
+            </span></p>
+        <p><input type="password" name="user-password2" id="id_user-password2" 
+            required placeholder="powtórz hasło"></p>
+
+        <p><input type="text" name="user-first_name" maxlength="30"
+                id="id_user-first_name" required placeholder="Imię"></p>
+
+        <p><input type="text" name="user-last_name" maxlength="50"
+                id="id_user-last_name" required placeholder="Nazwisko"></p>
+        <p><input type="email" name="user-email" maxlength="254" id="id_user-email"
+                required placeholder="email"></p>
+        <p><input type="number" name="phone_number" id="id_phone_number"
+                required placeholder="nr telefonu"></p>
+
+        <hr>
+        <h2 class="text-center">Dane ucznia</h2>
+        <p><input type="text" name="student-first_name" maxlength="100"
+                id="id_student-first_name" required placeholder="Imię"></p>
+        <p><input type="text" name="student-last_name"
+                maxlength="100" id="id_student-last_name" required placeholder="Nazwisko"></p>
+        <p><input type="date" name="student-date_of_birth"
+                id="id_student-date_of_birth" required>
+            <span class="helptext">Data urodzenia</span></p>
+        <p><label for="id_student-gender">Płeć ucznia:</label> <select name="student-gender" id="id_student-gender" required>
+                <option value="" selected>---------</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select></p>
+        <p><input type="text" name="student-school" maxlength="100"
+                id="id_student-school" required placeholder="Szkoła">
+            <span class="helptext">Nazwa szkoły/przedszkola</span></p>
+        <p><input type="text" name="student-class_in_school"
+                maxlength="100" id="id_student-class_in_school" required placeholder="Klasa"></p>
+        <p><input type="text"
+                name="student-language_of_interest" value="Angielski" maxlength="100" id="id_student-language_of_interest"
+                required></p>
+        
+        <h3>Doświadczenie ucznia z językiem obcym</h3>
+        <p>
+            <select name="student-language_at_school" id="id_student-language_at_school">
+                <option value="" selected>---------</option>
+                <option value="True">Tak</option>
+                <option value="False">Nie</option>
+            </select>
+            <span class="helptext">Czy uczeń uczy się obecnie tego języka w szkole?</span>
+        </p>
+        <p><input type="text" name="student-experience" maxlength="200"
+                id="id_student-experience" placeholder="Od jak dawna?"></p>
+                
+        <p><input type="text" name="student-book" maxlength="200"
+                id="id_student-book" required placeholder="Nazwa podręcznika"></p>
+
+        <h3>Dostępność czasowa</h3>
+        <p>W jakie dni tygodnia i w jakich godzinach uczeń może uczęszczać na zajęcia. 
+            Podaj jak najwięcej terminów aby zwiększyć szansę przyjęcia do najlepiej dopasowanej grupy.</p>
+        <p><input type="text" name="student-avaliability"
+                maxlength="400" id="id_student-avaliability" required placeholder="np. pon: od 13:30, wt: od 13:00, sr: od 14:00, czw: 13:00-18:00, pt: od 13:00"></p>
+        <p><input type="text" name="student-other_classes"
+                maxlength="200" id="id_student-other_classes" placeholder="Inne zajęcia pozaszkolne"></p>
+        
+        <h3>Informacje dodatkowe:</h3>
+        <p><input type="text" name="student-focus" maxlength="200"
+                id="id_student-focus" required>
+        <span class="helptext">Najwazniejszy aspekt nauki. U młodszych dzieci jest to najczęściej zaznajmienie z brzmieniem języka obcego oraz poznanie podstawowych zwrotów. U strszych może to być poprawa płynności mówienia lub rozwijanie zasobów słownictwa.</span>
+        </p>
         <input type="submit" value="Zapisz">
     </form>
 
