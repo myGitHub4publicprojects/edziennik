@@ -3,6 +3,8 @@ from django.contrib.auth import login, authenticate
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.models import User
+
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
@@ -519,22 +521,39 @@ def signup(request):
         print('student: ', student_form.is_valid())
 
         if user_form.is_valid() and parent_form.is_valid() and student_form.is_valid():
-            print('here1')
-            user = user_form.save()
+            # create user
+            fname = user_form.cleaned_data['first_name']
+            lname = user_form.cleaned_data['last_name']
+            password = User.objects.make_random_password(length=8)
+            user = User.objects.create(
+                first_name=fname,
+                last_name=lname,
+                email=user_form.cleaned_data['email'],
+                username=create_unique_username(fname, lname),
+                password=password
+            )
+            # create parent
             parent = parent_form.save(commit=False)
             parent.user = user
+
+            # set phone number and address
+            
             parent.save()
+
+            # create student
             student = student_form.save(commit=False)
             student.group = Group.objects.all().first()
             student.parent = parent
             student.save()
-            print('here2')
-            # login to parent home page
-            raw_password = user_form.cleaned_data.get('password1')
-            user = authenticate(username=user.username, password=raw_password)
+
+            # email to parent with login details (url, username, pass)
+            
+            # login parent and redirect to home page
             login(request, user)
-            print('here3')
             return redirect('edziennik:name_home')
+
+
+
 
         else:
             print('here4')

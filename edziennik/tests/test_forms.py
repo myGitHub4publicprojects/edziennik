@@ -36,3 +36,21 @@ class TestAdminProfileForm():
         form = forms.AdminProfileForm(data=data)
         assert form.errors == {}, 'shoud be empty'
         assert form.is_valid() is True, 'Should be valid'
+
+
+class TestSignUpForm():
+    def test_empty_form(self):
+        form = forms.SignUpForm(data={})
+        assert form.is_valid() is False, 'fields are required, should be False'
+
+    def test_fully_filled_form(self):
+        data = {
+                # 'password1': 'cotmbyc23',
+                # 'password2': 'cotmbyc23',
+                'first_name': 'oloo',
+                'last_name': 'Nowak',
+                'email': 'asdfljwoejf@gmail.com',
+                }
+        form = forms.SignUpForm(data=data)
+        assert form.errors == {}, 'shoud be empty'
+        assert form.is_valid() is True, 'Should be valid'
