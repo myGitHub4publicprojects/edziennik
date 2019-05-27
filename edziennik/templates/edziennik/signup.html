@@ -7,16 +7,6 @@
         {% csrf_token %}
 
         <h2 class="text-center">Dane klienta</h2>
-        <!-- <p><input type="text" name="user-username" maxlength="150" id="id_user-username" 
-            autofocus required placeholder="nazwa użytkownika">
-            <span class="helptext">Litery, cyfry i znaki @/./+/-/_ </span>
-        </p> -->
-        <!-- <p><input type="password" name="user-password1" id="id_user-password1"
-                required placeholder="hasło"> <span class="helptext">
-                Musi mieć minimum 8 znaków i składać się z liter i cyfr.
-            </span></p>
-        <p><input type="password" name="user-password2" id="id_user-password2" 
-            required placeholder="powtórz hasło"></p> -->
 
         <p><input type="text" name="user-first_name" maxlength="30"
                 id="id_user-first_name" required placeholder="Imię"></p>
@@ -28,6 +18,13 @@
         <p><input type="number" name="phone_number" id="id_phone_number"
                 required placeholder="nr telefonu"></p>
 
+        <!-- address -->
+        <p><input type="text" name="street" placeholder="Ulica"></p>
+        <p><input type="text" name="house_number" required placeholder="Numer domu"></p>
+        <p><input type="text" name="apartment_number" placeholder="Numer lokalu"></p>
+        <p><input type="text" name="city" required placeholder="Miejscowość"></p>
+        <p><input type="text" name="zip_code" required placeholder="Kod pocztowy"></p>
+       
         <hr>
         <h2 class="text-center">Dane ucznia</h2>
         <p><input type="text" name="student-first_name" maxlength="100"
