@@ -33,8 +33,14 @@ class Testgenerate_weekly_admin_report(TestCase):
         """
         yesterday = today-timedelta(1)
         group = mixer.blend(Group, name='g1')
-        student1 = mixer.blend(Student, name='s1', group=group)
-        student2 = mixer.blend(Student, name='s2', group=group)
+        student1 = mixer.blend(Student,
+                               first_name='f1',
+                               last_name='l1',
+                               group=group)
+        student2 = mixer.blend(Student,
+                               first_name='f2',
+                               last_name='l2',
+                               group=group)
         class_date = mixer.blend(ClassDate,
                                 date_of_class=yesterday,
                                 subject='subject1')
@@ -43,7 +49,7 @@ class Testgenerate_weekly_admin_report(TestCase):
 
         head = 'On %s\nin group: %s\n' % (str(yesterday), group.name)
         f = 'the following students were present:'
-        attendance = '\n' + student1.name + '\n--------------------------------\n'
+        attendance = '\n' + str(student1) + '\n--------------------------------\n'
         grades = 'No grades have been given last week'
         email_title, email_body = generate_weekly_admin_report()
         expected_title = 'Attendance and grades report'
@@ -58,8 +64,14 @@ class Testgenerate_weekly_admin_report(TestCase):
         """
         yesterday = today-timedelta(1)
         group = mixer.blend(Group, name='g1')
-        student1 = mixer.blend(Student, name='s1', group=group)
-        student2 = mixer.blend(Student, name='s2', group=group)
+        student1 = mixer.blend(Student,
+                                first_name='f1',
+                                last_name='l1',
+                                group=group)
+        student2 = mixer.blend(Student,
+                                first_name='f2',
+                                last_name='l2',
+                                group=group)
         class_date = mixer.blend(ClassDate,
                                 date_of_class=yesterday,
                                 subject='subject1')
@@ -68,14 +80,14 @@ class Testgenerate_weekly_admin_report(TestCase):
 
         head = 'On %s\nin group: %s\n' % (str(yesterday), group.name)
         f = 'the following students were present:'
-        attendance = '\n' + student1.name + '\n--------------------------------\n'
+        attendance = '\n' + str(student1) + '\n--------------------------------\n'
 
         grade = Grades.objects.create(
                 name='g1',
                 student = student1,
                 score = 2)
         head2 = '\n' + 'Last week the following grades were given:\n'
-        students_grades = ' '.join([str(grade.timestamp.date()), 'group:', group.name, 'student:', student1.name,
+        students_grades = ' '.join([str(grade.timestamp.date()), 'group:', group.name, 'student:', str(student1),
                          'for:', grade.name, 'score:', str(grade.score), '\n'])
                          
         grades = head2 + students_grades

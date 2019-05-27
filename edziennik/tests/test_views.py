@@ -360,11 +360,14 @@ class StudentViewTests(TestCase):
                             email='jlennon@beatles.com',
                             password='glassonion')
         parent = Parent.objects.create(user=user_john, phone_number=111111111)
-        student = mixer.blend('edziennik.Student', name='little_john', parent=parent)
+        student = mixer.blend('edziennik.Student',
+                              first_name='johny',
+                              last_name='smith',
+                              parent=parent)
         logged_in = self.client.login(username='john', password='glassonion')
         self.assertTrue(logged_in)
         response = self.client.get(reverse('edziennik:student', args=(student.id,)))
-        self.assertContains(response, 'little_john', status_code=200)
+        self.assertEqual(response.context['student'].id, 1)
 
     def test_student_view_other_parent(self):
         """
