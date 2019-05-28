@@ -16,7 +16,7 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
 from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
-                             create_unique_username)
+                             create_unique_username, signup_email)
 
 from .tasks import (quizlet_check_task,
     twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
@@ -511,15 +511,9 @@ def message_test(request):
 
 def signup(request):
     if request.method == 'POST':
-    
         user_form = SignUpForm(request.POST, prefix="user")
         parent_form = ParentForm(request.POST)
         student_form = StudentForm(request.POST, prefix="student")
-
-        print('user: ', user_form.is_valid())
-        print('parent: ', parent_form.is_valid())
-        print('student: ', student_form.is_valid())
-
         if user_form.is_valid() and parent_form.is_valid() and student_form.is_valid():
             # create user
             fname = user_form.cleaned_data['first_name']
@@ -535,9 +529,6 @@ def signup(request):
             # create parent
             parent = parent_form.save(commit=False)
             parent.user = user
-
-            # set phone number and address
-            
             parent.save()
 
             # create student
@@ -547,13 +538,11 @@ def signup(request):
             student.save()
 
             # email to parent with login details (url, username, pass)
+            signup_email(parent, student, password)
             
             # login parent and redirect to home page
             login(request, user)
             return redirect('edziennik:name_home')
-
-
-
 
         else:
             print('here4')

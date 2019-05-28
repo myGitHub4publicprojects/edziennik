@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 # from django.contrib.staticfiles.templatetags.staticfiles import static
 from edziennik.models import Lector, Group, Parent, Student, ClassDate, Grades, Admin_Profile
 
-from edziennik.utils import admin_email, generate_weekly_admin_report
+from edziennik.utils import admin_email, generate_weekly_admin_report, signup_email
 
 pytestmark = pytest.mark.django_db
 today = datetime.today().date()
@@ -150,3 +150,43 @@ class TestAdmin_Email(TestCase):
 
         # should have an expected recipient
         self.assertEqual(mail.outbox[0].to, ['test@example.com'])
+
+
+class TestSignUp_Email(TestCase):
+    def test_signup_with_no_other_users(self):
+        '''should send one email to the address specified in settings.py'''
+        p1 = 'somePass'
+        e1 = 'example@email.com'
+        fname = 'Oloo'
+        home_url = 'example.com'
+        user = User.objects.create(username='johnlenon', password=p1, email=e1)
+        parent = mixer.blend(Parent, user=user)
+        student = mixer.blend(Student, parent=parent, first_name=fname)
+        signup_email(parent, student, p1)
+
+        expected_title = 'Witaj w szkole Energy Czerwonak!'
+        expected_body = """Witamy w szkole Energy Czerwonak!
+            Dziękujemy za wypełnienie formularza zgłoszeniowego. Mamy nadzieję, że {student} już wkrótce dołączy do naszego grona!
+            W ciągu najbliższych kilku dni zadzwonimy pod podany w formularzu numer telefonu aby omówić
+            szczegóły dotyczące rekrutacji.
+            Poniżej znajdziesz link oraz swoje dane dostępu do naszego edziennka. Znajdziesz tam swoje dane oraz dane zgłoszonych przez Ciebie studentów.
+            Strona logowania: {url}
+            Nazwa użytkownika: {username}
+            Hasło: {password}
+            Do usłyszenia,
+            Zespół szkoły Energy Czerwonak
+            """.format(student=student.first_name,
+                        url=home_url,
+                        username=parent.user.username,
+                        password=p1)
+        expected_email_address = [parent.user.email]
+
+        # should send only one email
+        self.assertEqual(len(mail.outbox), 1)
+
+        # should have expeceted title and body
+        self.assertEqual(mail.outbox[0].subject, expected_title)
+        self.assertEqual(mail.outbox[0].body, expected_body)
+
+        # should have an expected recipient
+        self.assertEqual(mail.outbox[0].to, expected_email_address)

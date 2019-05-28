@@ -4,6 +4,8 @@ import re
 import datetime
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.sites.models import Site
+
 from django.contrib.auth.models import User
 
 from twilio.rest import Client
@@ -145,3 +147,27 @@ def create_unique_username(a, b):
     else:
         r = str(random.randint(1, 10))
         return create_unique_username(a, b+r)
+
+
+def signup_email(parent, student, password):
+    home_url = Site.objects.get_current().domain
+    title = 'Witaj w szkole Energy Czerwonak!'
+    body = """Witamy w szkole Energy Czerwonak!
+            Dziękujemy za wypełnienie formularza zgłoszeniowego. Mamy nadzieję, że {student} już wkrótce dołączy do naszego grona!
+            W ciągu najbliższych kilku dni zadzwonimy pod podany w formularzu numer telefonu aby omówić
+            szczegóły dotyczące rekrutacji.
+            Poniżej znajdziesz link oraz swoje dane dostępu do naszego edziennka. Znajdziesz tam swoje dane oraz dane zgłoszonych przez Ciebie studentów.
+            Strona logowania: {url}
+            Nazwa użytkownika: {username}
+            Hasło: {password}
+            Do usłyszenia,
+            Zespół szkoły Energy Czerwonak
+            """.format(student=student.first_name,
+                       url=home_url,
+                       username=parent.user.username,
+                       password=password)
+    send_mail(title,
+              body,
+              settings.EMAIL_HOST_USER,
+              [parent.user.email],
+              fail_silently=False)
