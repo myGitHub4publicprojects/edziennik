@@ -31,4 +31,6 @@ urlpatterns = [
          name='message_test'),
     path('signup/', views.signup,
          name='signup'),
+    path('duplicate_check/', views.duplicate_check,
+         name='duplicate_check'),
 ]

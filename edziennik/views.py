@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonRespons
 from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
 
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
@@ -560,3 +562,12 @@ def signup(request):
         }
 
     return render(request, 'edziennik/signup.html', context)
+
+
+def duplicate_check(request):
+	if request.GET.get('email'):
+		email = request.GET.get('email')
+		user = User.objects.filter(email__contains=email)
+		if user:
+			return HttpResponse('present')
+		return HttpResponse('absent')

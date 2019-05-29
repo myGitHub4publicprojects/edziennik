@@ -81,4 +81,26 @@
 
 
 </section>
+
+<script>
+let email = document.getElementById('id_user-email');
+email.addEventListener('focusout', uniqueEmail);
+
+
+function uniqueEmail(e) {
+        let     xhr = new XMLHttpRequest(),
+                url = "{% url 'edziennik:duplicate_check' %}?email=" + e.target.value
+                console.log(url);
+        xhr.open('get', url, true)
+        xhr.onload = function () {
+                if (this.status == 200) {
+                        if (this.responseText == 'present') {
+                                alert('Taki email już istnieje');
+                        }
+                }
+        }
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send()
+}
+</script>
 {% endblock content %}
