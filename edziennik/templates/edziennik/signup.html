@@ -82,10 +82,30 @@
 
 </section>
 
+<div id="modal-main">
+        <div id="modal-content">
+                <span id="closeBtn">&times;</span>
+                <h3 class="text-center">Ten email jest już zarejestrowany w naszej bazie!</h3>
+                <p class="text-center">Zaloguj się na swoje konto zamiast rejestrować nowe.</p>
+                <p class="text-center">Hasło i nazwa użytkownika zostały wysłane mailem przy pierwszej rejestracji.</p>
+                <p class="text-center">W przypadku utraty hasła kliknij tutaj aby ustawić nowe.</p>
+        </div>
+</div>
+
 <script>
 let email = document.getElementById('id_user-email');
-email.addEventListener('focusout', uniqueEmail);
+let modal = document.getElementById('modal-main');
+let modalImg = document.getElementById('modalImg');
+let closeBtn = document.getElementById('closeBtn');
 
+// add event listeners
+email.addEventListener('focusout', uniqueEmail);
+closeBtn.addEventListener('click', closeModal);
+
+
+function closeModal() {
+        modal.style.display = 'none';
+}
 
 function uniqueEmail(e) {
         let     xhr = new XMLHttpRequest(),
@@ -95,7 +115,8 @@ function uniqueEmail(e) {
         xhr.onload = function () {
                 if (this.status == 200) {
                         if (this.responseText == 'present') {
-                                alert('Taki email już istnieje');
+                                console.log('show modal')
+                                modal.style.display = 'block';
                         }
                 }
         }
