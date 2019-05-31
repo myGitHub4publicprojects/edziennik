@@ -526,8 +526,9 @@ def signup(request):
                 last_name=lname,
                 email=user_form.cleaned_data['email'],
                 username=create_unique_username(fname, lname),
-                password=password
             )
+            user.set_password(password)
+            user.save()
             # create parent
             parent = parent_form.save(commit=False)
             parent.user = user
