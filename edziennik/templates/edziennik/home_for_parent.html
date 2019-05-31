@@ -10,5 +10,6 @@
     {% endfor %}
 
 <a href="{% url 'auth_password_change' %}">Zmień hasło</a>
+<a href="{% url 'edziennik:parent_datail' parent.id %}">Twoje dane</a>
 </section>
 {% endblock content %}

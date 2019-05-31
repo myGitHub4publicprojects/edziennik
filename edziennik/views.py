@@ -1,4 +1,5 @@
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.contrib.auth import login, authenticate
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.template import RequestContext, loader
@@ -61,7 +62,8 @@ def index(request):
     if request.user in parent_users:
         parent = Parent.objects.get(user=request.user)
         context = {
-            'students': Student.objects.filter(parent=parent)
+            'students': Student.objects.filter(parent=parent),
+            'parent': parent,
         }
         return render(request, 'edziennik/home_for_parent.html', context)
 
@@ -149,6 +151,8 @@ def student(request, pk):
 class StudentList(ListView):
 	model = Student
 
+class ParentDetailView(DetailView):
+    model=Parent
 
 def group(request, pk):
     ''' enables to select an action for a group '''
@@ -548,7 +552,6 @@ def signup(request):
             return redirect('edziennik:name_home')
 
         else:
-            print('here4')
             context = {
                 'user_form': user_form,
                 'parent_form': parent_form,
@@ -568,7 +571,8 @@ def signup(request):
 def duplicate_check(request):
 	if request.GET.get('email'):
 		email = request.GET.get('email')
-		user = User.objects.filter(email__contains=email)
+		user = User.objects.filter(email=email)
 		if user:
 			return HttpResponse('present')
 		return HttpResponse('absent')
+

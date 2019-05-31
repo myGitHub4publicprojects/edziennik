@@ -1,0 +1,17 @@
+{% extends "edziennik/base.html" %}
+{% block content %}
+
+<section>
+    <h2>Twoje dane:</h2>
+    <p>Imię: {{ object.user.first_name }}</p>
+    <p>Nazwisko: {{ object.user.last_name }}</p>
+    <p>Email: {{ object.user.email }}</p>
+    <p>Nazwa użytkownika: {{ object.user.username }}</p>
+    <p>Nr telefonu: {{ object.phone_number }}</p>
+    <p>Ulica: {{ object.street }}</p>
+    <p>Nr domu: {{ object.house_number }}</p>
+    <p>Nr lokalu: {{ object.apartment_number }}</p>
+    <p>Miejscowość: {{ object.city }}</p>
+    <p>Kod pocztowy: {{ object.zip_code }}</p>
+</section>
+{% endblock content %}

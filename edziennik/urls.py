@@ -17,6 +17,8 @@ urlpatterns = [
     path('<int:pk>/student/', views.student, name='student'),
     path('student_list/',
          login_required(views.StudentList.as_view()), name='student_list'),
+    path('<int:pk>/parent_datail/',
+         login_required(views.ParentDetailView.as_view()), name='parent_datail'),
     path('<int:pk>/group/', views.group, name='group'),
     path('<int:pk>/add_quizlet/', views.add_quizlet, name='add_quizlet'),
     path('process_quizlet/', views.process_quizlet, name='process_quizlet'),
