@@ -14,7 +14,7 @@
 <form action="{% url 'edziennik:add_grades' group.id %}" method="post">
 	{% csrf_token %}
 	Za co ocena: <input type="text" name="grade_name" required /><br>
-	Data testu: <input type="date" name="date_of_test" />(jeśli nie podasz zostanie wybrana dzisiejsza data)<br>
+	Data testu: <input id="dateOfTest" type="date" name="date_of_test" />(jeśli nie podasz zostanie wybrana dzisiejsza data)<br>
 
 	<table class="table">
 	{% for student in students %}
@@ -24,8 +24,26 @@
 	    </tr>
 	{% endfor %}
 	</table>
-	<input type="submit" value="Zatwierdzam" />
+	<input id="submitBtn" type="submit" value="Zatwierdzam" />
 
 </form>
 
 {% endblock content %}
+
+{% block javascript %}
+<script>
+	let submitBtn = document.getElementById('submitBtn');
+	submitBtn.addEventListener('click', function(event) {
+		let dateOfTest = document.getElementById('dateOfTest');
+		let year = dateOfTest.value.split('-')[0];
+		year = parseInt(year);
+		if (year < (new Date().getFullYear()) - 1 || year > new Date().getFullYear()){
+			event.preventDefault();
+			dateOfTest.className = 'btn-danger';
+			alert('Niewłaściwy rok. Proszę poprawić');
+		}
+	});
+
+
+</script>
+{% endblock javascript %}
