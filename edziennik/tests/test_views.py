@@ -564,6 +564,36 @@ class TestAttendance_CheckView(TestCase):
         # one of the three students should have homework
         assert len(class_date.has_homework.all()) == 1
 
+    def test_attendance_check_view_for_staff_polish_characters(self):
+        """
+        polish characters in subject
+        """
+        data = {
+            'student': [1,],
+            'class_subject': 'Óweśź ąśćtęź',
+            'homework': [1, ]
+        }
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        group1 = mixer.blend('edziennik.Group', lector=lector1)
+        student1 = mixer.blend('edziennik.Student', group=group1)
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:attendance_check', args=(group1.id,))
+        expected_url = reverse('edziennik:group', args=(group1.id,))
+
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # one ClassDate object should be created
+        assert ClassDate.objects.all().count() == 1
+
+        # ClassDate subject should be: 'Óweśź ąśćtęź'
+        self.assertEqual(
+            ClassDate.objects.all().first().subject, 'Óweśź ąśćtęź')
+
+
 
 # class TestAdd_GradesView(TestCase):
 #     def setUp(self):
