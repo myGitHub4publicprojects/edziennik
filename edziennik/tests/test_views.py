@@ -565,6 +565,64 @@ class TestAttendance_CheckView(TestCase):
         assert len(class_date.has_homework.all()) == 1
 
 
+# class TestAdd_GradesView(TestCase):
+#     def setUp(self):
+#         User.objects.create_superuser(
+#             username='admin', email='jlennon@beatles.com', password='glassonion')
+#         User.objects.create_user(
+#             'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
+
+#     def test_attendance_check_view_for_non_staff(self):
+#         """
+#         non staff user should not have access - status code 404
+#         """
+#         client = Client()
+#         group = mixer.blend('edziennik.Group')
+#         response = self.client.get(
+#             reverse('edziennik:attendance_check', args=(group.id,)))
+#         self.assertEqual(response.status_code, 404)
+
+#     def test_attendance_check_view_for_staff(self):
+#         """
+#         staff user should have access - status code 200
+#         """
+#         data = {
+#             'student': [1, 2],
+#             'class_subject': 'test_subject',
+#             'homework': [1, ]
+#         }
+#         client = Client()
+#         lector1 = mixer.blend('edziennik.Lector')
+#         lector2 = mixer.blend('edziennik.Lector')
+#         group1 = mixer.blend('edziennik.Group', lector=lector1)
+#         student1 = mixer.blend('edziennik.Student', group=group1)
+#         student2 = mixer.blend('edziennik.Student', group=group1)
+#         student3 = mixer.blend('edziennik.Student', group=group1)
+#         logged_in = self.client.login(
+#             username='admin', password='glassonion')
+#         url = reverse('edziennik:attendance_check', args=(group1.id,))
+#         expected_url = reverse('edziennik:group', args=(group1.id,))
+
+#         response = self.client.post(url, data, follow=True)
+#         # should give code 200 as follow is set to True
+#         assert response.status_code == 200
+
+#         # one ClassDate object should be created
+#         assert len(ClassDate.objects.all()) == 1
+
+#         # only lector1 sould have one hour
+#         assert len(lector1.classdate_set.all()) == 1
+
+#         # lector2 should have no hours
+#         assert len(lector2.classdate_set.all()) == 0
+
+#         # two of the three students should have attendance
+#         class_date = ClassDate.objects.first()
+#         assert len(class_date.student.all()) == 2
+
+#         # one of the three students should have homework
+#         assert len(class_date.has_homework.all()) == 1
+
 class TestAdvanced_SettingsView(TestCase):
     def setUp(self):
         User.objects.create_superuser(

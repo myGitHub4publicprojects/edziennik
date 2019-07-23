@@ -26,7 +26,7 @@ Temat lekcji: <input type="text" name="class_subject" required />
 	{% for student in students %}
 	<tr>
 		<td>
-			<label for="student{{ forloop.counter }}">{{ student.name }}</label><br />
+			<label for="student{{ forloop.counter }}">{{ student }}</label><br />
 		</td>
 		<td>
 				<input type="checkbox"

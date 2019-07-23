@@ -81,11 +81,11 @@ def lector(request, pk):
     # for dates between Sep and Dec
     if today.month in range(9,13):
         start_date = datetime.date(year=today.year, month=9, day=1)
-        end_date = datetime.date(year=today.year + 1, month=6, day=30)
-    # for dates between Jan and Jun
+        end_date = datetime.date(year=today.year + 1, month=8, day=30)
+    # for dates between Jan and Aug
     else:
         start_date = datetime.date(year=today.year - 1, month=9, day=1)
-        end_date = datetime.date(year=today.year, month=6, day=30)
+        end_date = datetime.date(year=today.year, month=8, day=30)
     all_hours = ClassDate.objects.filter(lector=lector)
     hours_in_current_year = all_hours.filter(
         date_of_class__range=[start_date, end_date])
