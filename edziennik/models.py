@@ -10,12 +10,6 @@ class Lector(models.Model):
     def __str__(self):              
         return self.user.username
 
-class Group(models.Model):
-    name = models.CharField(max_length=200)
-    lector = models.ForeignKey(Lector, on_delete=models.CASCADE)
-
-    def __str__(self):              
-        return self.name
 
 class Parent(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -45,7 +39,6 @@ class Student(models.Model):
     avaliability = models.CharField(max_length=400)
     other_classes = models.CharField(max_length=200, null=True, blank=True)
     focus = models.CharField(max_length=200)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -59,6 +52,16 @@ class Student(models.Model):
     def __str__(self):              
         return self.first_name + ' ' + self.last_name
 
+
+class Group(models.Model):
+    name = models.CharField(max_length=200)
+    lector = models.ForeignKey(Lector, on_delete=models.CASCADE)
+    student = models.ManyToManyField(Student, related_name="group_student")
+
+    def __str__(self):
+        return self.name
+
+
 class ClassDate(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     date_of_class = models.DateField()
@@ -66,6 +69,7 @@ class ClassDate(models.Model):
     student = models.ManyToManyField(Student, related_name="student")
     has_homework = models.ManyToManyField(Student, related_name="has_homework")
     lector = models.ForeignKey(Lector, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     
     def __str__(self):
         return str(self.date_of_class)
@@ -76,6 +80,7 @@ class Grades(models.Model):
     name = models.CharField(max_length = 200) # what is the grade for
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField()
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.name)

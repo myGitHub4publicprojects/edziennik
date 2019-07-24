@@ -73,7 +73,8 @@ def generate_weekly_admin_report():
         output = ''
     for class_date in class_dates:
         students = class_date.student.all()
-        group = students.first().group
+        # group = students.first().group
+        group = class_date.group
         date = class_date.date_of_class
         head = 'On %s\nin group: %s\n' % (str(date), group.name)
         f = 'the following students were present:'
@@ -90,7 +91,8 @@ def generate_weekly_admin_report():
     for g in grades:
         date = g.timestamp.date()
         student = g.student
-        group = student.group.name
+        # group = student.group.name
+        group = g.group.name
         name = g.name
         score = g.score
         g_str = ' '.join([str(date), 'group:', group, 'student:', str(student),

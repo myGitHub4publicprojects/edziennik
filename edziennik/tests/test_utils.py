@@ -32,18 +32,22 @@ class Testgenerate_weekly_admin_report(TestCase):
         should return attendance report with one date and one student
         """
         yesterday = today-timedelta(1)
-        group = mixer.blend(Group, name='g1')
+        
         student1 = mixer.blend(Student,
                                first_name='f1',
                                last_name='l1',
-                               group=group)
+                               )
         student2 = mixer.blend(Student,
                                first_name='f2',
                                last_name='l2',
-                               group=group)
+                               )
+
+        group = mixer.blend(Group, name='g1')
+        group.student.add(student1, student2)
         class_date = mixer.blend(ClassDate,
                                 date_of_class=yesterday,
-                                subject='subject1')
+                                subject='subject1',
+                                group=group)
         class_date.student.add(student1)
         class_date.save()
 
@@ -63,18 +67,20 @@ class Testgenerate_weekly_admin_report(TestCase):
         one grade for one student
         """
         yesterday = today-timedelta(1)
-        group = mixer.blend(Group, name='g1')
         student1 = mixer.blend(Student,
                                 first_name='f1',
                                 last_name='l1',
-                                group=group)
+                                )
         student2 = mixer.blend(Student,
                                 first_name='f2',
                                 last_name='l2',
-                                group=group)
+                                )
+        group = mixer.blend(Group, name='g1')
+        group.student.add(student1, student2)
         class_date = mixer.blend(ClassDate,
                                 date_of_class=yesterday,
-                                subject='subject1')
+                                subject='subject1',
+                                group=group)
         class_date.student.add(student1)
         class_date.save()
 
@@ -85,7 +91,8 @@ class Testgenerate_weekly_admin_report(TestCase):
         grade = Grades.objects.create(
                 name='g1',
                 student = student1,
-                score = 2)
+                score = 2,
+                group=group)
         head2 = '\n' + 'Last week the following grades were given:\n'
         students_grades = ' '.join([str(grade.timestamp.date()), 'group:', group.name, 'student:', str(student1),
                          'for:', grade.name, 'score:', str(grade.score), '\n'])
