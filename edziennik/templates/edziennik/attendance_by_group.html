@@ -10,7 +10,7 @@
       <th>data</th>
       <th>temat</th>
       {% for student in students %}
-      <th><a href="{% url 'edziennik:student' student.id %}">{{ student.name }}</a></th>
+      <th><a href="{% url 'edziennik:student' student.id %}">{{ student }}</a></th>
       {% endfor %}
     </tr>
     

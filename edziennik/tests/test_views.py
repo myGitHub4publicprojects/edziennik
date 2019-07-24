@@ -616,6 +616,7 @@ class TestAttendance_CheckView(TestCase):
             ClassDate.objects.all().first().subject, 'Óweśź ąśćtęź')
 
 
+# attendance_by_group - write tests
 
 class TestAdd_GradesView(TestCase):
     def setUp(self):

@@ -240,7 +240,7 @@ def group_check(request, pk):
     lector = group.lector
     if not request.user.is_superuser and request.user != lector.user:
         raise Http404
-    students = Student.objects.filter(group=group)
+    students = group.student.all()
     context = {
         'group': group,
         'students': students,
@@ -345,8 +345,7 @@ def attendance_by_group(request, group_id):
     lector = group.lector
     if not request.user.is_superuser and request.user != lector.user:
         raise Http404
-    students = group.student_set.all()
-    table_header = ['data', 'temat'] + list(students)
+    students = group.student.all()
     table_content = []
     classes_in_group = ClassDate.objects.filter(student__in=students).distinct().order_by('date_of_class')
 
