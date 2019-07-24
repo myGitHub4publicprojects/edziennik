@@ -110,41 +110,48 @@ def lector(request, pk):
 def student(request, pk):
     '''displays info about a given student'''
     student = get_object_or_404(Student, pk = pk)
-    lector = student.group.lector
     parents = [parent.user for parent in Parent.objects.all()]
-    group = student.group
-    if not (request.user.is_superuser) and (request.user != lector.user) and not (
+    groups = student.group_student.all()
+    lectors = [group.lector.user for group in groups]
+    if not (request.user.is_superuser) and (request.user not in lectors) and not (
         request.user in parents):
         raise Http404
-    grades = Grades.objects.filter(student=student)
-    grade_list = [(g.date_of_test.strftime("%d/%m/%Y"), g.name, g.score) for g in grades]
-    
-    students = Student.objects.filter(group=group) # all students in this group
-    all_classes = ClassDate.objects.filter(student__in=students).distinct().order_by('date_of_class') #all clases in this group
-    # check students attendance and build an array
-    attendence_table_header = ['data', 'temat', 'obecnosc']
-    attendance_table_content = []
-    for date in all_classes:
-        date_string = date.date_of_class.strftime("%d/%m/%Y")
-        subject = date.subject
-        if student.student.filter(date_of_class=date.date_of_class):
-            if  not student.has_homework.filter(date_of_class=date.date_of_class):
-                img_url = static('img/green_on_red.png')
+    student_groups = []
+    for group in groups:
+        grades = Grades.objects.filter(student=student, group=group)
+        grade_list = [(g.date_of_test.strftime("%d/%m/%Y"), g.name, g.score) for g in grades]
+        
+        # students = group.student.all() # all students in this group
+        all_classes = ClassDate.objects.filter(group=group).order_by('date_of_class') #all clases in this group
+        # check students attendance and build an array
+        attendence_table_header = ['data', 'temat', 'obecnosc']
+        attendance_table_content = []
+        for date in all_classes:
+            date_string = date.date_of_class.strftime("%d/%m/%Y")
+            subject = date.subject
+            if student.student.filter(date_of_class=date.date_of_class):
+                if  not student.has_homework.filter(date_of_class=date.date_of_class):
+                    img_url = static('img/green_on_red.png')
+                else:
+                    img_url = static('img/check_sign_icon_green.png')
             else:
-                img_url = static('img/check_sign_icon_green.png')
-        else:
-            img_url = static('img/x-mark-red.png')
-            
-        row = [date_string, subject, '<img src=%s>' % img_url]
-        attendance_table_content.append(row)
+                img_url = static('img/x-mark-red.png')
+                
+            row = [date_string, subject, '<img src=%s>' % img_url]
+            attendance_table_content.append(row)
+        student_group = {
+            'group': group,
+            'grade_list': grade_list,
+            'attendence_table_header': attendence_table_header,
+            'attendance_table_content': attendance_table_content,
+        }
+        student_groups.append(student_group)
+
     context = {
         'student': student,
-        'lector': lector,
-        'group': group,
-        'grade_list': grade_list,
-        'attendence_table_header': attendence_table_header,
-        'attendance_table_content': attendance_table_content,
+        'student_groups': student_groups,
         }
+    
     return render(request, 'edziennik/student.html', context)
 
 
@@ -162,7 +169,7 @@ def group(request, pk):
     lector = group.lector
     if not request.user.is_superuser and request.user != lector.user:
         raise Http404
-    students = Student.objects.filter(group=group)
+    students = group.student.all()
     grades_in_this_group = Grades.objects.filter(student__in=students)
 
     dates_grades = []
@@ -248,7 +255,7 @@ def attendance_check(request, pk):
     group = get_object_or_404(Group, pk=pk)
 
     # checks if attendance was checked today in this group, if yes, error
-    for i in ClassDate.objects.filter(student__in=group.student_set.all()):
+    for i in ClassDate.objects.filter(group=group):
         if i.date_of_class == datetime.date.today():
             context = {
             'error_message': "BYLA JUZ DZIS SPRAWDZANA OBECNOSC W TEJ GRUPIE",
@@ -261,7 +268,8 @@ def attendance_check(request, pk):
     class_subject = request.POST.get('class_subject')
     class_date = ClassDate.objects.create(  date_of_class=datetime.datetime.today(),
                                             subject = class_subject,
-                                            lector = group.lector)
+                                            lector = group.lector,
+                                            group=group)
     have_homework = request.POST.getlist('homework')
     for id in selected_student_list:
         student = Student.objects.get(id=id)
@@ -299,7 +307,7 @@ def attendance_check(request, pk):
 
         
     # notify parents of absence
-    absentees = group.student_set.exclude(id__in=selected_student_list)
+    absentees = group.student.all().exclude(id__in=selected_student_list)
     admin_profile = Admin_Profile.objects.all().first()
     if admin_profile:
         if admin_profile.sms_when_absent:
