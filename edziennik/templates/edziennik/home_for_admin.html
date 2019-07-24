@@ -43,7 +43,7 @@
     {% if lectors %}
     {% for lector in lectors %}
     <a href="{% url 'edziennik:lector' lector.id %}">
-        <button class="btn btn-lg blue-btn">{{ lector.user.get_full_name }}</button>
+        <button class="btn btn-lg blue-btn">{{ lector.user }}</button>
     </a>
     {% endfor %}
     {% else %}
