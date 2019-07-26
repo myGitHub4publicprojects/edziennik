@@ -527,92 +527,89 @@ class TestGroupView(TestCase):
         self.assertEqual(len(response_table_content[0]), 2+2)
 
 
-# class TestShow_Group_GradesView(TestCase):
-#     def setUp(self):
-#         User.objects.create_superuser(
-#             username='admin', email='jlennon@beatles.com', password='glassonion')
-#         User.objects.create_user(
-#             'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
+class TestShow_Group_GradesView(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+        User.objects.create_user(
+            'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
 
-#     def test_show_group_grades_for_non_staff(self):
-#         """
-#         non staff user should not have access - status code 404
-#         """
-#         client = Client()
-#         group = mixer.blend('edziennik.Group')
-#         response = self.client.get(
-#             reverse('edziennik:show_group_grades', args=(group.id,)))
-#         self.assertEqual(response.status_code, 404)
+    def test_show_group_grades_for_non_staff(self):
+        """
+        non staff user should not have access - status code 404
+        """
+        client = Client()
+        group = mixer.blend('edziennik.Group')
+        response = self.client.get(
+            reverse('edziennik:show_group_grades', args=(group.id,)))
+        self.assertEqual(response.status_code, 404)
 
-#     def test_show_group_grades_for_staff(self):
-#         """
-#         staff user should have access - status code 200,
-#         attendance was checked yesterday and today (should be 2 dates),
-#         yesterday only student1 present with homework,
-#         today there should student2 and student3 present and student1 absent,
-#         today student2 with and student3 without homework,
-#         """
-#         client = Client()
-#         student1 = mixer.blend('edziennik.Student')
-#         student2 = mixer.blend('edziennik.Student')
-#         student3 = mixer.blend('edziennik.Student')
-#         group1 = mixer.blend('edziennik.Group')
-#         group1.student.add(student1, student2, student3)
-#         c_date1 = mixer.blend('edziennik.ClassDate',
-#                               date_of_class=today - timedelta(days=1),
-#                               group=group1)
-#         c_date1.student.add(student1)
-#         c_date1.has_homework.add(student1)
-#         c_date2 = mixer.blend('edziennik.ClassDate',
-#                               date_of_class=today,
-#                               group=group1)
-#         c_date2.student.add(student2, student3)
-#         c_date2.has_homework.add(student2)
+    def test_show_group_grades_for_staff(self):
+        """
+        staff user should have access - status code 200,
+        yesterday student1 got grade 1, student 2 got grade 2,
+        today student 2 got grade 3, and student 3 got grade 4
+        """
+        client = Client()
+        student1 = mixer.blend('edziennik.Student')
+        student2 = mixer.blend('edziennik.Student')
+        student3 = mixer.blend('edziennik.Student')
+        group1 = mixer.blend('edziennik.Group')
+        group1.student.add(student1, student2, student3)
 
-#         logged_in = self.client.login(
-#             username='admin', password='glassonion')
-#         url = reverse('edziennik:show_group_grades', args=(group1.id,))
 
-#         response = self.client.post(url, follow=True)
-#         # should give code 200 as follow is set to True
-#         assert response.status_code == 200
+        grade1 = Grades.objects.create(
+            date_of_test=today-timedelta(days=1),
+            score=1,
+            student=student1,
+            name='t',
+            group=group1
+        )
 
-#         table_content = list(response.context['table_content'])
-#         # [['25/07/2019', 'testowy temat', '<img sr[159 chars]g>']...
-#         yesterday_row = table_content[0]
-#         today_row = table_content[1]
-#         # there should be two dates displayed (yesterdays and todays)
-#         self.assertEqual(len(table_content), 2)
-#         date1 = yesterday_row[0]
-#         date2 = today_row[0]
-#         self.assertEqual(date1, (today-timedelta(days=1)).strftime("%d/%m/%Y"))
-#         self.assertEqual(date2, today.strftime("%d/%m/%Y"))
+        grade2 = Grades.objects.create(
+            date_of_test=today-timedelta(days=1),
+            score=2,
+            student=student2,
+            name='t',
+            group=group1
+        )
+        grade3 = Grades.objects.create(
+            date_of_test=today,
+            score=3,
+            student=student2,
+            name='t',
+            group=group1
+        )
+        grade4 = Grades.objects.create(
+            date_of_test=today,
+            score=4,
+            student=student3,
+            name='t',
+            group=group1
+        )
 
-#         # student1 should have attendance and homework yesterday, 2 and 3 should not
-#         """ attendance with homework == 'img/check_sign_icon_green.png'
-#             absence == 'img/x-mark-red.png'
-#             order of students in table head: 'date', 'subject', student1, s2, s3..
-#         """
-#         present_with_hw = '<img src=%s>' % static(
-#             'img/check_sign_icon_green.png')
-#         absent_sign = '<img src=%s>' % static('img/x-mark-red.png')
-#         self.assertEqual(present_with_hw, yesterday_row[2])
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:show_group_grades', args=(group1.id,))
+        response = self.client.post(url, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
 
-#         # student2 and student3 should not have absence yesterday
-#         self.assertEqual(absent_sign, yesterday_row[3])
-#         self.assertEqual(absent_sign, yesterday_row[4])
+        table_content = response.context['table_content']
+        # [['25/07/2019', 't', 1, 2, '-'], ['26/07/2019', 't', '-', 3, 4]]
+        yesterday_row = table_content[0]
+        today_row = table_content[1]
+        # order of items in row: date, name, student1 score, s2 score, s3 score
+        # s1 should have grade 1 yesterday
+        self.assertEqual(yesterday_row[2], 1)
 
-#         # student2 and present today with homework
-#         self.assertEqual(present_with_hw, today_row[3])
+        # s2 should have grade 2 yesterday
+        self.assertEqual(yesterday_row[3], 2)
 
-#         # student1 absent today
-#         self.assertEqual(absent_sign, today_row[2])
+        # s2 should have grade 3 today
+        self.assertEqual(today_row[3], 3)
 
-#         # student3 present today but no homework
-#         present_with_no_hw = '<img src=%s>' % static(
-#             'img/green_on_red.png')
-#         self.assertEqual(present_with_no_hw, today_row[4])
-
+        # s3 should have grade 4 today
+        self.assertEqual(today_row[4], 4)
 
 
 class TestGroup_CheckView(TestCase):

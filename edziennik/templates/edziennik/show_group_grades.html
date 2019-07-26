@@ -4,7 +4,7 @@
 <p>Nazwa grupy: <b>{{ group.name }}</b></p>
 {% if request.user.is_superuser %}
 <p>Lektor prowadzący: 
-  <a href="{% url 'edziennik:lector' lector.id %}">
+  <a href="{% url 'edziennik:lector' group.lector.id %}">
     <b>{{ lector.user.get_full_name }}</b>
   </a>
 </p>

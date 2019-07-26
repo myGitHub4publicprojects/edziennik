@@ -202,8 +202,7 @@ def show_group_grades(request, pk):
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
-    lector = group.lector
-    if not request.user.is_superuser and request.user != lector.user:
+    if not request.user.is_superuser and request.user != group.lector.user:
         raise Http404
     students = group.student.all()
     grades_in_this_group = Grades.objects.filter(student__in=students)
@@ -227,7 +226,6 @@ def show_group_grades(request, pk):
     context = {
         'students': students,
         'group': group,
-        'lector': lector,
         'table_content': table_content,
     }
     return render(request, 'edziennik/show_group_grades.html', context)
