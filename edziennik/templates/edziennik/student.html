@@ -11,74 +11,77 @@
         <button type="submit">Login</button>
     </form>
 {% else %}
-
     {% if request.user.is_superuser or request.user == lector.user or request.user == student.parent.user  %}
+        <section class="mb-5">
+        <h1 class="text-center">{{ student }}</h1>
+        <hr>
+        <h2 class="text-center mt-3">Oceny</h2>
+        {% for student_group in student_groups %}
+            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>{{ student_group.group.lector.user.get_full_name}}</b></p>
+            
+                {% if student_group.grade_list %}
+                <table class="table">
+                    <tr>
+                        <th>Data</th>
+                        <th>Za co</th>
+                        <th>Ocena</th>
+                    </tr>
+                    {% for i in student_group.grade_list %}
+                    <tr>
+                        {% for j in i %}
+                        <td>{{ j }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
 
-    <h1>{{ student.name }}</h1>
-    <p>Grupa: <b>{{ group.name }}</b>, Lektor: <b>{{ lector.user.get_full_name}}</b></p>
-
-
-    <h2>Oceny:</h2>
-
-        {% if grade_list %}
-        
-        <table class="table">
-            <tr>
-                <th>Data</th>
-                <th>Za co</th>
-                <th>Ocena</th>
-            </tr>
-            {% for i in grade_list %}
-            <tr>
-                {% for j in i %}
-                <td>{{ j }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
-
-        {% else %}
-        <p>Nie ma jeszcze żadnych ocen</p>
-        {% endif %}
-
+                {% else %}
+                <p>Nie ma jeszcze żadnych ocen</p>
+                {% endif %}
+            <hr class="mb-3">
+        {% endfor %}
+        </section>
     {% else %}
 
-    nie masz uprawnień
-
+        nie masz uprawnień
+        
     {% endif %}
 
     {% if request.user.is_superuser or request.user == lector.user %}
-    <h2>Frekwencja</h2>
-    <table class="table">
-        <tr>
-        {% for i in attendence_table_header %}
-        <td>{{ i }}</td>
+        
+        <h2 class="text-center">Frekwencja</h2>
+        {% for student_group in student_groups %}
+            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>{{ student_group.group.lector.user.get_full_name}}</b></p>
+            <table class="table">
+                <tr>
+                {% for i in student_group.attendence_table_header %}
+                <td>{{ i }}</td>
+                {% endfor %}
+                </tr>
+
+                {% for i in student_group.attendance_table_content %}
+                <tr>
+                {% for j in i %}
+                <td>{{ j|safe }}</td>
+                {% endfor %}  
+                </tr>
+                {% endfor %}
+            </table>
+
+            <table class="table">
+                    <tr>
+                        <td><img src="{% static 'img/x-mark-red.png' %}"></td>
+                        <td><img src="{% static 'img/check_sign_icon_green.png' %}"></td>
+                        <td><img src="{% static 'img/green_on_red.png' %}"></td>
+                    </tr>
+                    <tr>
+                        <td>nieobecny</td>
+                        <td>obecny</td>
+                        <td>obecny bez zadania domowego</td>
+                    </tr>
+            </table>
+            <hr>
         {% endfor %}
-        </tr>
-
-        {% for i in attendance_table_content %}
-        <tr>
-          {% for j in i %}
-          <td>{{ j|safe }}</td>
-          {% endfor %}  
-        </tr>
-        {% endfor %}
-    </table>
-
-    <table class="table">
-            <tr>
-                <td><img src="{% static 'img/x-mark-red.png' %}"></td>
-                <td><img src="{% static 'img/check_sign_icon_green.png' %}"></td>
-                <td><img src="{% static 'img/green_on_red.png' %}"></td>
-            </tr>
-            <tr>
-                <td>nieobecny</td>
-                <td>obecny</td>
-                <td>obecny bez zadania domowego</td>
-            </tr>
-    </table>
-
-
     {% endif %}
 
 {% endif %}

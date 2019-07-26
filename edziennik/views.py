@@ -205,7 +205,7 @@ def show_group_grades(request, pk):
     lector = group.lector
     if not request.user.is_superuser and request.user != lector.user:
         raise Http404
-    students = Student.objects.filter(group=group)
+    students = group.student.all()
     grades_in_this_group = Grades.objects.filter(student__in=students)
 
     dates_grades = []
@@ -347,7 +347,7 @@ def attendance_by_group(request, group_id):
         raise Http404
     students = group.student.all()
     table_content = []
-    classes_in_group = ClassDate.objects.filter(student__in=students).distinct().order_by('date_of_class')
+    classes_in_group = ClassDate.objects.filter(group=group).order_by('date_of_class')
 
     for i in classes_in_group:
         row = [i.date_of_class.strftime("%d/%m/%Y"), i.subject]
@@ -380,7 +380,7 @@ def group_grades(request, group_id):
     lector = group.lector
     if not request.user.is_superuser and request.user != lector.user:
         raise Http404
-    students = Student.objects.filter(group=group)
+    students = group.student.all()
     context = {
         'group': group,
         'students': students,
@@ -392,11 +392,11 @@ def add_grades(request, pk):
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
-    students = Student.objects.filter(group=group)
+    students = group.student.all()
     date_of_test = request.POST.get('date_of_test') or datetime.datetime.today()
     grade_name = request.POST.get('grade_name')
     for student in students:
-        if request.POST.get(student.name):
+        if request.POST.get(str(student)):
             todays_grades = Grades.objects.filter(student=student)
             # make sure grade with this name is not already added
             if todays_grades.filter(name=grade_name, date_of_test=date_of_test):
@@ -407,7 +407,8 @@ def add_grades(request, pk):
                 name=grade_name,
                 date_of_test=date_of_test,
                 student = student,
-                score = request.POST.get(student.name)
+                score=request.POST.get(str(student)),
+                group=group
                 )
 
     messages.success(request, "Oceny w grupie %s dodane" % group.name)
@@ -418,7 +419,7 @@ def add_quizlet(request, pk):
     if not request.user.is_superuser:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
-    students = Student.objects.filter(group=group)
+    students = group.student.all()
     context = {
         'group': group,
         'students': students,

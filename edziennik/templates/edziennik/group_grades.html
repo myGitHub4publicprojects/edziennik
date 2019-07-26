@@ -19,8 +19,8 @@
 	<table class="table">
 	{% for student in students %}
 		<tr>
-	    	<td><label for="student{{ forloop.counter }}">{{ student.name }}</label></td>
-	    	<td><input type="number" min="1" max="6" name="{{ student.name }}" id="student{{ forloop.counter }}" /><br /></td>
+	    	<td><label for="student{{ forloop.counter }}">{{ student }}</label></td>
+	    	<td><input type="number" min="1" max="6" name="{{ student }}" id="student{{ forloop.counter }}" /><br /></td>
 	    </tr>
 	{% endfor %}
 	</table>
