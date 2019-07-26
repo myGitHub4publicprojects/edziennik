@@ -397,13 +397,13 @@ def add_grades(request, pk):
     grade_name = request.POST.get('grade_name')
     for student in students:
         if request.POST.get(str(student)):
-            todays_grades = Grades.objects.filter(student=student)
+            todays_grades = Grades.objects.filter(student=student, group=group)
             # make sure grade with this name is not already added
             if todays_grades.filter(name=grade_name, date_of_test=date_of_test):
-                messages.error(request, "Ocena za %s  w dniu %s byla juz dodana uczniowi %s. Sprobuj jeszcze raz" % (grade_name, date_of_test, student.name))
+                messages.error(request, "Ocena za %s  w dniu %s byla juz dodana uczniowi %s. Sprobuj jeszcze raz" % (grade_name, date_of_test, str(student)))
                 return redirect('edziennik:group_grades', group_id=pk)
             # add grade
-            instance = Grades.objects.create(
+            Grades.objects.create(
                 name=grade_name,
                 date_of_test=date_of_test,
                 student = student,
