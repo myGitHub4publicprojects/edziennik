@@ -46,7 +46,7 @@ class Student(models.Model):
         )
     gender = models.CharField(
         max_length=1, choices=GENDER_CHOICES, verbose_name='Płeć ucznia')
-    quizlet = models.BooleanField(default=False) # give student reward for activity on quizlet
+    # quizlet = models.BooleanField(default=False) # give student reward for activity on quizlet
     quizlet_username = models.CharField(max_length=30, blank=True)
 
     def __str__(self):              
@@ -57,6 +57,7 @@ class Group(models.Model):
     name = models.CharField(max_length=200)
     lector = models.ForeignKey(Lector, on_delete=models.CASCADE)
     student = models.ManyToManyField(Student, related_name="group_student", blank=True)
+    quizlet_group_url = models.URLField(blank=True)
 
     def __str__(self):
         return self.name
@@ -84,6 +85,13 @@ class Grades(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+class Quizlet(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class SMS(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
