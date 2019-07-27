@@ -1009,6 +1009,55 @@ class TestAdd_GradesView(TestCase):
             'test grade', today, str(student2))
         self.assertEqual(all_messages[0].message, expectd_msg)
 
+
+class TestAdd_QuizletView(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+        User.objects.create_user(
+            'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
+
+    def test_add_quizlet_for_non_staff(self):
+        """
+        non staff user should not have access - status code 404
+        """
+        client = Client()
+        group = mixer.blend('edziennik.Group')
+        response = self.client.get(
+            reverse('edziennik:add_quizlet', args=(group.id,)))
+        self.assertEqual(response.status_code, 404)
+
+    def test_add_quizlet_for_staff(self):
+        """
+        staff user should have access - status code 200,
+        there are 3 students,
+        2 of the 3 are in the same group,
+        """
+        client = Client()
+        student1 = mixer.blend('edziennik.Student')
+        student2 = mixer.blend('edziennik.Student')
+        student3 = mixer.blend('edziennik.Student')
+        group1 = mixer.blend('edziennik.Group')
+        group1.student.add(student1, student2)
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:add_quizlet', args=(group1.id,))
+
+        response = self.client.post(url, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        group = response.context['group']
+        students = response.context['students']
+
+        # should return group1
+        self.assertEqual(group, group1)
+
+        # there should be 2 students (student1, student2) in this group
+        self.assertEqual(students.count(), 2)
+
+        
 class TestAdvanced_SettingsView(TestCase):
     def setUp(self):
         User.objects.create_superuser(
