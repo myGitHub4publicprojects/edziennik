@@ -749,6 +749,52 @@ class TestAttendance_CheckView(TestCase):
         self.assertEqual(
             ClassDate.objects.all().first().subject, 'Óweśź ąśćtęź')
 
+    def test_attendance_check_view_for_staff_two_groups(self):
+        """
+        staff user should have access - status code 200
+        student1 is in group 1 and group 2,
+        student1 already has attendance today in group 2,
+        attendance is checked in group 1
+        """
+        data = {
+            'student': [1, 2],
+            'class_subject': 'test_subject',
+            'homework' : [1,]
+        }
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        lector2 = mixer.blend('edziennik.Lector')
+        student1 = mixer.blend('edziennik.Student')
+        student2 = mixer.blend('edziennik.Student')
+        student3 = mixer.blend('edziennik.Student')
+        group1 = mixer.blend('edziennik.Group', lector=lector1)
+        group2 = mixer.blend('edziennik.Group', lector=lector1)
+        group1.student.add(student1, student2, student3)
+        group2.student.add(student1)
+        mixer.blend('edziennik.ClassDate',
+                    date_of_class=today,
+                    group=group2,
+                    student=[1],
+                    subject='test_subject')
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:attendance_check', args=(group1.id,))
+        expected_url = reverse('edziennik:group', args=(group1.id,))
+
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # there should be two ClassDate objects
+        assert ClassDate.objects.all().count() == 2
+
+        # newly created ClassDate should have student1 and student2
+        cd = ClassDate.objects.all().last()
+        students = cd.student.all()
+        self.assertTrue(students.filter(id=student1.id).exists())
+        self.assertTrue(students.filter(id=student1.id).exists())
+
+
 
 class TestAttendance_By_GroupView(TestCase):
     def setUp(self):
