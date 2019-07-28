@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from django.db.models.signals import m2m_changed
+# from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 
@@ -138,3 +139,14 @@ class Admin_Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+def student_added_to_group(sender, ** kwargs):
+    if kwargs['action'] == 'post_add':
+        group = kwargs['instance']
+        students_ids = kwargs['pk_set']
+        students = Student.objects.filter(id__in=students_ids)
+        for s in students:
+            Quizlet.objects.create(group=group,student=s)
+
+m2m_changed.connect(student_added_to_group, sender=Group.student.through)
