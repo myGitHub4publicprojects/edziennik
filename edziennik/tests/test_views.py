@@ -10,7 +10,8 @@ import pytest
 from datetime import date, datetime, timedelta
 from django.templatetags.static import static
 from freezegun import freeze_time
-from edziennik.models import Lector, Group, Parent, Student, ClassDate, Grades, Admin_Profile
+from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
+                              Admin_Profile, Quizlet)
 pytestmark = pytest.mark.django_db
 today = datetime.today().date()
 
@@ -1057,7 +1058,86 @@ class TestAdd_QuizletView(TestCase):
         # there should be 2 students (student1, student2) in this group
         self.assertEqual(students.count(), 2)
 
-        
+
+class TestProcess_QuizletView(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+        User.objects.create_user(
+            'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
+
+    def test_process_quizlet_view_for_non_staff(self):
+        """
+        non staff user should not have access - status code 404
+        """
+        client = Client()
+        group = mixer.blend('edziennik.Group')
+        response = self.client.get(
+            reverse('edziennik:process_quizlet', args=(group.id,)))
+        self.assertEqual(response.status_code, 404)
+
+    def test_process_quizlet_view_for_staff_no_preexisting_quizlet(self):
+        """
+        staff user should have access - status code 200
+        there are no quizlet instances
+        quizlet instances should be created,
+        two groups with same students,
+        quizlet True only in studetns in group1
+        """
+        data = {
+            'student': [1,2]
+        }
+        client = Client()
+        group1 = mixer.blend('edziennik.Group')
+        group2 = mixer.blend('edziennik.Group')
+        student1 = mixer.blend('edziennik.Student',
+                               first_name='s1', last_name='s1')
+        student2 = mixer.blend('edziennik.Student',
+                               first_name='s2', last_name='s2')
+        student3 = mixer.blend('edziennik.Student',
+                               first_name='s3', last_name='s3')
+        group1.student.add(student1, student2, student3)
+        group2.student.add(student1, student2, student3)
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:process_quizlet', args=(group1.id,))
+        expected_url = reverse('edziennik:name_home')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+        # should redirect
+        self.assertRedirects(response, expected_url,
+                             status_code=302, target_status_code=200)
+
+        # two Quizlet objects should be created
+        assert Quizlet.objects.all().count() == 2
+
+        # student2 should have quizlet status True in group1
+        self.assertTrue(Quizlet.objects.filter(student=student1, group=group1).exists())
+
+        # student1 should have no quizlet in group2
+        self.assertFalse(Quizlet.objects.filter(
+            student=student1, group=group2).exists())
+
+        # student2 should have quizlet status True in group1
+        self.assertTrue(Quizlet.objects.filter(
+            student=student2, group=group1).exists())
+
+        # student1 should have no quizlet in group2
+        self.assertFalse(Quizlet.objects.filter(
+            student=student2, group=group2).exists())
+
+        # student3 should have no quizlet
+        self.assertFalse(Quizlet.objects.filter(
+            student=student3).exists())
+
+        # should display success message
+        all_messages = [msg for msg in get_messages(response.wsgi_request)]
+        expectd_msg = "Punkty za quizlet w grupie %s dodane" % group1
+        self.assertEqual(all_messages[0].message, expectd_msg)
+
+
 class TestAdvanced_SettingsView(TestCase):
     def setUp(self):
         User.objects.create_superuser(

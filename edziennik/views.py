@@ -15,7 +15,7 @@ from django.urls import reverse
 from django.templatetags.static import static
 
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
-                              Admin_Profile)
+                              Admin_Profile, Quizlet)
 from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
@@ -424,15 +424,25 @@ def add_quizlet(request, pk):
         }
     return render(request, 'edziennik/add_quizlet.html', context)
 
-def process_quizlet(request):
+def process_quizlet(request, pk):
     if not request.user.is_superuser:
         raise Http404
+    group = get_object_or_404(Group, pk=pk)
     students = request.POST.getlist('student')
     for student in students:
         student_object = Student.objects.get(id=student)
-        student_object.quizlet = True
-        student_object.save()
-    messages.success(request, "Punkty za quizlet w grupie %s dodane" % student_object.group.name)
+        quizlet = Quizlet.objects.filter(student=student_object, group=group)
+        if quizlet.exists():
+            quizlet.status = True
+            quizlet.save()
+        else:
+            Quizlet.objects.create(
+                student=student_object,
+                group=group,
+                status=True
+            )
+
+    messages.success(request, "Punkty za quizlet w grupie %s dodane" % group)
     return redirect('edziennik:name_home')
 
 

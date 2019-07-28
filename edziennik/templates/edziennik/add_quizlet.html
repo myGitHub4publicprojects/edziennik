@@ -4,7 +4,7 @@
 
 <p>Nazwa grupy: <b>{{ group.name }}</b></p>
 
-<form action="{% url 'edziennik:process_quizlet' %}" method="post">
+<form action="{% url 'edziennik:process_quizlet' group.id%}" method="post">
 	{% csrf_token %}
     <table class="table">
             <tr>
