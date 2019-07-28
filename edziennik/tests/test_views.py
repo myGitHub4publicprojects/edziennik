@@ -1079,10 +1079,9 @@ class TestProcess_QuizletView(TestCase):
     def test_process_quizlet_view_for_staff_no_preexisting_quizlet(self):
         """
         staff user should have access - status code 200
-        there are no quizlet instances
-        quizlet instances should be created,
         two groups with same students,
         quizlet True only in studetns in group1
+        only students from group1 should get quizlet points
         """
         data = {
             'student': [1,2]
@@ -1110,27 +1109,27 @@ class TestProcess_QuizletView(TestCase):
         self.assertRedirects(response, expected_url,
                              status_code=302, target_status_code=200)
 
-        # two Quizlet objects should be created
-        assert Quizlet.objects.all().count() == 2
 
         # student2 should have quizlet status True in group1
-        self.assertTrue(Quizlet.objects.filter(student=student1, group=group1).exists())
+        self.assertTrue(Quizlet.objects.get(student=student1, group=group1).status)
 
-        # student1 should have no quizlet in group2
-        self.assertFalse(Quizlet.objects.filter(
-            student=student1, group=group2).exists())
+        # student1 should have quizlet status False in group2
+        self.assertFalse(Quizlet.objects.get(
+            student=student1, group=group2).status)
 
         # student2 should have quizlet status True in group1
-        self.assertTrue(Quizlet.objects.filter(
-            student=student2, group=group1).exists())
+        self.assertTrue(Quizlet.objects.get(
+            student=student2, group=group1).status)
 
-        # student1 should have no quizlet in group2
-        self.assertFalse(Quizlet.objects.filter(
-            student=student2, group=group2).exists())
+        # student2 should have quizlet status False in group2
+        self.assertFalse(Quizlet.objects.get(
+            student=student2, group=group2).status)
 
-        # student3 should have no quizlet
-        self.assertFalse(Quizlet.objects.filter(
-            student=student3).exists())
+        # student1 should have quizlet status False in group 1 and group2
+        self.assertFalse(Quizlet.objects.get(
+            student=student3, group=group1).status)
+        self.assertFalse(Quizlet.objects.get(
+            student=student3, group=group2).status)
 
         # should display success message
         all_messages = [msg for msg in get_messages(response.wsgi_request)]

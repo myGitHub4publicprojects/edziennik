@@ -431,16 +431,9 @@ def process_quizlet(request, pk):
     students = request.POST.getlist('student')
     for student in students:
         student_object = Student.objects.get(id=student)
-        quizlet = Quizlet.objects.filter(student=student_object, group=group)
-        if quizlet.exists():
-            quizlet.status = True
-            quizlet.save()
-        else:
-            Quizlet.objects.create(
-                student=student_object,
-                group=group,
-                status=True
-            )
+        quizlet = Quizlet.objects.get(student=student_object, group=group)
+        quizlet.status = True
+        quizlet.save()
 
     messages.success(request, "Punkty za quizlet w grupie %s dodane" % group)
     return redirect('edziennik:name_home')
