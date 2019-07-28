@@ -947,9 +947,10 @@ class TestAdd_GradesView(TestCase):
         self.assertFalse(Grades.objects.filter(student=student3).exists())
 
 
-    def test_add_grades_view_for_staff_preexisting_grade_today(self):
+    def test_add_grades_view_for_staff_preexisting_grade_today_in_this_group(self):
         """
         staff user should have access - status code 200
+        student already has today's grade with this name in this group
         should redirect to group_grades
         should generate message about duplicate grade
         """
@@ -1010,7 +1011,67 @@ class TestAdd_GradesView(TestCase):
             'test grade', today, str(student2))
         self.assertEqual(all_messages[0].message, expectd_msg)
 
+    def test_add_grades_view_for_staff_preexisting_grade_today_different_group(self):
+        """
+        staff user should have access - status code 200
+        student already has a grade with this name today but in different group
+        should proceed with adding grades in this group as normal
+        """
+        data = {
+            's1 s1': 1,
+            's2 s2': 2,
+            'grade_name': 'test grade',
+            'date_of_test': today
+        }
+        client = Client()
+        group1 = mixer.blend('edziennik.Group')
+        group2 = mixer.blend('edziennik.Group')
+        student1 = mixer.blend('edziennik.Student',
+                               first_name='s1', last_name='s1')
+        student2 = mixer.blend('edziennik.Student',
+                               first_name='s2', last_name='s2')
+        student3 = mixer.blend('edziennik.Student',
+                               first_name='s3', last_name='s3')
+        group1.student.add(student1, student2, student3)
+        group2.student.add(student1, student2, student3)
+        mixer.blend('edziennik.Grades',
+            group=group2,
+            date_of_test=today,
+            student=student1,
+            name='test grade',
+            score=6)
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
 
+        url = reverse('edziennik:add_grades', args=(group1.id,))
+        expected_url = reverse('edziennik:group_grades', args=(group1.id,))
+
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+      
+        # three Grade objects should exists (two new and one preexisting)
+        assert Grades.objects.all().count() == 3
+
+        # date of all grades should be today
+        assert Grades.objects.filter(date_of_test=today).count() == 3
+
+        # student1 should have grade 1 in group 1
+        grade = Grades.objects.get(student=student1, group=group1)
+        self.assertEqual(grade.score, 1)
+
+        # student1 should have grade 6 in group 2
+        grade = Grades.objects.get(student=student1, group=group2)
+        self.assertEqual(grade.score, 6)
+
+        # student 2 should have grade 2 in group 1
+        grade2 = Grades.objects.get(student=student2)
+        self.assertEqual(grade2.score, 2)
+
+        # student 3 should have no grades
+        self.assertFalse(Grades.objects.filter(student=student3).exists())
+
+       
 class TestAdd_QuizletView(TestCase):
     def setUp(self):
         User.objects.create_superuser(
