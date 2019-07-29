@@ -795,6 +795,48 @@ class TestAttendance_CheckView(TestCase):
         self.assertTrue(students.filter(id=student1.id).exists())
 
 
+    def test_attendance_check_view_for_staff_no_students(self):
+        """
+        staff user should have access - status code 200
+        there are no students present,
+        ClassDate should be created,
+        lector1 should get 1 hour
+        """
+        data = {
+            'student': [],
+            'class_subject': 'test_subject',
+            'homework': []
+        }
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        lector2 = mixer.blend('edziennik.Lector')
+        student1 = mixer.blend('edziennik.Student')
+        student2 = mixer.blend('edziennik.Student')
+        student3 = mixer.blend('edziennik.Student')
+        group1 = mixer.blend('edziennik.Group', lector=lector1)
+        group1.student.add(student1, student2, student3)
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:attendance_check', args=(group1.id,))
+        expected_url = reverse('edziennik:group', args=(group1.id,))
+
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # one ClassDate object should be created
+        assert ClassDate.objects.all().count() == 1
+
+        # only lector1 sould have one hour
+        assert lector1.classdate_set.all().count() == 1
+
+        # lector2 should have no hours
+        assert lector2.classdate_set.all().count() == 0
+
+        # no students should have attendance
+        class_date = ClassDate.objects.first()
+        assert class_date.student.all().count() == 0
+
 
 class TestAttendance_By_GroupView(TestCase):
     def setUp(self):
