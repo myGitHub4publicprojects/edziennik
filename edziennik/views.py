@@ -238,7 +238,10 @@ def group_check(request, pk):
     lector = group.lector
     if not request.user.is_superuser and request.user != lector.user:
         raise Http404
-    students = group.student.all()
+    students = []
+    for i in group.student.all():
+        quizlet = Quizlet.objects.get(student=i, group=group).status
+        students.append({'name': str(i), 'id': i.id, 'quizlet': quizlet})
     context = {
         'group': group,
         'students': students,

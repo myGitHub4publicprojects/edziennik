@@ -658,7 +658,7 @@ class TestGroup_CheckView(TestCase):
         self.assertEqual(group, group1)
 
         # there should be 2 students (student1, student2) in this group
-        self.assertEqual(students.count(), 2)
+        self.assertEqual(len(students), 2)
 
 
 class TestAttendance_CheckView(TestCase):
