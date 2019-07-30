@@ -838,6 +838,88 @@ class TestAttendance_CheckView(TestCase):
         assert class_date.student.all().count() == 0
 
 
+    def test_attendance_check_view_for_staff_error_msg(self):
+        """
+        staff user should have access - status code 200
+        should not allow to check attendance twice in the same day in same group,
+        without special 'additional_hour' input
+        """
+        data = {
+            'student': [1,],
+            'class_subject': 'test_subject',
+            'homework': [1,],
+            'additional_hour': False
+        }
+        client = Client()
+        lector1 = mixer.blend('edziennik.Lector')
+        student1 = mixer.blend('edziennik.Student')
+        group1 = mixer.blend('edziennik.Group', lector=lector1)
+        group1.student.add(student1)
+        mixer.blend('edziennik.ClassDate', date_of_class=today, group=group1)
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+        url = reverse('edziennik:attendance_check', args=(group1.id,))
+        expected_url = reverse('edziennik:group_check', args=(group1.id,))
+
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # no ClassDate object should be created, one preexisting
+        assert ClassDate.objects.all().count() == 1
+
+        # only lector1 sould get no hours
+        assert lector1.classdate_set.all().count() == 0
+
+        # should display message about preexisting classdate
+        msg = response.context['error_message']
+        expectd_msg = """BYLA JUZ DZIS SPRAWDZANA OBECNOSC W TEJ GRUPIE. Jeśli chcesz jeszcze raz zaznaczyć obecność kliknij i zaznacz 'dodatkowa godzina'"""
+        self.assertEqual(msg, expectd_msg)
+
+
+    # def test_attendance_check_view_for_staff_twice_same_day(self):
+    #     """
+    #     staff user should have access - status code 200
+    #     """
+    #     data = {
+    #         'student': [1, 2],
+    #         'class_subject': 'test_subject',
+    #         'homework': [1, ]
+    #     }
+    #     client = Client()
+    #     lector1 = mixer.blend('edziennik.Lector')
+    #     lector2 = mixer.blend('edziennik.Lector')
+    #     student1 = mixer.blend('edziennik.Student')
+    #     student2 = mixer.blend('edziennik.Student')
+    #     student3 = mixer.blend('edziennik.Student')
+    #     group1 = mixer.blend('edziennik.Group', lector=lector1)
+    #     group1.student.add(student1, student2, student3)
+    #     logged_in = self.client.login(
+    #         username='admin', password='glassonion')
+    #     url = reverse('edziennik:attendance_check', args=(group1.id,))
+    #     expected_url = reverse('edziennik:group', args=(group1.id,))
+
+    #     response = self.client.post(url, data, follow=True)
+    #     # should give code 200 as follow is set to True
+    #     assert response.status_code == 200
+
+    #     # one ClassDate object should be created
+    #     assert ClassDate.objects.all().count() == 1
+
+    #     # only lector1 sould have one hour
+    #     assert lector1.classdate_set.all().count() == 1
+
+    #     # lector2 should have no hours
+    #     assert lector2.classdate_set.all().count() == 0
+
+    #     # two of the three students should have attendance
+    #     class_date = ClassDate.objects.first()
+    #     assert class_date.student.all().count() == 2
+
+    #     # one of the three students should have homework
+    #     assert class_date.has_homework.all().count() == 1
+
+
 class TestAttendance_By_GroupView(TestCase):
     def setUp(self):
         User.objects.create_superuser(

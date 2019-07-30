@@ -250,16 +250,21 @@ def group_check(request, pk):
 
 def attendance_check(request, pk):
     ''' handles checked attendance of a group, adds one hour to a lector,
+    lector can check attendance again in same group same day only if 'additional_hour'
+    field is checked,
     and generates error message if attendance was checked earlier that day'''
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
 
-    # checks if attendance was checked today in this group, if yes, error
+    # checks if attendance was checked today in this group, if yes, error,
+    # if no 'additinal_hour' input
+    additional_hour = request.POST.get('additional_hour')
+    print(additional_hour)
     for i in ClassDate.objects.filter(group=group):
-        if i.date_of_class == datetime.date.today():
+        if i.date_of_class == datetime.date.today() and additional_hour == 'False':
             context = {
-            'error_message': "BYLA JUZ DZIS SPRAWDZANA OBECNOSC W TEJ GRUPIE",
+            'error_message': """BYLA JUZ DZIS SPRAWDZANA OBECNOSC W TEJ GRUPIE. Jeśli chcesz jeszcze raz zaznaczyć obecność kliknij i zaznacz 'dodatkowa godzina'""",
             'group': group,
             }
             return render(request, 'edziennik/group_check.html', context)
