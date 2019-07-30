@@ -260,7 +260,6 @@ def attendance_check(request, pk):
     # checks if attendance was checked today in this group, if yes, error,
     # if no 'additinal_hour' input
     additional_hour = request.POST.get('additional_hour')
-    print(additional_hour)
     for i in ClassDate.objects.filter(group=group):
         if i.date_of_class == datetime.date.today() and additional_hour == 'False':
             context = {
