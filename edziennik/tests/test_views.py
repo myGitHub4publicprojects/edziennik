@@ -666,7 +666,9 @@ class TestAttendance_CheckView(TestCase):
         User.objects.create_superuser(
             username='admin', email='jlennon@beatles.com', password='glassonion')
         User.objects.create_user(
-            'john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
+            username='john', email='lennon@thebeatles.com', password='johnpassword', is_staff=True)
+        User.objects.create_user(
+            username='ben', email='ben@thebeatles.com', password='benpassword', is_staff=True)
     def test_attendance_check_view_for_non_staff(self):
         """
         non staff user should not have access - status code 404
@@ -679,7 +681,8 @@ class TestAttendance_CheckView(TestCase):
 
     def test_attendance_check_view_for_staff_lector_checks(self):
         """
-        staff user should have access - status code 200
+        staff user should have access - status code 200,
+        there are two lectors,
         group lector checks attendance, he should get an hour
         """
         data = {
@@ -688,8 +691,100 @@ class TestAttendance_CheckView(TestCase):
             'homework' : [1,]
         }
         client = Client()
-        lector1 = mixer.blend('edziennik.Lector')
-        lector2 = mixer.blend('edziennik.Lector')
+        lector1 = Lector.objects.create(user=User.objects.get(username='john'))
+        lector2 = Lector.objects.create(user=User.objects.get(username='ben'))
+        student1 = mixer.blend('edziennik.Student')
+        student2 = mixer.blend('edziennik.Student')
+        student3 = mixer.blend('edziennik.Student')
+        group1 = mixer.blend('edziennik.Group', lector=lector1)
+        group1.student.add(student1, student2, student3)
+        logged_in = self.client.login(
+            username='john', password='johnpassword')
+        url = reverse('edziennik:attendance_check', args=(group1.id,))
+        expected_url = reverse('edziennik:group', args=(group1.id,))
+
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # one ClassDate object should be created
+        assert ClassDate.objects.all().count() == 1
+
+        # only lector1 sould have one hour
+        assert lector1.classdate_set.all().count() == 1
+
+        # lector2 should have no hours
+        assert lector2.classdate_set.all().count() == 0
+
+        # two of the three students should have attendance
+        class_date = ClassDate.objects.first()
+        assert class_date.student.all().count() == 2
+
+        # one of the three students should have homework
+        assert class_date.has_homework.all().count() == 1
+
+    def test_attendance_check_view_for_staff_substitution(self):
+        """
+        staff user should have access - status code 200
+        there are two lectors,
+        other lector checks attendance (substitution)
+        lector who checks should get an hour
+        """
+        data = {
+            'student': [1, 2],
+            'class_subject': 'test_subject',
+            'homework' : [1,]
+        }
+        client = Client()
+        lector1 = Lector.objects.create(user=User.objects.get(username='john'))
+        lector2 = Lector.objects.create(user=User.objects.get(username='ben'))
+        student1 = mixer.blend('edziennik.Student')
+        student2 = mixer.blend('edziennik.Student')
+        student3 = mixer.blend('edziennik.Student')
+        group1 = mixer.blend('edziennik.Group', lector=lector1)
+        group1.student.add(student1, student2, student3)
+
+        logged_in = self.client.login(
+            username='ben', password='benpassword')
+        self.assertTrue(logged_in)
+
+        url = reverse('edziennik:attendance_check', args=(group1.id,))
+        expected_url = reverse('edziennik:group', args=(group1.id,))
+
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # one ClassDate object should be created
+        assert ClassDate.objects.all().count() == 1
+
+        # lector1 sould have no hour
+        assert lector1.classdate_set.all().count() == 0
+
+        # lector2 should get one hour
+        assert lector2.classdate_set.all().count() == 1
+
+        # two of the three students should have attendance
+        class_date = ClassDate.objects.first()
+        assert class_date.student.all().count() == 2
+
+        # one of the three students should have homework
+        assert class_date.has_homework.all().count() == 1
+
+
+    def test_attendance_check_view_for_staff_admin_checks(self):
+        """
+        staff user should have access - status code 200,
+        group.lector should get an hour when admin checks
+        """
+        data = {
+            'student': [1, 2],
+            'class_subject': 'test_subject',
+            'homework' : [1,]
+        }
+        client = Client()
+        lector1 = Lector.objects.create(user=User.objects.get(username='john'))
+        lector2 = Lector.objects.create(user=User.objects.get(username='ben'))
         student1 = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         student3 = mixer.blend('edziennik.Student')
@@ -719,91 +814,6 @@ class TestAttendance_CheckView(TestCase):
 
         # one of the three students should have homework
         assert class_date.has_homework.all().count() == 1
-
-    # def test_attendance_check_view_for_staff_other_lector_checks(self):
-    #     """
-    #     staff user should have access - status code 200
-    #     """
-    #     data = {
-    #         'student': [1, 2],
-    #         'class_subject': 'test_subject',
-    #         'homework' : [1,]
-    #     }
-    #     client = Client()
-    #     lector1 = mixer.blend('edziennik.Lector')
-    #     lector2 = mixer.blend('edziennik.Lector')
-    #     student1 = mixer.blend('edziennik.Student')
-    #     student2 = mixer.blend('edziennik.Student')
-    #     student3 = mixer.blend('edziennik.Student')
-    #     group1 = mixer.blend('edziennik.Group', lector=lector1)
-    #     group1.student.add(student1, student2, student3)
-    #     logged_in = self.client.login(
-    #         username='admin', password='glassonion')
-    #     url = reverse('edziennik:attendance_check', args=(group1.id,))
-    #     expected_url = reverse('edziennik:group', args=(group1.id,))
-
-    #     response = self.client.post(url, data, follow=True)
-    #     # should give code 200 as follow is set to True
-    #     assert response.status_code == 200
-
-    #     # one ClassDate object should be created
-    #     assert ClassDate.objects.all().count() == 1
-
-    #     # only lector1 sould have one hour
-    #     assert lector1.classdate_set.all().count() == 1
-
-    #     # lector2 should have no hours
-    #     assert lector2.classdate_set.all().count() == 0
-
-    #     # two of the three students should have attendance
-    #     class_date = ClassDate.objects.first()
-    #     assert class_date.student.all().count() == 2
-
-    #     # one of the three students should have homework
-    #     assert class_date.has_homework.all().count() == 1
-
-
-    # def test_attendance_check_view_for_staff_admin_checks(self):
-    #     """
-    #     staff user should have access - status code 200
-    #     """
-    #     data = {
-    #         'student': [1, 2],
-    #         'class_subject': 'test_subject',
-    #         'homework' : [1,]
-    #     }
-    #     client = Client()
-    #     lector1 = mixer.blend('edziennik.Lector')
-    #     lector2 = mixer.blend('edziennik.Lector')
-    #     student1 = mixer.blend('edziennik.Student')
-    #     student2 = mixer.blend('edziennik.Student')
-    #     student3 = mixer.blend('edziennik.Student')
-    #     group1 = mixer.blend('edziennik.Group', lector=lector1)
-    #     group1.student.add(student1, student2, student3)
-    #     logged_in = self.client.login(
-    #         username='admin', password='glassonion')
-    #     url = reverse('edziennik:attendance_check', args=(group1.id,))
-    #     expected_url = reverse('edziennik:group', args=(group1.id,))
-
-    #     response = self.client.post(url, data, follow=True)
-    #     # should give code 200 as follow is set to True
-    #     assert response.status_code == 200
-
-    #     # one ClassDate object should be created
-    #     assert ClassDate.objects.all().count() == 1
-
-    #     # only lector1 sould have one hour
-    #     assert lector1.classdate_set.all().count() == 1
-
-    #     # lector2 should have no hours
-    #     assert lector2.classdate_set.all().count() == 0
-
-    #     # two of the three students should have attendance
-    #     class_date = ClassDate.objects.first()
-    #     assert class_date.student.all().count() == 2
-
-    #     # one of the three students should have homework
-    #     assert class_date.has_homework.all().count() == 1
 
     def test_attendance_check_view_for_staff_polish_characters(self):
         """
@@ -894,15 +904,15 @@ class TestAttendance_CheckView(TestCase):
             'homework': []
         }
         client = Client()
-        lector1 = mixer.blend('edziennik.Lector')
-        lector2 = mixer.blend('edziennik.Lector')
+        lector1 = Lector.objects.create(user=User.objects.get(username='john'))
+        lector2 = Lector.objects.create(user=User.objects.get(username='ben'))
         student1 = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         student3 = mixer.blend('edziennik.Student')
         group1 = mixer.blend('edziennik.Group', lector=lector1)
         group1.student.add(student1, student2, student3)
         logged_in = self.client.login(
-            username='admin', password='glassonion')
+            username='john', password='johnpassword')
         url = reverse('edziennik:attendance_check', args=(group1.id,))
         expected_url = reverse('edziennik:group', args=(group1.id,))
 
@@ -937,13 +947,13 @@ class TestAttendance_CheckView(TestCase):
             'additional_hour': False
         }
         client = Client()
-        lector1 = mixer.blend('edziennik.Lector')
+        lector1 = Lector.objects.create(user=User.objects.get(username='john'))
         student1 = mixer.blend('edziennik.Student')
         group1 = mixer.blend('edziennik.Group', lector=lector1)
         group1.student.add(student1)
         mixer.blend('edziennik.ClassDate', date_of_class=today, group=group1)
         logged_in = self.client.login(
-            username='admin', password='glassonion')
+            username='john', password='johnpassword')
         url = reverse('edziennik:attendance_check', args=(group1.id,))
         expected_url = reverse('edziennik:group_check', args=(group1.id,))
 
@@ -954,7 +964,7 @@ class TestAttendance_CheckView(TestCase):
         # no ClassDate object should be created, one preexisting
         assert ClassDate.objects.all().count() == 1
 
-        # only lector1 sould get no hours
+        # lector1 sould get no hours
         assert lector1.classdate_set.all().count() == 0
 
         # should display message about preexisting classdate
@@ -977,7 +987,7 @@ class TestAttendance_CheckView(TestCase):
             'additional_hour': True
         }
         client = Client()
-        lector1 = mixer.blend('edziennik.Lector')
+        lector1 = Lector.objects.create(user=User.objects.get(username='john'))
         student1 = mixer.blend('edziennik.Student')
         group1 = mixer.blend('edziennik.Group', lector=lector1)
         group1.student.add(student1)
@@ -987,7 +997,7 @@ class TestAttendance_CheckView(TestCase):
             lector=lector1)
         cd.student.add(student1)
         logged_in = self.client.login(
-            username='admin', password='glassonion')
+            username='john', password='johnpassword')
         url = reverse('edziennik:attendance_check', args=(group1.id,))
         expected_url = reverse('edziennik:group', args=(group1.id,))
 

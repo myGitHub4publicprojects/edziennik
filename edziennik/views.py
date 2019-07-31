@@ -167,8 +167,8 @@ def group(request, pk):
         raise Http404
     group = get_object_or_404(Group, pk=pk)
     lector = group.lector
-    if not request.user.is_superuser and request.user != lector.user:
-        raise Http404
+    # if not request.user.is_superuser and request.user != lector.user:
+    #     raise Http404
     students = group.student.all()
     grades_in_this_group = Grades.objects.filter(student__in=students)
 
@@ -251,11 +251,16 @@ def group_check(request, pk):
 def attendance_check(request, pk):
     ''' handles checked attendance of a group, adds one hour to a lector,
     lector can check attendance again in same group same day only if 'additional_hour'
+    lector who checks gets an hour, if admin check group.lector gets an hour
     field is checked,
     and generates error message if attendance was checked earlier that day'''
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
+    if not request.user.is_superuser:
+        lector = Lector.objects.get(user=request.user)
+    else:
+        lector = group.lector
 
     # checks if attendance was checked today in this group, if yes, error,
     # if no 'additinal_hour' input
@@ -273,7 +278,7 @@ def attendance_check(request, pk):
     class_subject = request.POST.get('class_subject')
     class_date = ClassDate.objects.create(  date_of_class=datetime.datetime.today(),
                                             subject = class_subject,
-                                            lector = group.lector,
+                                            lector = lector,
                                             group=group)
     have_homework = request.POST.getlist('homework')
     for id in selected_student_list:
