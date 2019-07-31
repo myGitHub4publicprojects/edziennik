@@ -30,16 +30,17 @@ class Student(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(
         max_length=100, verbose_name='Nazwisko ucznia')
-    date_of_birth = models.DateField(verbose_name='Data urodzenia')
-    school = models.CharField(max_length=100)
-    class_in_school = models.CharField(max_length=100)
+    date_of_birth = models.DateField(
+        verbose_name='Data urodzenia', null=True, blank=True)
+    school = models.CharField(max_length=100, null=True, blank=True)
+    class_in_school = models.CharField(max_length=100, null=True, blank=True)
     language_of_interest = models.CharField(max_length=100, default='English')
-    language_at_school = models.BooleanField()
+    language_at_school = models.BooleanField(null=True, blank=True)
     experience = models.CharField(max_length=200, null=True, blank=True)
-    book = models.CharField(max_length=200)
-    avaliability = models.CharField(max_length=400)
+    book = models.CharField(max_length=200, null=True, blank=True)
+    avaliability = models.CharField(max_length=400, null=True, blank=True)
     other_classes = models.CharField(max_length=200, null=True, blank=True)
-    focus = models.CharField(max_length=200)
+    focus = models.CharField(max_length=200, null=True, blank=True)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     GENDER_CHOICES = (
         ('M', 'Male'),
