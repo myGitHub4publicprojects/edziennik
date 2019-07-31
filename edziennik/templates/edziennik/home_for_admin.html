@@ -44,25 +44,31 @@
         <button class="btn blue-btn ml-3 float-right">Uczniowie</button>
 
     </a>
-    <div><h2>Lektorzy: </h2>
+    <hr>
+    <div><h3>Lektorzy: </h3>
     {% if lectors %}
-    {% for lector in lectors %}
-    <a href="{% url 'edziennik:lector' lector.id %}">
-        <button class="btn btn-lg blue-btn">{{ lector.user }}</button>
-    </a>
-    {% endfor %}
+    <ul class="list-unstyled">
+        {% for lector in lectors %}
+            <li>
+            <a class="btn" href="{% url 'edziennik:lector' lector.id %}">{{ lector.user }}</a>
+            </li>
+        {% endfor %}
+    </ul>
     {% else %}
         <p>Nie masz żadnych lektorów</p>
     {% endif %}
     </div>
+    <hr>
 
-    <div><h2>Grupy: </h2>
+    <div><h3>Grupy: </h3>
     {% if groups %}
-    {% for group in groups %}
-    <a href="{% url 'edziennik:group' group.id %}">
-        <button class="btn btn-lg blue-btn">{{ group.name }}</button>
-    </a>    
-    {% endfor %}
+    <ul class="list-unstyled">
+        {% for group in groups %}
+            <li>
+            <a class="btn" href="{% url 'edziennik:group' group.id %}">{{ group.name }}</a>    
+            </li>
+        {% endfor %}
+    </ul>
     {% else %}
         <p>Nie masz żadnych grup</p>
     {% endif %}
