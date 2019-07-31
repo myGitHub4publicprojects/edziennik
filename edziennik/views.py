@@ -266,7 +266,7 @@ def attendance_check(request, pk):
     # if no 'additinal_hour' input
     additional_hour = request.POST.get('additional_hour')
     for i in ClassDate.objects.filter(group=group):
-        if i.date_of_class == datetime.date.today() and additional_hour == 'False':
+        if i.date_of_class == datetime.date.today() and additional_hour == None:
             context = {
             'error_message': """BYLA JUZ DZIS SPRAWDZANA OBECNOSC W TEJ GRUPIE. Jeśli chcesz jeszcze raz zaznaczyć obecność kliknij i zaznacz 'dodatkowa godzina'""",
             'group': group,
@@ -284,8 +284,10 @@ def attendance_check(request, pk):
     for id in selected_student_list:
         student = Student.objects.get(id=id)
         class_date.student.add(student)
-        student.quizlet = False
-        student.save()
+        # set quizlet status to False
+        quizlet = Quizlet.objects.get(student=student, group=group)
+        quizlet.status = False
+        quizlet.save()
             
         if id in have_homework:
             class_date.has_homework.add(student)

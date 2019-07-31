@@ -944,7 +944,7 @@ class TestAttendance_CheckView(TestCase):
             'student': [1,],
             'class_subject': 'test_subject',
             'homework': [1,],
-            'additional_hour': False
+            # 'additional_hour': None
         }
         client = Client()
         lector1 = Lector.objects.create(user=User.objects.get(username='john'))
@@ -984,7 +984,7 @@ class TestAttendance_CheckView(TestCase):
             'student': [1,],
             'class_subject': 'test_subject',
             'homework': [1,],
-            'additional_hour': True
+            'additional_hour': 'on'
         }
         client = Client()
         lector1 = Lector.objects.create(user=User.objects.get(username='john'))
