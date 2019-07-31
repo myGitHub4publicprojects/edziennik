@@ -46,6 +46,7 @@ def index(request):
         lname = request.GET.get('lname')
         fname = request.GET.get('fname')
         if lname or fname:
+            students = []
             results = Student.objects.all()
             if fname:
                 results = results.filter(
@@ -53,7 +54,12 @@ def index(request):
             if lname:
                 results = results.filter(
                     last_name__icontains=lname)
-            context['results'] = results
+            for i in results:
+                    s = {}
+                    s['student'] = i
+                    s['groups'] = Group.objects.filter(student=i)
+                    students.append(s)
+            context['students'] = students
 
         return render(request, 'edziennik/home_for_admin.html', context)
 

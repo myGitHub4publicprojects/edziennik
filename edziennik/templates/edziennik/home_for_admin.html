@@ -11,7 +11,7 @@
         <input type="submit" value="szukaj ucznia">
         </form>
 
-    {% if results %}
+    {% if students %}
     <table class="table table-sm table-hover">
         <thead>
             <tr>
@@ -19,15 +19,20 @@
                     Imię i nazwisko
                 </td>
                 <td>
-                    Grupa
+                    Grupy
                 </td>
             </tr>
         </thead>
         <tbody>
-            {% for s in results %}
+            {% for s in students %}
             <tr>
-                <td><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></td>
-                <td><a href="{% url 'edziennik:group' s.group.id %}">{{ s.group }}</a></td>
+                <td><a href="{% url 'edziennik:student' s.student.id %}">{{ s.student }}</a></td>
+                <td>
+                    {% for g in s.groups %}
+                    <a href="{ url 'edziennik:group' g.id }">{{ g }}</a> 
+                    {% endfor %}
+                </td>
+
             </tr>
             {% endfor %}
         </tbody>
