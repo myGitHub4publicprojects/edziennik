@@ -230,3 +230,7 @@ corresponding value from the list below*/
   font-size: 0.7em;
   color: #7d7474;
 }
+
+#additional_hour_div {
+  display: none;
+}
