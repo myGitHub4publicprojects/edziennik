@@ -14,4 +14,26 @@
         <p>No group available.</p>
     {% endif %}
     </section>
+    <hr>
+    <section>
+        <h4>Dodatkowe grupy (zastępstwo):</h4>
+        <button id="additional_hour_btn" class="btn btn-sm btn-primary" type="button">pokaż</button>
+        <div id="additional_hour_div">
+            {% for group in all_groups %}
+            <a href="{% url 'edziennik:group' group.id %}">
+                <button class="btn btn-lg blue-btn">{{ group.name }}</button>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    let additional_hour_btn = document.getElementById('additional_hour_btn');
+    additional_hour_btn.addEventListener('click', function () {
+        document.getElementById('additional_hour_div').style.display = 'block';
+    })
+
+</script>
+{% endblock javascript %}

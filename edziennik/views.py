@@ -36,13 +36,14 @@ def index(request):
     if request.user in lector_users:
         # show only groups associated with this lector
         lector = Lector.objects.get(user=request.user)
-        context = {'groups': Group.objects.filter(lector=lector)}
+        context = {'groups': Group.objects.filter(lector=lector),
+                   'all_groups': Group.objects.all()}
         return render(request, 'edziennik/home_for_lector.html', context)
 
     # home for admins
     if request.user.is_superuser:
-        context = {'groups': Group.objects.all(),
-                    'lectors': Lector.objects.all(), }
+        context = {'groups': Group.objects.all().order_by('name'),
+                    'lectors': Lector.objects.all().order_by('user__last_name'), }
         lname = request.GET.get('lname')
         fname = request.GET.get('fname')
         if lname or fname:
@@ -219,8 +220,8 @@ def show_group_grades(request, pk):
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
-    if not request.user.is_superuser and request.user != group.lector.user:
-        raise Http404
+    # if not request.user.is_superuser and request.user != group.lector.user:
+    #     raise Http404
     students = group.student.all()
     grades_in_this_group = Grades.objects.filter(student__in=students)
 
@@ -253,8 +254,8 @@ def group_check(request, pk):
         raise Http404
     group = get_object_or_404(Group, pk=pk)
     lector = group.lector
-    if not request.user.is_superuser and request.user != lector.user:
-        raise Http404
+    # if not request.user.is_superuser and request.user != lector.user:
+    #     raise Http404
     students = []
     for i in group.student.all():
         quizlet = Quizlet.objects.get(student=i, group=group).status
@@ -372,8 +373,8 @@ def attendance_by_group(request, group_id):
 
     group = get_object_or_404(Group, pk=group_id)
     lector = group.lector
-    if not request.user.is_superuser and request.user != lector.user:
-        raise Http404
+    # if not request.user.is_superuser and request.user != lector.user:
+    #     raise Http404
     students = group.student.all()
     table_content = []
     classes_in_group = ClassDate.objects.filter(group=group).order_by('date_of_class')
@@ -407,8 +408,8 @@ def group_grades(request, group_id):
 
     group = get_object_or_404(Group, pk=group_id)
     lector = group.lector
-    if not request.user.is_superuser and request.user != lector.user:
-        raise Http404
+    # if not request.user.is_superuser and request.user != lector.user:
+    #     raise Http404
     students = group.student.all()
     context = {
         'group': group,
