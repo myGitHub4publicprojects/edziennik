@@ -162,7 +162,18 @@ def student(request, pk):
 
 
 class StudentList(ListView):
-	model = Student
+    model = Student
+    def get_context_data(self, **kwargs):
+        students = []
+        for i in Student.objects.all():
+            s = {}
+            s['student'] = i
+            s['groups'] = Group.objects.filter(student=i)
+            students.append(s)
+        context = super(StudentList, self).get_context_data(**kwargs)
+        context['students'] = students
+        return context
+
 
 class ParentDetailView(DetailView):
     model=Parent
