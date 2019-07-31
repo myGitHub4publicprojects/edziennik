@@ -29,7 +29,7 @@
                 <td><a href="{% url 'edziennik:student' s.student.id %}">{{ s.student }}</a></td>
                 <td>
                     {% for g in s.groups %}
-                    <a href="{ url 'edziennik:group' g.id }">{{ g }}</a> 
+                    <a href="{% url 'edziennik:group' g.id %}">{{ g }}</a> 
                     {% endfor %}
                 </td>
 
