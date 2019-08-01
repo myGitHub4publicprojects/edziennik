@@ -9,27 +9,29 @@
         </a>
     {% endif %}
     </p>
-
+    
+<section>
+    
     {% if request.user.is_superuser %}
     <a href="{% url 'edziennik:add_quizlet' group.id %}">
-        <button class="btn btn-lg blue-btn">Dodaj quizlet</button>
+        <button class="btn blue-btn">Dodaj quizlet</button>
     </a>
     {% endif %}
-<section>
+
     <a href="{% url 'edziennik:group_check' group.id %}">
-        <button class="btn btn-lg blue-btn">Sprawdź obecność</button>
+        <button class="btn blue-btn">Sprawdź obecność</button>
     </a>
     <a href="{% url 'edziennik:group_grades' group.id %}">
-        <button class="btn btn-lg blue-btn">Dodaj oceny</button>
+        <button class="btn blue-btn">Dodaj oceny</button>
     </a>
     <a href="{% url 'edziennik:attendance_by_group' group.id %}">
-        <button class="btn btn-lg blue-btn">Pokaż frekwencje</button>
+        <button class="btn blue-btn">Pokaż frekwencje</button>
     </a>
     <a href="{% url 'edziennik:show_group_grades' group.id %}">
-        <button class="btn btn-lg blue-btn">Pokaż oceny</button>
+        <button class="btn blue-btn">Pokaż oceny</button>
     </a>
     <a href="{% url 'edziennik:add_homework' group.id %}">
-        <button class="btn btn-lg blue-btn">Homework</button>
+        <button class="btn blue-btn">Homework</button>
     </a>
 </section>
 <hr>
@@ -43,5 +45,15 @@
             {% endfor %}
         </ul>
     </p>
+</section>
+<section>
+    <p>Zadania domowe:</p>
+    <ul class="list-unstyled">
+        {% for h in homeworks %}
+        <li>
+            {{ h.classdate.date_of_class }} {{ h.message }}
+        </li>
+        {% endfor %}
+    </ul>
 </section>
 {% endblock content %}

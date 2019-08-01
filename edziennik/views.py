@@ -15,7 +15,7 @@ from django.urls import reverse
 from django.templatetags.static import static
 
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
-                              Admin_Profile, Quizlet)
+                              Admin_Profile, Quizlet, Homework)
 from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
@@ -188,29 +188,13 @@ def group(request, pk):
     # if not request.user.is_superuser and request.user != lector.user:
     #     raise Http404
     students = group.student.all()
-    # grades_in_this_group = Grades.objects.filter(student__in=students)
-
-    # dates_grades = []
-    # for grade in grades_in_this_group:
-    #     if (grade.date_of_test, grade.name) not in dates_grades:
-    #         dates_grades.append((grade.date_of_test, grade.name))
-
-    # table_header = ['data', 'za co'] + list(students)
-    # table_content = []
-    # for grade in dates_grades:
-    #     grade_date_name_score = [grade[0].strftime("%d/%m/%Y"), grade[1]]
-    #     for student in students:
-    #         item = grades_in_this_group.filter(student=student, date_of_test=grade[0], name=grade[1]).first()
-    #         if item:
-    #             grade_date_name_score.append(item.score)
-    #         else:
-    #             grade_date_name_score.append('-')
-    #     table_content.append(grade_date_name_score)
-
+    cd = ClassDate.objects.filter(group=group)
+    homeworks = Homework.objects.filter(classdate__in=cd).order_by('classdate__date_of_class')
     context = {
         'group': group,
         'lector': lector,
-        'students': students
+        'students': students,
+        'homeworks': homeworks
         # 'table_header': table_header,
         # 'table_content': table_content,
     }
