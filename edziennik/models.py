@@ -18,10 +18,10 @@ class Parent(models.Model):
     phone_number = models.IntegerField()
     # address
     street = models.CharField(max_length=120, null=True, blank=True)
-    house_number = models.CharField(max_length=6, null=True)
+    house_number = models.CharField(max_length=6, null=True, blank=True)
     apartment_number = models.CharField(max_length=6, null=True, blank=True)
-    city = models.CharField(max_length=120, null=True)
-    zip_code = models.CharField(max_length=6, null=True)
+    city = models.CharField(max_length=120, null=True, blank=True)
+    zip_code = models.CharField(max_length=6, null=True, blank=True)
    
     def __str__(self):              
         return self.user.username
