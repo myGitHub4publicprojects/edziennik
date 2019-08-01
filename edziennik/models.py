@@ -148,6 +148,9 @@ def student_added_to_group(sender, ** kwargs):
         students_ids = kwargs['pk_set']
         students = Student.objects.filter(id__in=students_ids)
         for s in students:
-            Quizlet.objects.create(group=group,student=s)
+            # prevent duplicates
+            if not Quizlet.objects.filter(group=group, student=s).exists():
+                # create quizlet object
+                Quizlet.objects.create(group=group,student=s)
 
 m2m_changed.connect(student_added_to_group, sender=Group.student.through)
