@@ -81,7 +81,7 @@ class ClassDate(models.Model):
 class Homework(models.Model):
     classdate = models.ForeignKey(ClassDate, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    message = models.CharField(max_length=200)
+    message = models.CharField(max_length=200, verbose_name='Treść zadania')
 
     def __str__(self):
         return str(self.message)

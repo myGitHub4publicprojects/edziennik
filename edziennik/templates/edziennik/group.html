@@ -9,7 +9,7 @@
         </a>
     {% endif %}
     </p>
-    
+
 <section>
     
     {% if request.user.is_superuser %}
@@ -46,14 +46,21 @@
         </ul>
     </p>
 </section>
+<hr>
 <section>
     <p>Zadania domowe:</p>
-    <ul class="list-unstyled">
+    <table class="table">
+        <thead>
+            <td>Data</td>
+            <td>Treść</td>
+        </thead>
         {% for h in homeworks %}
-        <li>
-            {{ h.classdate.date_of_class }} {{ h.message }}
-        </li>
+        <tr>
+            <td>{{ h.classdate.date_of_class|date:"d.m.Y" }}</td>
+            <td>{{ h.message }}</td>
+
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 </section>
 {% endblock content %}
