@@ -1,6 +1,6 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
-<section>
+
     <p>Nazwa grupy: <b>{{ group.name }}</b>
     {% if request.user.is_superuser %}
         , Lektor prowadzący: 
@@ -15,7 +15,7 @@
         <button class="btn btn-lg blue-btn">Dodaj quizlet</button>
     </a>
     {% endif %}
-
+<section>
     <a href="{% url 'edziennik:group_check' group.id %}">
         <button class="btn btn-lg blue-btn">Sprawdź obecność</button>
     </a>
@@ -28,6 +28,20 @@
     <a href="{% url 'edziennik:show_group_grades' group.id %}">
         <button class="btn btn-lg blue-btn">Pokaż oceny</button>
     </a>
-
+    <a href="{% url 'edziennik:add_homework' group.id %}">
+        <button class="btn btn-lg blue-btn">Homework</button>
+    </a>
+</section>
+<hr>
+<section>
+    <p>Uczniowie:
+        <ul class="list-unstyled">
+            {% for s in students %}
+                <li>
+                    <a href="{% url 'edziennik:student' s.id">{{ s }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </p>
 </section>
 {% endblock content %}

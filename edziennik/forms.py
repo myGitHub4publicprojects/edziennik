@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import ModelForm, Textarea
-from .models import Admin_Profile, Student, Parent
+from .models import Admin_Profile, Student, Parent, Homework
 from edziennik.utils import create_unique_username
 
 
@@ -39,3 +39,8 @@ class SignUpForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=50)
     email = forms.EmailField(max_length=254)
+
+class HomeworkForm(ModelForm):
+    class Meta:
+        model = Homework
+        fields = ['message',]

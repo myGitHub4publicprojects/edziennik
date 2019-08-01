@@ -1,0 +1,16 @@
+{% extends "edziennik/base.html" %}
+
+{% block content %}
+
+<p>Nazwa grupy: <b>{{ group.name }}</b></p>
+
+<h3>Homework</h3>
+
+<form action="{% url 'edziennik:add_homework' group.id%}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Zatwierdzam" />
+
+</form>
+
+{% endblock content %}

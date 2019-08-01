@@ -16,7 +16,7 @@ from django.templatetags.static import static
 
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile, Quizlet)
-from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm
+from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
                              create_unique_username, signup_email)
@@ -618,3 +618,39 @@ def duplicate_check(request):
 			return HttpResponse('present')
 		return HttpResponse('absent')
 
+
+def add_homework(request, pk):
+    '''add homework to a ClassDate object with todays date,
+    display error message if:
+    trying to add second homework for this group,
+    trying to add homework without attendance check this day'''
+    if not request.user.is_staff:
+        raise Http404
+    group = get_object_or_404(Group, pk=pk)
+    today_cd = ClassDate.objects.filter(
+            group=group,
+            date_of_class=datetime.datetime.now().date())
+
+    # prevent homework if attendance not checked today
+    if not today_cd.exists():
+        messages.error(request, "Nie była sprawdzona obecność dziś")
+        return redirect(reverse('edziennik:group', args=(group.id,)))
+
+    # prevent homework if one homework already exists for this classdate
+    if today_cd.last().homework_set.all().exists():
+        messages.error(request, "Już dodany homework do ostatniej lekcji")
+        return redirect(reverse('edziennik:group', args=(group.id,)))
+
+    if request.method == 'POST':
+        form = HomeworkForm(request.POST)
+        if form.is_valid():
+            homework = form.save(commit=False)
+            homework.classdate = today_cd.last()
+            homework.save()
+
+            messages.success(request, "Zadanie domowe dodane")
+            return redirect(reverse('edziennik:group', args=(group.id,)))
+
+    form = HomeworkForm()
+    context = {'form': form, 'group': group}
+    return render(request, 'edziennik/add_homework.html', context)

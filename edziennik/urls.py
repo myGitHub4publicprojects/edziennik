@@ -36,4 +36,6 @@ urlpatterns = [
          name='signup'),
     path('duplicate_check/', views.duplicate_check,
          name='duplicate_check'),
+    path('<int:pk>/add_homework/', views.add_homework, name='add_homework'),
+
 ]

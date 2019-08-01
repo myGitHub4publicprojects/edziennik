@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from edziennik.models import Lector, Group, Student, ClassDate, Grades, Parent, SMS, Quizlet
+from edziennik.models import (Lector, Group, Student, ClassDate, Grades, Parent,
+                              SMS, Quizlet, Homework)
 
 admin.site.register(Lector)
 admin.site.register(Group)
@@ -10,3 +11,4 @@ admin.site.register(ClassDate)
 admin.site.register(Grades)
 admin.site.register(SMS)
 admin.site.register(Quizlet)
+admin.site.register(Homework)
