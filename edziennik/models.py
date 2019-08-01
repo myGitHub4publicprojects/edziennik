@@ -77,6 +77,16 @@ class ClassDate(models.Model):
     def __str__(self):
         return str(self.date_of_class)
 
+
+class Homework(models.Model):
+    classdate = models.ForeignKey(ClassDate, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    message = models.CharField(max_length=200)
+
+    def __str__(self):
+        return str(self.message)
+
+
 class Grades(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     date_of_test = models.DateField(null=True, blank=True)

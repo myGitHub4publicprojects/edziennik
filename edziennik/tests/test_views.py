@@ -504,28 +504,27 @@ class TestGroupView(TestCase):
         group1.student.add(student1, student2)
         group2 = mixer.blend('edziennik.Group')
         group2.student.add(student3)
-        grade1 = mixer.blend(
-            'edziennik.Grades', student=student1, date_of_test=today, group=group1)
-        grade2 = mixer.blend(
-            'edziennik.Grades', student=student2, date_of_test=today, group=group1)
-        grade3 = mixer.blend(
-            'edziennik.Grades', student=student3, date_of_test=today, group=group2)
         user_admin = User.objects.create_superuser(username='admin',
                                  email='jlennon@beatles.com',
                                  password='glassonion')
-
-
-        
 
         logged_in = self.client.login(username='admin', password='glassonion')
         response = self.client.get(reverse('edziennik:group', args=(group1.id,)))
         self.assertTrue(logged_in)
 
         self.assertEqual(response.status_code, 200)
-        response_table_content= list(response.context['table_content'])
 
-        # table_content[0] shows first row where two first items are fixed and then students
-        self.assertEqual(len(response_table_content[0]), 2+2)
+        response_students= response.context['students']
+        # student1 should be in response_students
+        self.assertTrue(response_students.filter(id=student1.id).exists())
+
+        # student2 should be in response_students
+        self.assertTrue(response_students.filter(id=student2.id).exists())
+
+        # student3 should not be in response_students
+        self.assertFalse(response_students.filter(
+            id=student3.id).exists())
+
 
 
 class TestShow_Group_GradesView(TestCase):

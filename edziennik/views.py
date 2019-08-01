@@ -188,30 +188,31 @@ def group(request, pk):
     # if not request.user.is_superuser and request.user != lector.user:
     #     raise Http404
     students = group.student.all()
-    grades_in_this_group = Grades.objects.filter(student__in=students)
+    # grades_in_this_group = Grades.objects.filter(student__in=students)
 
-    dates_grades = []
-    for grade in grades_in_this_group:
-        if (grade.date_of_test, grade.name) not in dates_grades:
-            dates_grades.append((grade.date_of_test, grade.name))
+    # dates_grades = []
+    # for grade in grades_in_this_group:
+    #     if (grade.date_of_test, grade.name) not in dates_grades:
+    #         dates_grades.append((grade.date_of_test, grade.name))
 
-    table_header = ['data', 'za co'] + list(students)
-    table_content = []
-    for grade in dates_grades:
-        grade_date_name_score = [grade[0].strftime("%d/%m/%Y"), grade[1]]
-        for student in students:
-            item = grades_in_this_group.filter(student=student, date_of_test=grade[0], name=grade[1]).first()
-            if item:
-                grade_date_name_score.append(item.score)
-            else:
-                grade_date_name_score.append('-')
-        table_content.append(grade_date_name_score)
+    # table_header = ['data', 'za co'] + list(students)
+    # table_content = []
+    # for grade in dates_grades:
+    #     grade_date_name_score = [grade[0].strftime("%d/%m/%Y"), grade[1]]
+    #     for student in students:
+    #         item = grades_in_this_group.filter(student=student, date_of_test=grade[0], name=grade[1]).first()
+    #         if item:
+    #             grade_date_name_score.append(item.score)
+    #         else:
+    #             grade_date_name_score.append('-')
+    #     table_content.append(grade_date_name_score)
 
     context = {
         'group': group,
         'lector': lector,
-        'table_header': table_header,
-        'table_content': table_content,
+        'students': students
+        # 'table_header': table_header,
+        # 'table_content': table_content,
     }
     return render(request, 'edziennik/group.html', context)
 
