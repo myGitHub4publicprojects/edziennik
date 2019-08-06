@@ -18,7 +18,14 @@
         <h2 class="text-center mt-3">Oceny</h2>
         {% for student_group in student_groups %}
             <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>{{ student_group.group.lector.user.get_full_name}}</b></p>
-            
+            <p>Ostatnie zadania domowe:</p>
+            <ul class="list-unstyled">
+                {% for h in student_group.homeworks %}
+                <li>
+                    Data: {{ h.classdate.date_of_class }}, treść: {{ h.message }}
+                </li>
+                {% endfor %}
+            </ul>
                 {% if student_group.grade_list %}
                 <table class="table">
                     <tr>

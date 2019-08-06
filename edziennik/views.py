@@ -127,6 +127,9 @@ def student(request, pk):
     for group in groups:
         grades = Grades.objects.filter(student=student, group=group)
         grade_list = [(g.date_of_test.strftime("%d/%m/%Y"), g.name, g.score) for g in grades]
+        cd = ClassDate.objects.filter(group=group)
+        homeworks = Homework.objects.filter(
+        classdate__in=cd).order_by('classdate__date_of_class')[:3]
         
         # students = group.student.all() # all students in this group
         all_classes = ClassDate.objects.filter(group=group).order_by('date_of_class') #all clases in this group
@@ -149,6 +152,7 @@ def student(request, pk):
         student_group = {
             'group': group,
             'grade_list': grade_list,
+            'homeworks': homeworks,
             'attendence_table_header': attendence_table_header,
             'attendance_table_content': attendance_table_content,
         }

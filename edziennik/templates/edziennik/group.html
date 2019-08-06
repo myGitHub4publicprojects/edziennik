@@ -40,7 +40,7 @@
         <ul class="list-unstyled">
             {% for s in students %}
                 <li>
-                    <a href="{% url 'edziennik:student' s.id">{{ s }}</a>
+                    <a href="{% url 'edziennik:student' s.id %}">{{ s }}</a>
                 </li>
             {% endfor %}
         </ul>
