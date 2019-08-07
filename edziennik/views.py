@@ -189,18 +189,15 @@ def group(request, pk):
         raise Http404
     group = get_object_or_404(Group, pk=pk)
     lector = group.lector
-    # if not request.user.is_superuser and request.user != lector.user:
-    #     raise Http404
     students = group.student.all()
     cd = ClassDate.objects.filter(group=group)
-    homeworks = Homework.objects.filter(classdate__in=cd).order_by('classdate__date_of_class')
+    homeworks = Homework.objects.filter(classdate__in=cd).order_by('-classdate__date_of_class')
     context = {
         'group': group,
         'lector': lector,
         'students': students,
         'homeworks': homeworks
-        # 'table_header': table_header,
-        # 'table_content': table_content,
+
     }
     return render(request, 'edziennik/group.html', context)
 

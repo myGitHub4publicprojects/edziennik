@@ -580,23 +580,66 @@ class TestGroupView(TestCase):
 
     def test_group_view_for_staff(self):
         """
-        should display a list of students in this group, but not others
+        should display a list of students in this group, but not others,
+        should display all homeworks in this group in reverse chronological order
         """
         client = Client()
 
         student1 = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         student3 = mixer.blend('edziennik.Student')
-        group1 = mixer.blend('edziennik.Group')
-        group1.student.add(student1, student2)
-        group2 = mixer.blend('edziennik.Group')
-        group2.student.add(student3)
+        g1 = mixer.blend('edziennik.Group')
+        g1.student.add(student1, student2)
+        g2 = mixer.blend('edziennik.Group')
+        g2.student.add(student3)
+
+        cd1 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=1),
+                    group=g2)
+        cd2 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today,
+                    group=g1)
+        cd3 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=2),
+                    group=g1)
+        cd4 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=3),
+                    group=g1)
+        cd5 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=4),
+                    group=g1)
+        homework_yesterday_g2 = 'Test homework, g2, yesterday'
+        homework_today_g1 = 'Test homework, g1, today'
+        homework_2_g1 = 'Test homework, g1, 2days'
+        homework_3_g1 = 'Test homework, g1, 3days'
+        homework_4_g1 = 'Test homework, g1, 4days'
+        mixer.blend('edziennik.Homework',
+                    classdate = cd1,
+                    message=homework_yesterday_g2
+        )
+        mixer.blend('edziennik.Homework',
+                    classdate = cd3,
+                    message=homework_2_g1
+        )
+        mixer.blend('edziennik.Homework',
+                    classdate = cd4,
+                    message=homework_3_g1
+        )
+        mixer.blend('edziennik.Homework',
+                    classdate = cd5,
+                    message=homework_4_g1
+        )
+        mixer.blend('edziennik.Homework',
+                    classdate=cd2,
+                    message=homework_today_g1
+                            )
+
         user_admin = User.objects.create_superuser(username='admin',
                                  email='jlennon@beatles.com',
                                  password='glassonion')
 
         logged_in = self.client.login(username='admin', password='glassonion')
-        response = self.client.get(reverse('edziennik:group', args=(group1.id,)))
+        response = self.client.get(reverse('edziennik:group', args=(g1.id,)))
         self.assertTrue(logged_in)
 
         self.assertEqual(response.status_code, 200)
@@ -612,7 +655,12 @@ class TestGroupView(TestCase):
         self.assertFalse(response_students.filter(
             id=student3.id).exists())
 
+        # there should be 4 homeworks in g1 (and one in g2 - not displayed here)
+        h_in_g1 = response.context['homeworks']
+        self.assertEqual(h_in_g1.count(), 4)
 
+        # first homework should be from today
+        self.assertEqual(h_in_g1.first().classdate.date_of_class, today)
 
 class TestShow_Group_GradesView(TestCase):
     def setUp(self):
