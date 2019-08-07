@@ -354,7 +354,8 @@ class StudentViewTests(TestCase):
     
     def test_student_view_parent(self):
         """
-        a parent should have access to his student
+        a parent should have access to his student,
+        parent should see grades and homework (last 3 in each group)
         """
         client = Client()
         user_john = User.objects.create_user(username='john',
@@ -365,10 +366,96 @@ class StudentViewTests(TestCase):
                               first_name='johny',
                               last_name='smith',
                               parent=parent)
+        student2 = mixer.blend('edziennik.Student')
+        g1 = mixer.blend('edziennik.Group')
+        g1.student.add(student, student2)
+        g2 = mixer.blend('edziennik.Group')
+        g2.student.add(student, student2)
+        grade1 = mixer.blend('edziennik.Grades',
+                             date_of_test=today - timedelta(days=1),
+                             score=1,
+                             group=g1,
+                             student=student)
+        grade2 = mixer.blend('edziennik.Grades',
+                             date_of_test=today,
+                             score=2,
+                             group=g2,
+                             student=student)
+        cd1 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=1),
+                    group=g1)
+        cd2 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today,
+                    group=g2)
+        cd3 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=2),
+                    group=g2)
+        cd4 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=3),
+                    group=g2)
+        cd5 = mixer.blend('edziennik.ClassDate',
+                    date_of_class=today-timedelta(days=4),
+                    group=g2)
+        homework_yesterday_g1 = 'Test homework, g1, yesterday'
+        homework_today_g2 = 'Test homework, g2, today'
+        homework_2_g2 = 'Test homework, g2, 2days'
+        homework_3_g2 = 'Test homework, g2, 3days'
+        homework_4_g2 = 'Test homework, g2, 4days'
+        mixer.blend('edziennik.Homework',
+                    classdate = cd1,
+                    message=homework_yesterday_g1
+        )
+        mixer.blend('edziennik.Homework',
+                    classdate = cd3,
+                    message=homework_2_g2
+        )
+        mixer.blend('edziennik.Homework',
+                    classdate = cd4,
+                    message=homework_3_g2
+        )
+        mixer.blend('edziennik.Homework',
+                    classdate = cd5,
+                    message=homework_4_g2
+        )
+        mixer.blend('edziennik.Homework',
+                            classdate=cd2,
+                            message=homework_today_g2
+                            )
         logged_in = self.client.login(username='john', password='glassonion')
         self.assertTrue(logged_in)
         response = self.client.get(reverse('edziennik:student', args=(student.id,)))
         self.assertEqual(response.context['student'].id, 1)
+
+        # should see grades - yesterday, in group g1, student got 1, today in g2 - 2
+        for i in response.context['student_groups']:
+            if i['group']==g1:
+                response_group1 = i
+            if i['group']==g2:
+                response_group2 = i
+        g1_response_score = response_group1['grade_list'][0][2]
+        # in group g1 yesterday score should be 1:
+        self.assertEqual(g1_response_score, 1)
+
+        g2_response_score = response_group2['grade_list'][0][2]
+        # in group g2 yesterday score should be 2:
+        self.assertEqual(g2_response_score, 2)
+
+        # should see homeworks (at most last 3 in each group)
+        g1_response_homeworks = response_group1['homeworks']
+        # there should be 1 homework in g1, text: 'Test homework, g1, yesterday'
+        self.assertEqual(g1_response_homeworks.count(), 1)
+        self.assertEqual(g1_response_homeworks.first().message,
+                         'Test homework, g1, yesterday')
+        # there should be 3 visible homeworks out of total 4 in g2
+        g2_response_homeworks = response_group2['homeworks']
+        self.assertEqual(g2_response_homeworks.count(), 3)
+
+        # there should be homework added today with message:
+        # 'Test homework, g2, today', this homework should be first
+        self.assertEqual(g2_response_homeworks.first().message,
+                         'Test homework, g2, today')
+
+
 
     def test_student_view_other_parent(self):
         """
