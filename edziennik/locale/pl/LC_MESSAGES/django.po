@@ -22,20 +22,20 @@ msgstr ""
 
 #: edziennik/templates/edziennik/registration/activate.html:6
 msgid "Account activation failed"
-msgstr ""
+msgstr "Aktywacja konta nie powiodła się"
 
 #: edziennik/templates/edziennik/registration/activation_complete.html:5
 msgid "Your account is now activated."
-msgstr ""
+msgstr "Twoje konto jest aktywne."
 
 #: edziennik/templates/edziennik/registration/activation_email.txt:2
 msgid "Activate account at"
-msgstr ""
+msgstr "Aktywuj konto na"
 
 #: edziennik/templates/edziennik/registration/activation_email.txt:11
 #, python-format
 msgid "The above link is valid for %(expiration_days)s days."
-msgstr ""
+msgstr "Powyższy link jest ważny przez %(expiration_days)s dni."
 
 #: edziennik/templates/edziennik/registration/login.html:14
 #: edziennik/templates/edziennik/registration/password_change_form.html:9
@@ -45,11 +45,11 @@ msgstr "Zatwierdzam"
 
 #: edziennik/templates/edziennik/registration/login.html:23
 msgid "Forgot password"
-msgstr ""
+msgstr "Zapomniełem hasła"
 
 #: edziennik/templates/edziennik/registration/login.html:23
 msgid "Reset it"
-msgstr ""
+msgstr "Resetuj"
 
 #: edziennik/templates/edziennik/registration/login.html:24
 msgid "Not member"
@@ -61,7 +61,7 @@ msgstr ""
 
 #: edziennik/templates/edziennik/registration/password_change_done.html:5
 msgid "Password changed"
-msgstr ""
+msgstr "Hasło zmienione"
 
 #: edziennik/templates/edziennik/registration/password_change_form.html:16
 #: edziennik/templates/edziennik/registration/password_change_form.html:24
@@ -70,7 +70,7 @@ msgstr "Witamy na naszej stronie"
 
 #: edziennik/templates/edziennik/registration/password_reset_complete.html:6
 msgid "Password reset successfully"
-msgstr ""
+msgstr "Hasło zostało zresetowane"
 
 #: edziennik/templates/edziennik/registration/password_reset_complete.html:8
 msgid "Log in"
@@ -78,7 +78,7 @@ msgstr ""
 
 #: edziennik/templates/edziennik/registration/password_reset_confirm.html:17
 msgid "Password reset failed"
-msgstr ""
+msgstr "Reset hasła się nie powiódł"
 
 #: edziennik/templates/edziennik/registration/password_reset_form.html:13
 msgid "Reset"
