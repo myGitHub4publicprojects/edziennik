@@ -34,13 +34,13 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 ROOT_URLCONF = 'projektdziennik.urls'
 
@@ -164,6 +164,10 @@ EMAIL_USE_TLS = True
 # for development
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Internationalization
+# LOCALE_PATHS = (os.path.join(PROJECT_ROOT, 'locale'),)
+# LOCALE_PATHS = (
+#     PROJECT_ROOT + '/locale', )
 
 try:
     from .local_settings import *
