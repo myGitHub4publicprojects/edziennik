@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.db.models.signals import post_save
 from django.db.models.signals import m2m_changed
 # from __future__ import unicode_literals
 from django.db import models
@@ -16,6 +17,7 @@ class Parent(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     phone_number = models.IntegerField()
+    email = models.EmailField()
     # address
     street = models.CharField(max_length=120, null=True, blank=True)
     house_number = models.CharField(max_length=6, null=True, blank=True)
@@ -164,3 +166,11 @@ def student_added_to_group(sender, ** kwargs):
                 Quizlet.objects.create(group=group,student=s)
 
 m2m_changed.connect(student_added_to_group, sender=Group.student.through)
+
+
+def add_email_to_user(sender, instance, **kwargs):
+    user = instance.user
+    user.email = instance.email
+    user.save()
+
+post_save.connect(add_email_to_user, sender=Parent)

@@ -46,3 +46,10 @@ class Test_Student_added_to_group(TestCase):
 
         # one Quizlet instance should correspond to s1 attending group g
         self.assertEqual(Quizlet.objects.filter(group=g, student=s1).count(), 1)
+
+
+class Test_add_email_to_user(TestCase):
+
+    def test_add_email_to_user(self):
+        p = mixer.blend('edziennik.Parent')
+        self.assertEqual(p.user.email, p.email)
