@@ -65,7 +65,9 @@ def test_sms_twilio(twilio_account_sid, twilio_auth_token, messaging_service_sid
 def generate_weekly_admin_report():
     ''' genereates raport for last week '''
     today = datetime.date.today()
-    title = 'Attendance and grades report'
+    current_site = Site.objects.get_current()
+    
+    title = 'Attendance and grades report from {0}'.format(current_site.domain,)
     class_dates = ClassDate.objects.filter(
         date_of_class__gte=today-datetime.timedelta(7))
     output = 'Attendance has not been checked this week\n'
