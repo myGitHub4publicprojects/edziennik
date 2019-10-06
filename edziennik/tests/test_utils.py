@@ -22,7 +22,7 @@ class Testgenerate_weekly_admin_report(TestCase):
         if setup is correct title and body are returned
         """
         email_title, email_body = generate_weekly_admin_report()
-        expected_title = 'Attendance and grades report'
+        expected_title = 'Attendance and grades report from example.com'
         expected_body = 'Attendance has not been checked this week\n' + 'No grades have been given last week'
         self.assertEqual(email_title, expected_title)
         self.assertEqual(email_body, expected_body)
@@ -56,7 +56,7 @@ class Testgenerate_weekly_admin_report(TestCase):
         attendance = '\n' + str(student1) + '\n--------------------------------\n'
         grades = 'No grades have been given last week'
         email_title, email_body = generate_weekly_admin_report()
-        expected_title = 'Attendance and grades report'
+        expected_title = 'Attendance and grades report from example.com'
         expected_body = head + f + attendance + grades
         self.assertEqual(email_title, expected_title)
         self.assertEqual(email_body, expected_body)
@@ -99,7 +99,7 @@ class Testgenerate_weekly_admin_report(TestCase):
                          
         grades = head2 + students_grades
         email_title, email_body = generate_weekly_admin_report()
-        expected_title = 'Attendance and grades report'
+        expected_title = 'Attendance and grades report from example.com'
         expected_body = head + f + attendance + grades
         self.assertEqual(email_title, expected_title)
         self.assertEqual(email_body, expected_body)
