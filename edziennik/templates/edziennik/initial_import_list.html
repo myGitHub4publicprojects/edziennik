@@ -1,0 +1,21 @@
+{% extends "edziennik/base.html" %}
+
+{% block content %}
+
+<h1>Pobrane pliki</h1>
+<a href="{% url 'edziennik:initial_import_create' %}">
+    <div class="btn btn-primary mb-3">Pobierz nowy plik</div>
+</a>
+<ul>
+    {% for f in object_list %}
+    <li><a href="{% url 'edziennik:initial_import_detail' f.id %}">
+            Nazwa: {{ f.filename }}, dodany: {{ f.uploaded_at|date:'Y-m-d H:i' }}</a>
+        {% if f.initial_import_usage_errors_set %}BŁĘDY!{% endif %}</li>
+        {% endfor %}
+    </li>
+    {% empty %}
+    <li>Nie ma żadnych plików.</li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}

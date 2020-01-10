@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
+import shutil
+import tempfile
+
+from django.conf import settings
+from django.core.files import File
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.template.loader import render_to_string
@@ -11,7 +17,7 @@ from datetime import date, datetime, timedelta
 from django.templatetags.static import static
 from freezegun import freeze_time
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
-                              Admin_Profile, Quizlet)
+                              Admin_Profile, Quizlet, Initial_Import)
 pytestmark = pytest.mark.django_db
 today = datetime.today().date()
 
@@ -1725,3 +1731,5 @@ class TestAdvanced_SettingsView(TestCase):
         all_messages = [msg for msg in get_messages(response.wsgi_request)]
         self.assertEqual(all_messages[0].tags, "success")
         self.assertEqual(all_messages[0].message, 'Ustawienia zachowane')
+
+

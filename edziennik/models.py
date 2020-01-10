@@ -1,9 +1,45 @@
 # -*- coding: utf-8 -*-
+import os
+
 from django.db.models.signals import post_save
 from django.db.models.signals import m2m_changed
-# from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
+
+from .validators import xlsx_only
+
+
+class Initial_Import(models.Model):
+	'''xlsx file containing students, parents and group data to populate db'''
+	file = models.FileField(upload_to='initial_import_files/', validators=[xlsx_only])
+	uploaded_at = models.DateTimeField(auto_now_add=True)
+
+	def filename(self):
+		return os.path.basename(self.file.name)
+
+	def get_absolute_url(self):
+		return reverse('edziennik:initial_import_detail', kwargs={'pk': self.pk})
+
+	def __unicode__(self):
+		return self.filename() + ' ' + str(self.uploaded_at)
+
+
+class Initial_Import_Usage(models.Model):
+    '''when was the uploaded file used what was produced'''
+    initial_import = models.ForeignKey(
+        Initial_Import, on_delete=models.CASCADE)
+    used = models.DateTimeField(auto_now_add=True)
+
+    def get_absolute_url(self):
+        return reverse('edziennik:initial_import_usage_detail', kwargs={'pk': self.pk})
+
+
+class Initial_Import_Usage_Errors(models.Model):
+    initial_import_usage = models.ForeignKey(
+    	Initial_Import_Usage, on_delete=models.CASCADE)
+    error_log = models.TextField()
+    line = models.TextField()
 
 class Lector(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
