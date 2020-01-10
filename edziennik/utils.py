@@ -10,7 +10,8 @@ from django.contrib.auth.models import User
 
 from twilio.rest import Client
 
-from edziennik.models import ClassDate, Grades, SMS, Admin_Profile
+from edziennik.models import (ClassDate, Grades, SMS, Admin_Profile, Initial_Import_Usage,
+    Initial_Import_Usage_Errors)
 
 
 def admin_email(mail_title, mail_body, email=None):
@@ -175,3 +176,13 @@ def signup_email(parent, student, password):
               settings.EMAIL_HOST_USER,
               [parent.user.email],
               fail_silently=False)
+
+
+def import_students(initial_import_instance):
+    '''Accepts Initial_Import obj, imports clients and studetns data from obj.file,
+    returns Initial_Import_Usage instance'''
+    iiu = Initial_Import_Usage.objects.create(
+        initial_import=initial_import_instance)
+
+
+    return iiu

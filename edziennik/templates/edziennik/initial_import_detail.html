@@ -6,8 +6,8 @@
 <p>Dodany: {{ object.uploaded_at }}</p>
 <p>Nazwa pliku: {{ object.filename }}</p>
 
-<form action="{% url 'edziennik:initial_import_usage_create' %}">
-    <input type="hidden" value="object.id" name="file_id" >
+<form action="" method="POST">{% csrf_token %}
+    <input type="hidden" value="object" name="initial_import_file" >
     <input type="submit" value="Rozpocznij import">
 </form>
 
@@ -15,7 +15,7 @@ Użycia pliku:
 <ul>
 {% for f in object.initial_import_usage_set.all %}
 <li>
-    <a href="{% url 'edziennik:initial_import_usage_detail' f.id %}">{{ f.used|date:'Y-m-d' }}</a>
+    <a href="{% url 'edziennik:initial_import_usage_detail' f.id %}">{{ f.used|date:'Y-m-d H:i' }}</a>
      {% if f.initial_import_usage_errors_set %}BŁĘDY{% endif %}
 </li>
 {% endfor %}

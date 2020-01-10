@@ -25,7 +25,7 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
 from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
-                             create_unique_username, signup_email)
+                             create_unique_username, signup_email, import_students)
 
 from .tasks import (quizlet_check_task,
     twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
@@ -659,14 +659,17 @@ class Initial_Import_Create(OnlySuperuserMixin, CreateView):
 
 class Initial_Import_Detail(OnlySuperuserMixin, DetailView):
     model = Initial_Import
-    
+
+    def post(self, request, *args, **kwargs):
+        print('here')
+        f = request.POST['initial_import_file']
+        f_usage = import_students(f)
+        return redirect(reverse(
+            'edziennik:initial_import_usage_detail', args=(f_usage.id,)))
+
 
 class Initial_Import_List(OnlySuperuserMixin, ListView):
     model = Initial_Import
-
-
-class Initial_Import_Usage_Create(OnlySuperuserMixin, CreateView):
-    model = Initial_Import_Usage
 
 
 class Initial_Import_Usage_Detail(OnlySuperuserMixin, DetailView):

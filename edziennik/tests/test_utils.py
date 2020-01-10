@@ -1,6 +1,9 @@
+import os
+import shutil
+import tempfile
+
+from django.core.files import File
 from django.test import TestCase, Client
-# from django.core.urlresolvers import reverse
-# from django.template.loader import render_to_string
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib import auth
@@ -8,10 +11,11 @@ from django.core import mail
 from mixer.backend.django import mixer
 import pytest
 from datetime import datetime, timedelta
-# from django.contrib.staticfiles.templatetags.staticfiles import static
-from edziennik.models import Lector, Group, Parent, Student, ClassDate, Grades, Admin_Profile
+from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades, 
+            Admin_Profile, Initial_Import, Initial_Import_Usage, Initial_Import_Usage_Errors)
 
-from edziennik.utils import admin_email, generate_weekly_admin_report, signup_email
+from edziennik.utils import (admin_email, generate_weekly_admin_report,
+        signup_email, import_students)
 
 pytestmark = pytest.mark.django_db
 today = datetime.today().date()
@@ -197,3 +201,45 @@ class TestSignUp_Email(TestCase):
 
         # should have an expected recipient
         self.assertEqual(mail.outbox[0].to, expected_email_address)
+
+class Test_import_students(TestCase):
+    def setUp(self):
+        self.test_dir = tempfile.mkdtemp()
+        settings.MEDIA_ROOT = self.test_dir
+
+    def tearDown(self):
+        # Remove the directory after the test
+        shutil.rmtree(self.test_dir)
+
+
+    def test_creates_Initial_Import_Usage_obj(self):
+        src = os.getcwd() + '/edziennik/tests/test_files/test.xlsx'
+        # copy file to test_dir to avoid SuspiciousFileOperation error
+        shutil.copyfile(src, self.test_dir + '/test.xlsx')
+
+        f = open(self.test_dir + '/test.xlsx', 'rb')
+        fF = File(f)
+        ii = Initial_Import.objects.create(file=fF)
+
+        import_students(ii)
+        self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
+
+    # def test_two_students_two_parents_two_groups(self):
+    #     src = os.getcwd() + '/edziennik/tests/test_files/test.xlsx'
+    #     # copy file to test_dir to avoid SuspiciousFileOperation error
+    #     shutil.copyfile(src, self.test_dir + '/test.xlsx')
+
+    #     f = open(self.test_dir + '/test.xlsx', 'rb')
+    #     fF = File(f)
+    #     ii = Initial_Import.objects.create(file=fF)
+
+    #     import_students(ii)
+
+    #     # should create 2 Student objects
+    #     self.assertEqual(Student.objects.all().count(), 1)
+
+    #     # should create 2 Parent objects
+    #     self.assertEqual(Parent.objects.all().count(), 1)
+
+    #     # should create 2 Group objects
+    #     self.assertEqual(Group.objects.all().count(), 1)

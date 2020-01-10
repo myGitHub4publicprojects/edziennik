@@ -39,14 +39,12 @@ urlpatterns = [
     path('<int:pk>/add_homework/', views.add_homework, name='add_homework'),
     path('initial_import_create/',
          views.Initial_Import_Create.as_view(), name='initial_import_create'),
-    path(r'^(?P<pk>[0-9]+)/initial_import_detail/$',
+    path('<int:pk>/initial_import_detail/',
          views.Initial_Import_Detail.as_view(), name='initial_import_detail'),
 #     path('initial_import_list/', views.Initial_Import_List.as_view(),
 #          name='initial_import_list'),
 
-    path('/initial_import_usage_create/',
-         views.Initial_Import_Usage_Create.as_view(), name='initial_import_usage_create'),
-    path(r'^(?P<pk>[0-9]+)/initial_import_usage_detail/$',
+    path('<int:pk>/initial_import_usage_detail/',
          views.Initial_Import_Usage_Detail.as_view(), name='initial_import_usage_detail'),
 
 ]
