@@ -79,6 +79,7 @@ class Student(models.Model):
     avaliability = models.CharField(max_length=400, null=True, blank=True)
     other_classes = models.CharField(max_length=200, null=True, blank=True)
     focus = models.CharField(max_length=200, null=True, blank=True)
+    recruitment_note = models.TextField(null=True, blank=True)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     GENDER_CHOICES = (
         ('M', 'Male'),

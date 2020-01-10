@@ -373,9 +373,10 @@ class StudentViewTests(TestCase):
                               last_name='smith',
                               parent=parent)
         student2 = mixer.blend('edziennik.Student')
-        g1 = mixer.blend('edziennik.Group')
+        lector = mixer.blend('edziennik.Lector')
+        g1 = mixer.blend('edziennik.Group', lector=lector)
         g1.student.add(student, student2)
-        g2 = mixer.blend('edziennik.Group')
+        g2 = mixer.blend('edziennik.Group', lector=lector)
         g2.student.add(student, student2)
         grade1 = mixer.blend('edziennik.Grades',
                              date_of_test=today - timedelta(days=1),
@@ -486,7 +487,8 @@ class StudentViewTests(TestCase):
         client = Client()
         student = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
-        group = mixer.blend('edziennik.Group')
+        lector = mixer.blend('edziennik.Lector')
+        group = mixer.blend('edziennik.Group', lector=lector)
         group.student.add(student, student2)
         grade1 = mixer.blend('edziennik.Grades', student=student, date_of_test=today, group=group)
         grade2 = mixer.blend('edziennik.Grades',
@@ -550,9 +552,9 @@ class StudentViewTests(TestCase):
         """
         should display '-' in attendance table
         """
-        client = Client()
+        Client()
         lector1 = mixer.blend('edziennik.Lector')
-        group=mixer.blend('edziennik.Group')
+        group = mixer.blend('edziennik.Group', lector=lector1)
         student = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         group.student.add(student, student2)
@@ -561,7 +563,7 @@ class StudentViewTests(TestCase):
                                                 group=group)
         date_of_class.student.add(student2)
 
-        user_admin = User.objects.create_superuser(username='admin',
+        User.objects.create_superuser(username='admin',
                                  email='jlennon@beatles.com',
                                  password='glassonion')
         logged_in = self.client.login(username='admin', password='glassonion')
@@ -594,9 +596,10 @@ class TestGroupView(TestCase):
         student1 = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         student3 = mixer.blend('edziennik.Student')
-        g1 = mixer.blend('edziennik.Group')
+        lector = mixer.blend('edziennik.Lector')
+        g1 = mixer.blend('edziennik.Group', lector=lector)
         g1.student.add(student1, student2)
-        g2 = mixer.blend('edziennik.Group')
+        g2 = mixer.blend('edziennik.Group', lector=lector)
         g2.student.add(student3)
 
         cd1 = mixer.blend('edziennik.ClassDate',
@@ -695,7 +698,8 @@ class TestShow_Group_GradesView(TestCase):
         student1 = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         student3 = mixer.blend('edziennik.Student')
-        group1 = mixer.blend('edziennik.Group')
+        lector = mixer.blend('edziennik.Lector')
+        group1 = mixer.blend('edziennik.Group', lector=lector)
         group1.student.add(student1, student2, student3)
 
 
@@ -1316,7 +1320,8 @@ class TestAdd_GradesView(TestCase):
             'date_of_test': today
         }
         client = Client()
-        group1 = mixer.blend('edziennik.Group')
+        lector = mixer.blend('edziennik.Lector')
+        group1 = mixer.blend('edziennik.Group', lector=lector)
         student1 = mixer.blend('edziennik.Student',
                                first_name='s1', last_name='s1')
         student2 = mixer.blend('edziennik.Student',
@@ -1429,8 +1434,9 @@ class TestAdd_GradesView(TestCase):
             'date_of_test': today
         }
         client = Client()
-        group1 = mixer.blend('edziennik.Group')
-        group2 = mixer.blend('edziennik.Group')
+        lector = mixer.blend('edziennik.Lector')
+        group1 = mixer.blend('edziennik.Group', lector=lector)
+        group2 = mixer.blend('edziennik.Group', lector=lector)
         student1 = mixer.blend('edziennik.Student',
                                first_name='s1', last_name='s1')
         student2 = mixer.blend('edziennik.Student',
