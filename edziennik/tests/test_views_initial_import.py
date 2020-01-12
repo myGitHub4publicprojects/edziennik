@@ -42,9 +42,9 @@ class Test_Initial_Import_Create(TestCase):
         self.assertRedirects(response, expected_url,
                              status_code=302, target_status_code=200)
 
-    def test_upload_2_students(self):
-        '''2 students, 2 parents, no preexisting'''
-        test_file = os.getcwd() + '/edziennik/tests/test_files/test.xlsx'
+    def test_upload_students(self):
+        '''1 student, no preexisting'''
+        test_file = os.getcwd() + '/edziennik/tests/test_files/test_1student.xlsx'
         f = open(test_file, 'rb')
         file = File(f)
 

@@ -2,6 +2,7 @@
 import random
 import re
 import datetime
+import traceback
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
@@ -9,9 +10,10 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 
 from twilio.rest import Client
+from openpyxl import load_workbook
 
 from edziennik.models import (ClassDate, Grades, SMS, Admin_Profile, Initial_Import_Usage,
-    Initial_Import_Usage_Errors)
+                              Initial_Import_Usage_Errors, Parent, Student, Group)
 
 
 def admin_email(mail_title, mail_body, email=None):
@@ -183,6 +185,59 @@ def import_students(initial_import_instance):
     returns Initial_Import_Usage instance'''
     iiu = Initial_Import_Usage.objects.create(
         initial_import=initial_import_instance)
+    wb = load_workbook(initial_import_instance.file)
+    ws = wb.active
 
+    for row_no, row in enumerate(ws.values):
+        if row_no != 0:
+            try:
+                print(row)
+                p_first_name = row[0]
+                p_last_name = row[1]
+                s_first_name = row[2]
+                s_last_name = row[3]
+                s_gender = row[4].upper()
+                language_of_interest = row[5] or 'English'
+                group_name = row[6]
+                p_phone_number = int(row[7])
+                p_email = row[8]
+                try:
+                    p = Parent.objects.get(phone_number=p_phone_number)
+                except Parent.DoesNotExist:
+                    u = User.objects.create(
+                        first_name=p_first_name,
+                        last_name=p_last_name,
+                        email=p_email,
+                        username=create_unique_username(
+                            p_first_name, p_last_name),
+                    )
+                    p = Parent.objects.create(
+                        user = u,
+                        phone_number=p_phone_number,
+                        email=p_email,
+
+                    )
+                # create a Student
+                s, created = Student.objects.get_or_create(
+                    parent=p,
+                    first_name=s_first_name,
+                    last_name=s_last_name,
+                    defaults = {
+                        'language_of_interest': language_of_interest,
+                        'gender': s_gender
+
+                    }
+                )
+                # create or get Group
+                g, created = Group.objects.get_or_create(name=group_name)
+                # add Student to a Group
+                g.student.add(s)
+            except:
+                Initial_Import_Usage_Errors.objects.create(
+                    Initial_Import_Usage=iiu,
+                    error_log=traceback.format_exc(),
+                    line=row_no + 1
+                )
+                break
 
     return iiu

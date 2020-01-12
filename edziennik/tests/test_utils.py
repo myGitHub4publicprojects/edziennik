@@ -213,11 +213,11 @@ class Test_import_students(TestCase):
 
 
     def test_creates_Initial_Import_Usage_obj(self):
-        src = os.getcwd() + '/edziennik/tests/test_files/test.xlsx'
+        src = os.getcwd() + '/edziennik/tests/test_files/test_1student.xlsx'
         # copy file to test_dir to avoid SuspiciousFileOperation error
-        shutil.copyfile(src, self.test_dir + '/test.xlsx')
+        shutil.copyfile(src, self.test_dir + '/test_1student.xlsx')
 
-        f = open(self.test_dir + '/test.xlsx', 'rb')
+        f = open(self.test_dir + '/test_1student.xlsx', 'rb')
         fF = File(f)
         ii = Initial_Import.objects.create(file=fF)
 
