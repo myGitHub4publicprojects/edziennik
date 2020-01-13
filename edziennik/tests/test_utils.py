@@ -254,6 +254,16 @@ class Test_import_students(TestCase):
         # should create 3 Group objects
         self.assertEqual(Group.objects.all().count(), 3)
 
+    def test_2_students_1_parent_3_groups(self):
+        import_students(self.make_initial_import_obj(
+            'test_2students_1p_3g.xlsx'))
+
+        # should create 2 Students objects
+        self.assertEqual(Student.objects.all().count(), 2)
+        # should create 1 Parent object
+        self.assertEqual(Parent.objects.all().count(), 1)
+        # should create 3 Group objects
+        self.assertEqual(Group.objects.all().count(), 3)
 
     def tearDown(self):
         # Remove the directory after the test

@@ -214,7 +214,6 @@ def import_students(initial_import_instance):
                         user = u,
                         phone_number=p_phone_number,
                         email=p_email,
-
                     )
                 # create a Student
                 s, created = Student.objects.get_or_create(
