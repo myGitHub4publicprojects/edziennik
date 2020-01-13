@@ -191,7 +191,6 @@ def import_students(initial_import_instance):
     for row_no, row in enumerate(ws.values):
         if row_no != 0:
             try:
-                print(row)
                 p_first_name = row[0]
                 p_last_name = row[1]
                 s_first_name = row[2]

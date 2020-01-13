@@ -1,8 +1,10 @@
+import io
 import os
 import shutil
 import tempfile
 
 from django.core.files import File
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.test import TestCase, Client
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -207,39 +209,52 @@ class Test_import_students(TestCase):
         self.test_dir = tempfile.mkdtemp()
         settings.MEDIA_ROOT = self.test_dir
 
+    def make_initial_import_obj(self, file_name):
+        '''file_name - .xlsx file, creates Initial_Import instance''' 
+        path = os.getcwd() + '/edziennik/tests/test_files/' + file_name
+        with open(path, 'rb') as f:
+            fF = InMemoryUploadedFile(io.BytesIO(f.read()), 'fileobj',
+                                      'name.xlsx', 'application/xlsx',
+                                      os.path.getsize(path), None)
+            return Initial_Import.objects.create(file=fF)
+
+    def test_creates_Initial_Import_Usage_obj(self):
+        import_students(self.make_initial_import_obj('test_1student.xlsx'))
+        self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
+
+    def test_one_student_one_parent_one_group(self):
+        import_students(self.make_initial_import_obj('test_1student.xlsx'))
+        self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
+
+        # should create 1 Student object
+        self.assertEqual(Student.objects.all().count(), 1)
+        # should create 1 Parent object
+        self.assertEqual(Parent.objects.all().count(), 1)
+        # should create 1 Group object
+        self.assertEqual(Group.objects.all().count(), 1)
+
+    def test_2_students_2_parents_2_groups(self):
+        import_students(self.make_initial_import_obj('test_2students.xlsx'))
+
+        # should create 2 Students objects
+        self.assertEqual(Student.objects.all().count(), 2)
+        # should create 2 Parents object
+        self.assertEqual(Parent.objects.all().count(), 2)
+        # should create 2 Group objects
+        self.assertEqual(Group.objects.all().count(), 2)
+
+
+    def test_3_students_2_parents_3_groups(self):
+        import_students(self.make_initial_import_obj('test_3students.xlsx'))
+
+        # should create 3 Students objects
+        self.assertEqual(Student.objects.all().count(), 3)
+        # should create 2 Parents object
+        self.assertEqual(Parent.objects.all().count(), 2)
+        # should create 3 Group objects
+        self.assertEqual(Group.objects.all().count(), 3)
+
+
     def tearDown(self):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
-
-
-    def test_creates_Initial_Import_Usage_obj(self):
-        src = os.getcwd() + '/edziennik/tests/test_files/test_1student.xlsx'
-        # copy file to test_dir to avoid SuspiciousFileOperation error
-        shutil.copyfile(src, self.test_dir + '/test_1student.xlsx')
-
-        f = open(self.test_dir + '/test_1student.xlsx', 'rb')
-        fF = File(f)
-        ii = Initial_Import.objects.create(file=fF)
-
-        import_students(ii)
-        self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
-
-    # def test_two_students_two_parents_two_groups(self):
-    #     src = os.getcwd() + '/edziennik/tests/test_files/test.xlsx'
-    #     # copy file to test_dir to avoid SuspiciousFileOperation error
-    #     shutil.copyfile(src, self.test_dir + '/test.xlsx')
-
-    #     f = open(self.test_dir + '/test.xlsx', 'rb')
-    #     fF = File(f)
-    #     ii = Initial_Import.objects.create(file=fF)
-
-    #     import_students(ii)
-
-    #     # should create 2 Student objects
-    #     self.assertEqual(Student.objects.all().count(), 1)
-
-    #     # should create 2 Parent objects
-    #     self.assertEqual(Parent.objects.all().count(), 1)
-
-    #     # should create 2 Group objects
-    #     self.assertEqual(Group.objects.all().count(), 1)
