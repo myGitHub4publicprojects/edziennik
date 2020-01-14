@@ -442,8 +442,6 @@ class Test_import_students(TestCase):
         # error sould be in row number 3 (row_number 2 as 0 indexed)
         self.assertEqual(e.first().row_number, 2)
 
-        # invalid email
-
         # error in second line, first and third ok - should create none
 
 
@@ -471,8 +469,7 @@ class Test_import_students2(TransactionTestCase):
             return Initial_Import.objects.create(file=fF)
 
     def test_2_students_1e_student_no_email(self):
-        '''missing email,
-        Initial_Import_Usage_Errors instance should have correct properties'''
+        '''missing email'''
         iiu = import_students(self.make_initial_import_obj(
             'test_2students_1e_missing_email.xlsx'))
             
@@ -483,7 +480,18 @@ class Test_import_students2(TransactionTestCase):
         # error sould be in row number 3 (row_number 2 as 0 indexed)
         self.assertEqual(e.first().row_number, 2)
 
-    
+    def test_2_students_1e_student_invalid_email(self):
+        '''invalid email'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_invalid_email.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
     def tearDown(self):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)
