@@ -1,7 +1,8 @@
 from django.test import TestCase
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
-                              Admin_Profile, Quizlet)
+                              Admin_Profile, Quizlet, Parent)
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from mixer.backend.django import mixer
 import pytest
 

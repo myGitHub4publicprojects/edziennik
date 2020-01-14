@@ -5,7 +5,7 @@ import tempfile
 
 from django.core.files import File
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.test import TestCase, Client
+from django.test import TestCase, Client, TransactionTestCase
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib import auth
@@ -309,13 +309,181 @@ class Test_import_students(TestCase):
         self.assertEqual(e.first().row_number, 2)
 
         # should have correct line
-        exp_line = "(None, 'Wolek', 'Marta', 'Kass', 'f', None, 'ważna grupa2 AĄŁ', 77722233, 'ala@gmail.com', 'nota o Izie Ąś')"
+        exp_line = "(None, 'Wolek', 'Marta', 'Kass', 'f', None, 'ważna grupa2 AĄŁ', 777222333, 'ala@gmail.com', 'nota o Izie Ąś')"
         self.assertEqual(e.first().line, exp_line)
 
         # should have correct error_log
         exp_log = "Traceback (most recent call last):"
         self.assertIn(exp_log, e.first().error_log)
 
+    def test_2_students_1e_parent_no_surname(self):
+        '''missing parent surname,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_parent_sname.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_no_fname(self):
+        '''missing student firstname,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_student_fname.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_no_sname(self):
+        '''missing student surname,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_student_sname.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_no_gender(self):
+        '''missing student gender,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_student_gender.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_no_group(self):
+        '''missing student group,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_student_group.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_no_tel(self):
+        '''missing tel,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_tel.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_short_tel(self):
+        '''too short tel'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_short_tel.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_long_tel(self):
+        '''too long tel'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_long_tel.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_invalid_tel(self):
+        '''invalid character in tel - space'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_invalid_tel.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    def test_2_students_1e_student_invalid_tel2(self):
+        '''invalid character in tel - letter'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_invalid_tel2.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+        # invalid email
+
+        # error in second line, first and third ok - should create none
+
+
+
+    def tearDown(self):
+        # Remove the directory after the test
+        shutil.rmtree(self.test_dir)
+
+
+class Test_import_students2(TransactionTestCase):
+    '''use TransactionTestCase to avoid problems with transactions'''
+    maxDiff = None
+
+    def setUp(self):
+        self.test_dir = tempfile.mkdtemp()
+        settings.MEDIA_ROOT = self.test_dir
+
+    def make_initial_import_obj(self, file_name):
+        '''file_name - .xlsx file, creates Initial_Import instance'''
+        path = os.getcwd() + '/edziennik/tests/test_files/' + file_name
+        with open(path, 'rb') as f:
+            fF = InMemoryUploadedFile(io.BytesIO(f.read()), 'fileobj',
+                                      'name.xlsx', 'application/xlsx',
+                                      os.path.getsize(path), None)
+            return Initial_Import.objects.create(file=fF)
+
+    def test_2_students_1e_student_no_email(self):
+        '''missing email,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_email.xlsx'))
+            
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
+    
     def tearDown(self):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)

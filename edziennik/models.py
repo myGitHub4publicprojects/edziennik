@@ -6,6 +6,7 @@ from django.db.models.signals import m2m_changed
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from .validators import xlsx_only
 
@@ -53,7 +54,8 @@ class Lector(models.Model):
 class Parent(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    phone_number = models.IntegerField()
+    phone_number = models.IntegerField(
+    	validators=[MinValueValidator(100000000),MaxValueValidator(999999999)])
     email = models.EmailField()
     # address
     street = models.CharField(max_length=120, null=True, blank=True)

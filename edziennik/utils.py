@@ -217,11 +217,14 @@ def import_students(initial_import_instance):
                         username=create_unique_username(
                             p_first_name, p_last_name),
                     )
-                    p = Parent.objects.create(
+                    p = Parent(
                         user = u,
                         phone_number=p_phone_number,
                         email=p_email,
                     )
+                    p.full_clean()
+                    p.save()
+                print('parent tel: ', p, p.phone_number)
                 # create a Student
                 s, created = Student.objects.get_or_create(
                     parent=p,
