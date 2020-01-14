@@ -205,6 +205,7 @@ class TestSignUp_Email(TestCase):
         self.assertEqual(mail.outbox[0].to, expected_email_address)
 
 class Test_import_students(TestCase):
+    maxDiff = None
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
         settings.MEDIA_ROOT = self.test_dir
@@ -220,7 +221,10 @@ class Test_import_students(TestCase):
 
     def test_creates_Initial_Import_Usage_obj(self):
         import_students(self.make_initial_import_obj('test_1student.xlsx'))
+        # should create 1 IIU instance
         self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
+        # there should be no Initial_Import_Usage_Errors instances
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 0)
 
     def test_one_student_one_parent_one_group(self):
         import_students(self.make_initial_import_obj('test_1student.xlsx'))
@@ -303,6 +307,14 @@ class Test_import_students(TestCase):
             initial_import_usage=iiu)
         # error sould be in row number 3 (row_number 2 as 0 indexed)
         self.assertEqual(e.first().row_number, 2)
+
+        # should have correct line
+        exp_line = "(None, 'Wolek', 'Marta', 'Kass', 'f', None, 'ważna grupa2 AĄŁ', 77722233, 'ala@gmail.com', 'nota o Izie Ąś')"
+        self.assertEqual(e.first().line, exp_line)
+
+        # should have correct error_log
+        exp_log = "Traceback (most recent call last):"
+        self.assertIn(exp_log, e.first().error_log)
 
     def tearDown(self):
         # Remove the directory after the test
