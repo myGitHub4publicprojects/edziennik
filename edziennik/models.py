@@ -39,6 +39,7 @@ class Initial_Import_Usage_Errors(models.Model):
     initial_import_usage = models.ForeignKey(
     	Initial_Import_Usage, on_delete=models.CASCADE)
     error_log = models.TextField()
+    row_number = models.IntegerField()
     line = models.TextField()
 
 class Lector(models.Model):

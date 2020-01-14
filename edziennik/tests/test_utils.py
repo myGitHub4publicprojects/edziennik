@@ -265,6 +265,45 @@ class Test_import_students(TestCase):
         # should create 3 Group objects
         self.assertEqual(Group.objects.all().count(), 3)
 
+    def test_2_students_1e(self):
+        '''missing parent first name
+        should not create Student, Parent and Group instances'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_parent_fname.xlsx'))
+
+        # should create 0 Students objects
+        self.assertEqual(Student.objects.all().count(), 0)
+        # should create 0 Parents object
+        self.assertEqual(Parent.objects.all().count(), 0)
+        # should create 0 Group objects
+        self.assertEqual(Group.objects.all().count(), 0)
+
+    def test_2_students_1e_generate_error(self):
+        '''missing parent first name
+        should create Initial_Import_Usage_Errors instance'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_parent_fname.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+
+        # Initial_Import_Usage should have 1 corresponding
+        # Initial_Import_Usage_Errors instance
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        self.assertEqual(e.count(), 1)
+
+    def test_2_students_1e_generate_error_logs_and_data(self):
+        '''missing parent first name
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_missing_parent_fname.xlsx'))
+
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+
     def tearDown(self):
         # Remove the directory after the test
         shutil.rmtree(self.test_dir)

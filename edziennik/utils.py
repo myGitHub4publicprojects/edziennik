@@ -6,9 +6,8 @@ import traceback
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
-
 from django.contrib.auth.models import User
-
+from django.db import transaction
 from twilio.rest import Client
 from openpyxl import load_workbook
 
@@ -182,14 +181,22 @@ def signup_email(parent, student, password):
 
 def import_students(initial_import_instance):
     '''Accepts Initial_Import obj, imports clients and studetns data from obj.file,
-    returns Initial_Import_Usage instance'''
+    returns Initial_Import_Usage instance,
+    if errors in file (eg. missing values) only IIU_Errors instances are created and
+    all changes are reverted via transaction savepoint'''
     iiu = Initial_Import_Usage.objects.create(
         initial_import=initial_import_instance)
     wb = load_workbook(initial_import_instance.file)
     ws = wb.active
-
+    sid = transaction.savepoint()
+    errors = []
     for row_no, row in enumerate(ws.values):
         if row_no != 0:
+            # dissalow empty
+            # print(type(row))
+            # for r in list(row)[:5] + [row[6], row[7]]:
+            #     if not r:
+            #         rollback
             try:
                 p_first_name = row[0]
                 p_last_name = row[1]
@@ -231,11 +238,22 @@ def import_students(initial_import_instance):
                 # add Student to a Group
                 g.student.add(s)
             except:
-                Initial_Import_Usage_Errors.objects.create(
-                    Initial_Import_Usage=iiu,
-                    error_log=traceback.format_exc(),
-                    line=row_no + 1
-                )
-                break
+                error={
+                    'error_log': traceback.format_exc(),
+                    'row_number': row_no,
+                    'line': row
+                }
+                errors.append(error)
+    if errors:
+        transaction.savepoint_rollback(sid)
+        for e in errors:
+            Initial_Import_Usage_Errors.objects.create(
+                initial_import_usage=iiu,
+                error_log=e['error_log'],
+                row_number=e['row_number'],
+                line=e['line']
+            )
+    if not errors:
+        transaction.savepoint_commit(sid)
 
     return iiu
