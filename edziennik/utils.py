@@ -198,15 +198,16 @@ def import_students(initial_import_instance):
             #     if not r:
             #         rollback
             try:
-                p_first_name = row[0]
-                p_last_name = row[1]
-                s_first_name = row[2]
-                s_last_name = row[3]
-                s_gender = row[4].upper()
-                group_name = row[5]
+                p_first_name = row[0].strip()
+                p_last_name = row[1].strip()
+                s_first_name = row[2].strip()
+                s_last_name = row[3].strip()
+                s_gender = row[4].strip().upper()
+                group_name = row[5].strip()
                 p_phone_number = int(row[6])
                 p_email = row[7] or 'test@test.test'
-                s_recruitment_note = row[8]
+                p_email = p_email.strip()
+                s_recruitment_note = row[8].strip()
                 try:
                     p = Parent.objects.get(phone_number=p_phone_number)
                 except Parent.DoesNotExist:
