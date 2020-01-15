@@ -237,6 +237,26 @@ class Test_import_students(TestCase):
         # should create 1 Group object
         self.assertEqual(Group.objects.all().count(), 1)
 
+    def test_1_student_correct_params(self):
+        '''created student, parent and group should have correct parameteres'''
+        import_students(self.make_initial_import_obj('test_1student.xlsx'))
+        self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
+
+        s = Student.objects.get(id=1)
+        self.assertEqual(s.first_name, 'Olek')
+        self.assertEqual(s.last_name, 'Ura')
+        self.assertEqual(s.gender, 'M')
+        self.assertEqual(s.recruitment_note, 'coś o Arku')
+
+        p=Parent.objects.get(id=1)
+        self.assertEqual(p.user.first_name, 'Arek')
+        self.assertEqual(p.user.last_name, 'Nowak')
+        self.assertEqual(p.phone_number, 690506333)
+        self.assertEqual(p.email, 'olo@gmail.com')
+
+        g = Group.objects.get(id=1)
+        self.assertEqual(g.name, 'jun1')
+
     def test_2_students_2_parents_2_groups(self):
         import_students(self.make_initial_import_obj('test_2students.xlsx'))
 
@@ -441,9 +461,6 @@ class Test_import_students(TestCase):
             initial_import_usage=iiu)
         # error sould be in row number 3 (row_number 2 as 0 indexed)
         self.assertEqual(e.first().row_number, 2)
-
-        # error in second line, first and third ok - should create none
-
 
 
     def tearDown(self):

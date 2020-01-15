@@ -207,6 +207,7 @@ def import_students(initial_import_instance):
                 group_name = row[6]
                 p_phone_number = int(row[7])
                 p_email = row[8]
+                s_recruitment_note = row[9]
                 try:
                     p = Parent.objects.get(phone_number=p_phone_number)
                 except Parent.DoesNotExist:
@@ -232,8 +233,8 @@ def import_students(initial_import_instance):
                     last_name=s_last_name,
                     defaults = {
                         'language_of_interest': language_of_interest,
-                        'gender': s_gender
-
+                        'gender': s_gender,
+                        'recruitment_note': s_recruitment_note
                     }
                 )
                 # create or get Group
