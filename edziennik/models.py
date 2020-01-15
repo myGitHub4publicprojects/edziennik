@@ -64,7 +64,8 @@ class Parent(models.Model):
     apartment_number = models.CharField(max_length=6, null=True, blank=True)
     city = models.CharField(max_length=120, null=True, blank=True)
     zip_code = models.CharField(max_length=6, null=True, blank=True)
-   
+    iiu = models.ForeignKey(
+        Initial_Import_Usage, on_delete=models.CASCADE, blank=True, null=True)
     def __str__(self):              
         return self.user.username
 
@@ -93,6 +94,8 @@ class Student(models.Model):
         max_length=1, choices=GENDER_CHOICES, verbose_name='Płeć ucznia')
     # quizlet = models.BooleanField(default=False) # give student reward for activity on quizlet
     quizlet_username = models.CharField(max_length=30, blank=True)
+    iiu = models.ForeignKey(
+    	Initial_Import_Usage, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):              
         return self.first_name + ' ' + self.last_name
@@ -104,7 +107,8 @@ class Group(models.Model):
     	Lector, on_delete=models.CASCADE, blank=True, null=True)
     student = models.ManyToManyField(Student, related_name="group_student", blank=True)
     quizlet_group_url = models.URLField(blank=True)
-
+    iiu = models.ForeignKey(
+    	Initial_Import_Usage, on_delete=models.CASCADE, blank=True, null=True)
     def __str__(self):
         return self.name
 
