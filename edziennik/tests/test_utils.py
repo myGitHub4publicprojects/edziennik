@@ -329,7 +329,7 @@ class Test_import_students(TestCase):
         self.assertEqual(e.first().row_number, 2)
 
         # should have correct line
-        exp_line = "(None, 'Wolek', 'Marta', 'Kass', 'f', None, 'ważna grupa2 AĄŁ', 777222333, 'ala@gmail.com', 'nota o Izie Ąś')"
+        exp_line = "(None, 'Wolek', 'Marta', 'Kass', 'f', 'ważna grupa2 AĄŁ', 777222333, 'ala@gmail.com', 'nota o Izie Ąś')"
         self.assertEqual(e.first().line, exp_line)
 
         # should have correct error_log

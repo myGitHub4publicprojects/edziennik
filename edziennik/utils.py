@@ -203,11 +203,10 @@ def import_students(initial_import_instance):
                 s_first_name = row[2]
                 s_last_name = row[3]
                 s_gender = row[4].upper()
-                language_of_interest = row[5] or 'English'
-                group_name = row[6]
-                p_phone_number = int(row[7])
-                p_email = row[8]
-                s_recruitment_note = row[9]
+                group_name = row[5]
+                p_phone_number = int(row[6])
+                p_email = row[7]
+                s_recruitment_note = row[8]
                 try:
                     p = Parent.objects.get(phone_number=p_phone_number)
                 except Parent.DoesNotExist:
@@ -223,21 +222,21 @@ def import_students(initial_import_instance):
                         phone_number=p_phone_number,
                         email=p_email,
                     )
-                    p.full_clean()
+                    p.full_clean() # a must for validation
                     p.save()
-                print('parent tel: ', p, p.phone_number)
                 # create a Student
-                s, created = Student.objects.get_or_create(
-                    parent=p,
-                    first_name=s_first_name,
-                    last_name=s_last_name,
-                    defaults = {
-                        'language_of_interest': language_of_interest,
-                        'gender': s_gender,
-                        'recruitment_note': s_recruitment_note
-                    }
-                )
-                # create or get Group
+                try:
+                    s = Student.objects.get(parent=p,
+                                        first_name=s_first_name,
+                                        last_name=s_last_name)
+                except Student.DoesNotExist:
+                    s = Student(parent=p,
+                                first_name=s_first_name,
+                                last_name=s_last_name,
+                                gender = s_gender,
+                                recruitment_note = s_recruitment_note)
+                    s.full_clean()  # a must for validation
+                    s.save()
                 g, created = Group.objects.get_or_create(name=group_name)
                 # add Student to a Group
                 g.student.add(s)
