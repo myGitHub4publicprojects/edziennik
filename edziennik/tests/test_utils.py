@@ -239,7 +239,7 @@ class Test_import_students(TestCase):
 
     def test_1_student_correct_params(self):
         '''created student, parent and group should have correct parameteres'''
-        import_students(self.make_initial_import_obj('test_1student.xlsx'))
+        iiu = import_students(self.make_initial_import_obj('test_1student.xlsx'))
         self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
 
         s = Student.objects.get(id=1)
@@ -247,15 +247,18 @@ class Test_import_students(TestCase):
         self.assertEqual(s.last_name, 'Ura')
         self.assertEqual(s.gender, 'M')
         self.assertEqual(s.recruitment_note, 'coś o Arku')
+        self.assertEqual(s.iiu, iiu)
 
         p=Parent.objects.get(id=1)
         self.assertEqual(p.user.first_name, 'Arek')
         self.assertEqual(p.user.last_name, 'Nowak')
         self.assertEqual(p.phone_number, 690506333)
         self.assertEqual(p.email, 'olo@gmail.com')
+        self.assertEqual(p.iiu, iiu)
 
         g = Group.objects.get(id=1)
         self.assertEqual(g.name, 'jun1')
+        self.assertEqual(p.iiu, iiu)
 
     def test_2_students_2_parents_2_groups(self):
         import_students(self.make_initial_import_obj('test_2students.xlsx'))

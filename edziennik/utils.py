@@ -222,6 +222,7 @@ def import_students(initial_import_instance):
                         user = u,
                         phone_number=p_phone_number,
                         email=p_email,
+                        iiu=iiu
                     )
                     p.full_clean() # a must for validation
                     p.save()
@@ -235,10 +236,13 @@ def import_students(initial_import_instance):
                                 first_name=s_first_name,
                                 last_name=s_last_name,
                                 gender = s_gender,
-                                recruitment_note = s_recruitment_note)
+                                recruitment_note = s_recruitment_note,
+                                iiu=iiu
+                                )
                     s.full_clean()  # a must for validation
                     s.save()
-                g, created = Group.objects.get_or_create(name=group_name)
+                g, created = Group.objects.get_or_create(
+                    name=group_name, defaults={'iiu': iiu})
                 # add Student to a Group
                 g.student.add(s)
             except:
