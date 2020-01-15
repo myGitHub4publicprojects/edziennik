@@ -485,17 +485,19 @@ class Test_import_students2(TransactionTestCase):
                                       os.path.getsize(path), None)
             return Initial_Import.objects.create(file=fF)
 
-    def test_2_students_1e_student_no_email(self):
-        '''missing email'''
+    def test_2_students_student_no_email(self):
+        '''missing email - parent should get ‘test@test.test’ as email'''
         iiu = import_students(self.make_initial_import_obj(
             'test_2students_1e_missing_email.xlsx'))
             
-        # there should be 1 Initial_Import_Usage_Errors instance
-        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        # there should be no Initial_Import_Usage_Errors instances
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 0)
         e = Initial_Import_Usage_Errors.objects.filter(
             initial_import_usage=iiu)
-        # error sould be in row number 3 (row_number 2 as 0 indexed)
-        self.assertEqual(e.first().row_number, 2)
+
+        # Parent Olo (tel 555506333) should have ‘test@test.test’ email
+        p = Parent.objects.get(phone_number=555506333)
+        self.assertEqual(p.email, 'test@test.test')
 
     def test_2_students_1e_student_invalid_email(self):
         '''invalid email'''

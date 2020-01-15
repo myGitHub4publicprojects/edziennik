@@ -205,7 +205,7 @@ def import_students(initial_import_instance):
                 s_gender = row[4].upper()
                 group_name = row[5]
                 p_phone_number = int(row[6])
-                p_email = row[7]
+                p_email = row[7] or 'test@test.test'
                 s_recruitment_note = row[8]
                 try:
                     p = Parent.objects.get(phone_number=p_phone_number)

@@ -54,6 +54,7 @@ class Lector(models.Model):
 class Parent(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+    # phone_number - 9 digits, no spaces, no other characters
     phone_number = models.IntegerField(
     	validators=[MinValueValidator(100000000),MaxValueValidator(999999999)])
     email = models.EmailField()
