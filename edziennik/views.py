@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
-
+from django.contrib.messages.views import SuccessMessageMixin
 
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
@@ -657,12 +657,16 @@ class Initial_Import_Create(OnlySuperuserMixin, CreateView):
     fields = ['file']
 
 
-class Initial_Import_Detail(OnlySuperuserMixin, DetailView):
+class Initial_Import_Detail(OnlySuperuserMixin, SuccessMessageMixin, DetailView):
     model = Initial_Import
 
     def post(self, request, *args, **kwargs):
         f = request.POST['initial_import_file']
         f_usage = import_students(f)
+        if f_usage.Initial_Import_Usage_Errors_set.all():
+            success_message = 'WYSTĄPIŁY BŁĘDY - DANE NIE ZOSTAŁY ZAIMPORTOWANE'
+        else:
+            success_message = 'Import zakończony pomyślnie'
         return redirect(reverse(
             'edziennik:initial_import_usage_detail', args=(f_usage.id,)))
 
