@@ -661,7 +661,6 @@ class Initial_Import_Detail(OnlySuperuserMixin, DetailView):
     model = Initial_Import
 
     def post(self, request, *args, **kwargs):
-        print('here')
         f = request.POST['initial_import_file']
         f_usage = import_students(f)
         return redirect(reverse(

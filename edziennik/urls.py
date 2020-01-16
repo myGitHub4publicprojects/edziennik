@@ -41,8 +41,8 @@ urlpatterns = [
          views.Initial_Import_Create.as_view(), name='initial_import_create'),
     path('<int:pk>/initial_import_detail/',
          views.Initial_Import_Detail.as_view(), name='initial_import_detail'),
-#     path('initial_import_list/', views.Initial_Import_List.as_view(),
-#          name='initial_import_list'),
+    path('initial_import_list/', views.Initial_Import_List.as_view(),
+         name='initial_import_list'),
 
     path('<int:pk>/initial_import_usage_detail/',
          views.Initial_Import_Usage_Detail.as_view(), name='initial_import_usage_detail'),

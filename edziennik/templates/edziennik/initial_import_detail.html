@@ -11,7 +11,9 @@
     <input type="submit" value="Rozpocznij import">
 </form>
 
-Użycia pliku:
+
+{% if object.initial_import_usage_set.all %}
+<h3>Użycia pliku:</h3>
 <ul>
 {% for f in object.initial_import_usage_set.all %}
 <li>
@@ -20,4 +22,5 @@ Użycia pliku:
 </li>
 {% endfor %}
 </ul>
+{% endif %}
 {% endblock content %}
