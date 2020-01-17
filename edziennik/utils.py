@@ -192,16 +192,15 @@ def import_students(initial_import_instance):
     errors = []
     for row_no, row in enumerate(ws.values):
         if row_no != 0:
-            # dissalow empty
-            # print(type(row))
-            # for r in list(row)[:5] + [row[6], row[7]]:
-            #     if not r:
-            #         rollback
             try:
                 p_first_name = row[0].strip()
                 p_last_name = row[1].strip()
                 s_first_name = row[2].strip()
-                s_last_name = row[3].strip()
+                s_last_name = row[3]
+                if not s_last_name:
+                    s_last_name = p_last_name
+                else:
+                    s_last_name = s_last_name.strip()
                 s_gender = row[4].strip().upper()
                 group_name = row[5].strip()
                 p_phone_number = int(row[6])

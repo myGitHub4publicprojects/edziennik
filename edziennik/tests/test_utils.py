@@ -260,6 +260,32 @@ class Test_import_students(TestCase):
         self.assertEqual(g.name, 'jun1')
         self.assertEqual(p.iiu, iiu)
 
+    def test_2_students_student_no_sname(self):
+        '''missing student surname, should get parent sname
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_missing_student_sname.xlsx'))
+        # should create 1 Initial_Import_Usage
+        self.assertEqual(Initial_Import_Usage.objects.all().count(), 1)
+        # there should be no Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 0)
+
+        s1 = Student.objects.get(id=1)
+        self.assertEqual(s1.first_name, 'Adam')
+        self.assertEqual(s1.last_name, 'Nowak-Gościej')
+
+        p1 = Parent.objects.get(id=1)
+        self.assertEqual(p1.user.first_name, 'Arek')
+        self.assertEqual(p1.user.last_name, 'Nowak')
+
+        s2 = Student.objects.get(id=2)
+        self.assertEqual(s2.first_name, 'Ola')
+        self.assertEqual(s2.last_name, 'Kass')
+
+        p2 = Parent.objects.get(id=2)
+        self.assertEqual(p2.user.first_name, 'Olo')
+        self.assertEqual(p2.user.last_name, 'Kass')
+
     def test_2_students_2_parents_2_groups(self):
         import_students(self.make_initial_import_obj('test_2students.xlsx'))
 
@@ -387,19 +413,6 @@ class Test_import_students(TestCase):
         Initial_Import_Usage_Errors instance should have correct properties'''
         iiu = import_students(self.make_initial_import_obj(
             'test_2students_1e_missing_student_fname.xlsx'))
-
-        # there should be 1 Initial_Import_Usage_Errors instance
-        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
-        e = Initial_Import_Usage_Errors.objects.filter(
-            initial_import_usage=iiu)
-        # error sould be in row number 3 (row_number 2 as 0 indexed)
-        self.assertEqual(e.first().row_number, 2)
-
-    def test_2_students_1e_student_no_sname(self):
-        '''missing student surname,
-        Initial_Import_Usage_Errors instance should have correct properties'''
-        iiu = import_students(self.make_initial_import_obj(
-            'test_2students_1e_missing_student_sname.xlsx'))
 
         # there should be 1 Initial_Import_Usage_Errors instance
         self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
