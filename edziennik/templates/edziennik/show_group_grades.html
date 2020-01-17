@@ -1,14 +1,18 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 <h1 class="text-center">Oceny</h1>
-<p>Nazwa grupy: <b>{{ group.name }}</b></p>
-{% if request.user.is_superuser %}
-<p>Lektor prowadzący: 
-  <a href="{% url 'edziennik:lector' group.lector.id %}">
-    <b>{{ lector.user.get_full_name }}</b>
-  </a>
-</p>
-{% endif %}
+    <p>Nazwa grupy: <b>{{ group.name }}</b>
+    {% if request.user.is_superuser %}
+        , Lektor prowadzący: 
+        {% if lector %}
+        <a href="{% url 'edziennik:lector' lector.id %}">
+            <b>{{ lector.user.get_full_name }}</b>
+        </a>
+        {% else %}
+        nie przydzielono lekora
+        {% endif %}
+    {% endif %}
+    </p>
 
 <div class="table-responsive">
 <table class="table">

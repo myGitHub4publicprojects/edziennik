@@ -210,8 +210,6 @@ def show_group_grades(request, pk):
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
-    # if not request.user.is_superuser and request.user != group.lector.user:
-    #     raise Http404
     students = group.student.all()
     grades_in_this_group = Grades.objects.filter(student__in=students)
 
