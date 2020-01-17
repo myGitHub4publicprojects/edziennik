@@ -11,7 +11,7 @@
     <ul>
         {% for e in object.initial_import_usage_errors_set.all %}
         <li>
-            {{ e.row_number }}
+            {{ e.row_number|add:"1" }}
         </li>
         {% endfor %}
     </ul>

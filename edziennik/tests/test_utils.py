@@ -339,6 +339,36 @@ class Test_import_students(TestCase):
         exp_log = "Traceback (most recent call last):"
         self.assertIn(exp_log, e.first().error_log)
 
+    def test_5_students_2e_generate_error_logs_and_data(self):
+        '''missing or incorrect data in two rows
+        Initial_Import_Usage_Errors instances should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_5students_2e.xlsx'))
+
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # should genereate two Initial_Import_Usage_Errors
+        self.assertEqual(e.count(), 2)
+        e1 = e.first()
+        # error1 sould be in row number 3 (missing gender)
+        self.assertEqual(e1.row_number, 2)
+        # e1 should have corthe following line
+        exp_line = "('Arek', 'Nowak', 'Iza', 'Nowak', None, 'jun1', 690506333, 'olo@gmail.com', 'coś o Arku')"
+        self.assertEqual(e1.line, exp_line)
+        # e1 should have correct error_log
+        exp_log = "s_gender"
+        self.assertIn(exp_log, e1.error_log)
+
+        e2 = e.last()
+        # error2 sould be in row number 4 (missing gender)
+        self.assertEqual(e2.row_number, 3)
+        # e2 should have corthe following line
+        exp_line = "('Arek', 'Nowak', 'Adam', 'Nowak', 'm', 'jun1', 6, 'olo@gmail.com', 'coś o Arku')"
+        self.assertEqual(e2.line, exp_line)
+        # e2 should have correct error_log
+        exp_log = "phone_number"
+        self.assertIn(exp_log, e2.error_log)
+
     def test_2_students_1e_parent_no_surname(self):
         '''missing parent surname,
         Initial_Import_Usage_Errors instance should have correct properties'''
