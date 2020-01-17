@@ -7,7 +7,7 @@
 <p>Nazwa pliku: {{ object.filename }}</p>
 
 <form action="" method="POST">{% csrf_token %}
-    <input type="hidden" value="object" name="initial_import_file" >
+    <input type="hidden" value="{{ object.id }}" name="initial_import_file" >
     <input type="submit" value="Rozpocznij import">
 </form>
 
@@ -18,7 +18,7 @@
 {% for f in object.initial_import_usage_set.all %}
 <li>
     <a href="{% url 'edziennik:initial_import_usage_detail' f.id %}">{{ f.used|date:'Y-m-d H:i' }}</a>
-     {% if f.initial_import_usage_errors_set %}BŁĘDY{% endif %}
+     {% if f.initial_import_usage_errors_set.all %}BŁĘDY{% endif %}
 </li>
 {% endfor %}
 </ul>

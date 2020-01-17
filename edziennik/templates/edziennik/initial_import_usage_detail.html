@@ -1,10 +1,10 @@
 {% extends "edziennik/base.html" %}
 
 {% block content %}
-<h2>Szczegóły próby importu uczniów</h2>
+<h2>Szczegóły importu uczniów</h2>
 <p>Import uczniów z {{ object.used|date:'Y-m-d H:i' }}, 
     na podstawie pliku {{ object.initial_import.filename }} 
-    (uploaded: {{ object.initial_import.uploaded_at|date:'Y-m-d H:i' }}</p>
+    (uploaded: {{ object.initial_import.uploaded_at|date:'Y-m-d H:i' }})</p>
 {% if object.initial_import_usage_errors_set.all %}
     <h3>IMPORT NIEUDANY</h3>
     Wystąpiły błędy w następujących wierszach pliku:
@@ -18,9 +18,9 @@
 {% else %}
     Zaimportowano:
     <ul>
-        <li>{{ in object.student_set.all|length }} uczniów,</li>
-        <li>{{ in object.parent_set.all|length }} rodziców,</li>
-        <li>{{ in object.group_set.all|length }} grup</li>
+        <li>{{ object.student_set.all|length }} uczniów,</li>
+        <li>{{ object.parent_set.all|length }} rodziców,</li>
+        <li>{{ object.group_set.all|length }} grup</li>
     </ul>
 {% endif %}
 
