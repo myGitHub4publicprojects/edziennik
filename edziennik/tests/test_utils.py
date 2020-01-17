@@ -434,6 +434,21 @@ class Test_import_students(TestCase):
         # error sould be in row number 3 (row_number 2 as 0 indexed)
         self.assertEqual(e.first().row_number, 2)
 
+    def test_2_students_1e_student_incorrect_gender(self):
+        '''incorrect characters in student gender,
+        Initial_Import_Usage_Errors instance should have correct properties'''
+        iiu = import_students(self.make_initial_import_obj(
+            'test_2students_1e_other_char_in_student_gender.xlsx'))
+
+        # there should be 1 Initial_Import_Usage_Errors instance
+        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
+        e = Initial_Import_Usage_Errors.objects.filter(
+            initial_import_usage=iiu)
+        # error sould be in row number 3 (row_number 2 as 0 indexed)
+        self.assertEqual(e.first().row_number, 2)
+        exp_log = "gender"
+        self.assertIn(exp_log, e.first().error_log)
+
     def test_2_students_1e_student_no_group(self):
         '''missing student group,
         Initial_Import_Usage_Errors instance should have correct properties'''

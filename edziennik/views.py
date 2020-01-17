@@ -202,7 +202,6 @@ def group(request, pk):
         'lector': lector,
         'students': students,
         'homeworks': homeworks
-
     }
     return render(request, 'edziennik/group.html', context)
 
