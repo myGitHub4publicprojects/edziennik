@@ -124,7 +124,7 @@ def student(request, pk):
     student = get_object_or_404(Student, pk = pk)
     parents = [parent.user for parent in Parent.objects.all()]
     groups = student.group_student.all()
-    lectors = [group.lector.user for group in groups]
+    lectors = [group.lector.user for group in groups if group.lector]
     if not (request.user.is_superuser) and (request.user not in lectors) and not (
         request.user in parents):
         raise Http404
@@ -166,6 +166,7 @@ def student(request, pk):
     context = {
         'student': student,
         'student_groups': student_groups,
+        'lectors': lectors
         }
     
     return render(request, 'edziennik/student.html', context)

@@ -11,13 +11,19 @@
         <button type="submit">Login</button>
     </form>
 {% else %}
-    {% if request.user.is_superuser or request.user == lector.user or request.user == student.parent.user  %}
+    {% if request.user.is_superuser or request in lectors or request.user == student.parent.user  %}
         <section class="mb-5">
         <h1 class="text-center">{{ student }}</h1>
         <hr>
         <h2 class="text-center mt-3">Oceny</h2>
         {% for student_group in student_groups %}
-            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>{{ student_group.group.lector.user.get_full_name}}</b></p>
+            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>
+            {% if student_group.group.lector %}
+                {{ student_group.group.lector.user.get_full_name}}
+            {% else %}
+                lektor nie został przypisany
+            {% endif %}
+            </b></p>
             <p>Ostatnie zadania domowe:</p>
             <ul class="list-unstyled">
                 {% for h in student_group.homeworks %}
@@ -54,11 +60,17 @@
         
     {% endif %}
 
-    {% if request.user.is_superuser or request.user == lector.user %}
+    {% if request.user.is_superuser or request.user in lectors %}
         
         <h2 class="text-center">Frekwencja</h2>
         {% for student_group in student_groups %}
-            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>{{ student_group.group.lector.user.get_full_name}}</b></p>
+            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>
+            {% if student_group.group.lector %}
+                {{ student_group.group.lector.user.get_full_name}}
+            {% else %}
+                lektor nie został przypisany
+            {% endif %}
+            </b></p>
             <table class="table">
                 <tr>
                 {% for i in student_group.attendence_table_header %}
