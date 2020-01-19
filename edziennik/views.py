@@ -125,9 +125,10 @@ def student(request, pk):
     parents = [parent.user for parent in Parent.objects.all()]
     groups = student.group_student.all()
     lectors = [group.lector.user for group in groups if group.lector]
-    if not (request.user.is_superuser) and (request.user not in lectors) and not (
-        request.user in parents):
-        raise Http404
+    # this restriction is not needed anymore as implemented in template
+    # if not (request.user.is_superuser) and (request.user not in lectors) and not (
+    #     request.user in parents):
+    #     raise Http404
     student_groups = []
     for group in groups:
         grades = Grades.objects.filter(student=student, group=group)
