@@ -1,9 +1,11 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 
-    <p>Nazwa grupy: <b>{{ group.name }}</b>
+<div class="row">
+    <div class="col-sm-3">Nazwa grupy: <b>{{ group.name }}</b></div>
+    <div class="col-sm-9">
     {% if request.user.is_superuser %}
-        , Lektor prowadzący: 
+        Lektor prowadzący:
         {% if lector %}
         <a href="{% url 'edziennik:lector' lector.id %}">
             <b>{{ lector.user.get_full_name }}</b>
@@ -11,9 +13,24 @@
         {% else %}
         nie przydzielono lekora
         {% endif %}
-
+        
+        <button class="btn btn-primary btn-sm mx-3 mb-1" type="button" 
+        id="showLectorChange">zmień lektora</button>
+        <div id="collapseNewLector" class="d-none">
+        nowy lektor:
+        <form action="" method="POST" class="d-inline-block">{% csrf_token %}
+            <select name="newLectorId">
+                {% for l in lectors %}
+                <option value="{{ l.id }}">{{ l.user.get_full_name }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Zatwierdź">
+        </form>
+        </div>
     {% endif %}
-    </p>
+    </div>
+
+</div>
 
 <section>
     
@@ -68,4 +85,17 @@
         {% endfor %}
     </table>
 </section>
+
+<script>
+const showLectorChange = document.getElementById('showLectorChange');
+const collapseNewLector = document.getElementById('collapseNewLector');
+showLectorChange.addEventListener('click', function(){
+    if (collapseNewLector.className == 'd-inline-block'){
+        collapseNewLector.className = 'd-none';
+    }
+    else {
+        collapseNewLector.className = 'd-inline-block';
+    }
+})
+</script>
 {% endblock content %}

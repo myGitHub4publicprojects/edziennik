@@ -122,7 +122,7 @@ def lector(request, pk):
 def student(request, pk):
     '''displays info about a given student'''
     student = get_object_or_404(Student, pk = pk)
-    parents = [parent.user for parent in Parent.objects.all()]
+    # parents = [parent.user for parent in Parent.objects.all()]
     groups = student.group_student.all()
     lectors = [group.lector.user for group in groups if group.lector]
     # this restriction is not needed anymore as implemented in template
@@ -195,6 +195,12 @@ def group(request, pk):
     if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
+    if request.method == 'POST':
+        lector = get_object_or_404(Lector, pk=request.POST['newLectorId'])
+        group.lector = lector
+        group.save()
+        messages.success(
+            request, "Przypisano do grupy nowego lektora: %s" % lector.user.get_full_name())
     lector = group.lector
     students = group.student.all()
     cd = ClassDate.objects.filter(group=group)
@@ -202,6 +208,7 @@ def group(request, pk):
     context = {
         'group': group,
         'lector': lector,
+        'lectors': Lector.objects.all(),
         'students': students,
         'homeworks': homeworks
     }

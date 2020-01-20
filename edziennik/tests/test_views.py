@@ -592,7 +592,6 @@ class TestGroupView(TestCase):
         should display all homeworks in this group in reverse chronological order
         """
         client = Client()
-
         student1 = mixer.blend('edziennik.Student')
         student2 = mixer.blend('edziennik.Student')
         student3 = mixer.blend('edziennik.Student')
@@ -670,6 +669,26 @@ class TestGroupView(TestCase):
 
         # first homework should be from today
         self.assertEqual(h_in_g1.first().classdate.date_of_class, today)
+
+
+    def test_group_lector_change(self):
+        '''when new lector id is posted, new lector should be assigned to a group'''
+        l1 = mixer.blend('edziennik.Lector')
+        l2 = mixer.blend('edziennik.Lector')
+        g = mixer.blend('edziennik.Group', lector=l1)
+        User.objects.create_superuser(username='admin',
+                                                   email='jlennon@beatles.com',
+                                                   password='glassonion')
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:group', args=(g.id,))
+        data = {'newLectorId': l2.id}
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        # lector l2 should be now linked to the group
+        g.refresh_from_db()
+        self.assertEqual(g.lector, l2)
 
 class TestShow_Group_GradesView(TestCase):
     def setUp(self):
