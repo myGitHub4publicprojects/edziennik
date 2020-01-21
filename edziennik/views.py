@@ -208,11 +208,18 @@ def group(request, pk):
         raise Http404
     group = get_object_or_404(Group, pk=pk)
     if request.method == 'POST':
-        lector = get_object_or_404(Lector, pk=request.POST['newLectorId'])
-        group.lector = lector
-        group.save()
-        messages.success(
-            request, "Przypisano do grupy nowego lektora: %s" % lector.user.get_full_name())
+        if request.POST.get('newLectorId'):
+            lector = get_object_or_404(Lector, pk=request.POST['newLectorId'])
+            group.lector = lector
+            group.save()
+            messages.success(
+                request, "Przypisano do grupy nowego lektora: %s" % lector.user.get_full_name())
+        if request.POST.getlist('newStudentId'):
+            for s in request.POST.getlist('newStudentId'):
+                group.student.add(Student.objects.get(pk=s))
+        if request.POST.getlist('delStudentId'):
+            for s in request.POST.getlist('delStudentId'):
+                group.student.remove(Student.objects.get(pk=s))
     lector = group.lector
     students = group.student.all()
     cd = ClassDate.objects.filter(group=group)
@@ -222,6 +229,7 @@ def group(request, pk):
         'lector': lector,
         'lectors': Lector.objects.all(),
         'students': students,
+        'all_students': Student.objects.all(),
         'homeworks': homeworks
     }
     return render(request, 'edziennik/group.html', context)

@@ -336,7 +336,7 @@ class LectorViewTests(TestCase):
             'edziennik.ClassDate',
             lector=lector1,
             date_of_class=date(year=2018, month=2, day=20))
-        logged_in = self.client.login(username='admin', password='glassonion')
+        self.client.login(username='admin', password='glassonion')
         response = self.client.get(
             reverse('edziennik:lector', args=(lector1.id,)))
         expeced_hours = [
@@ -628,6 +628,10 @@ class StudentViewTests(TestCase):
         self.assertEqual(response_attendance_table_content[0][2], absent_sign)
 
 class TestGroupView(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+        username='admin', email='jlennon@beatles.com', password='glassonion')
+
     def test_group_view_for_non_staff(self):
         """
         non staff user should not have access - status code 404
@@ -693,10 +697,6 @@ class TestGroupView(TestCase):
                     message=homework_today_g1
                             )
 
-        user_admin = User.objects.create_superuser(username='admin',
-                                 email='jlennon@beatles.com',
-                                 password='glassonion')
-
         logged_in = self.client.login(username='admin', password='glassonion')
         response = self.client.get(reverse('edziennik:group', args=(g1.id,)))
         self.assertTrue(logged_in)
@@ -727,10 +727,7 @@ class TestGroupView(TestCase):
         l1 = mixer.blend('edziennik.Lector')
         l2 = mixer.blend('edziennik.Lector')
         g = mixer.blend('edziennik.Group', lector=l1)
-        User.objects.create_superuser(username='admin',
-                                                   email='jlennon@beatles.com',
-                                                   password='glassonion')
-
+        
         self.client.login(username='admin', password='glassonion')
         url = reverse('edziennik:group', args=(g.id,))
         data = {'newLectorId': l2.id}
@@ -740,6 +737,53 @@ class TestGroupView(TestCase):
         # lector l2 should be now linked to the group
         g.refresh_from_db()
         self.assertEqual(g.lector, l2)
+
+    def test_group_add_student(self):
+        '''when new student id is posted, new student should be assigned to a group'''
+        s1 = mixer.blend('edziennik.Student')
+        s2 = mixer.blend('edziennik.Student')
+        s3 = mixer.blend('edziennik.Student')
+        g = mixer.blend('edziennik.Group')
+        g.student.add(s1)
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:group', args=(g.id,))
+        data = {'newStudentId': [s2.id, s3.id]}
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        g.refresh_from_db()
+        # student s1 should still be linked to the group
+        self.assertIn(s1, g.student.all())
+        # student s2 should be now linked to the group
+        self.assertIn(s2, g.student.all())
+        # student s3 should be now linked to the group
+        self.assertIn(s3, g.student.all())
+
+    def test_group_remove_student(self):
+        '''when student id is posted, student should be removed from the group'''
+        s1 = mixer.blend('edziennik.Student')
+        s2 = mixer.blend('edziennik.Student')
+        s3 = mixer.blend('edziennik.Student')
+        g = mixer.blend('edziennik.Group')
+        g.student.add(s1, s2, s3)
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:group', args=(g.id,))
+        data = {'delStudentId': [s2.id, s3.id]}
+        response = self.client.post(url, data, follow=True)
+
+        print('test lll: ', [s2.id, s3.id])
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        g.refresh_from_db()
+        # student s1 should still be linked to the group
+        self.assertIn(s1, g.student.all())
+        # student s2 should not be linked to the group
+        self.assertNotIn(s2, g.student.all())
+        # student s3 should not be linked to the group
+        self.assertNotIn(s3, g.student.all())
+
 
 class TestShow_Group_GradesView(TestCase):
     def setUp(self):

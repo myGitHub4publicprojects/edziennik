@@ -11,11 +11,11 @@
             <b>{{ lector.user.get_full_name }}</b>
         </a>
         {% else %}
-        nie przydzielono lekora
+        nie przydzielono lektora
         {% endif %}
         
-        <button class="btn btn-primary btn-sm mx-3 mb-1" type="button" 
-        id="showLectorChange">zmień lektora</button>
+        <button class="btn btn-primary btn-sm mx-3 mb-1 btnToggle" type="button" 
+        >zmień lektora</button>
         <div id="collapseNewLector" class="d-none">
         nowy lektor:
         <form action="" method="POST" class="d-inline-block">{% csrf_token %}
@@ -57,17 +57,54 @@
     </a>
 </section>
 <hr>
-<section>
-    <p>Uczniowie:
-        <ul class="list-unstyled">
-            {% for s in students %}
+
+<div class="row">
+    <div class="col-sm text-center">
+        Uczniowie:
+            <ul class="list-unstyled">
+                {% for s in students %}
                 <li>
                     <a href="{% url 'edziennik:student' s.id %}">{{ s }}</a>
                 </li>
-            {% endfor %}
-        </ul>
-    </p>
-</section>
+                {% endfor %}
+            </ul>
+
+    </div>
+    {% if request.user.is_superuser %}
+    <div class="col-sm">
+        <button class="btn btn-primary btn-sm mb-1 btnToggle" type="button">
+            dodaj studentów</button>
+        <div class="d-none">
+            zaznacz uczniów do dodania:
+            <form action="" method="POST" class="d-inline-block">{% csrf_token %}
+                <select name="newStudentId" multiple>
+                    {% for s in all_students %}
+                    <option value="{{ s.id }}">{{ s }}, parent: {{ s.parent }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Zatwierdź">
+            </form>
+        </div>
+    </div>
+    <div class="col-sm">
+        <button class="btn btn-primary btn-sm mb-1 btnToggle" type="button">
+            usuń studentów</button>
+        <div class="d-none">
+            zaznacz uczniów do usunięcia:
+            <form action="" method="POST" class="d-inline-block">{% csrf_token %}
+                <select name="delStudentId" multiple>
+                    {% for s in students %}
+                    <option value="{{ s.id }}">{{ s }}, parent: {{ s.parent }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Zatwierdź">
+            </form>
+        </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
 <hr>
 <section>
     <p>Zadania domowe:</p>
@@ -87,15 +124,17 @@
 </section>
 
 <script>
-const showLectorChange = document.getElementById('showLectorChange');
-const collapseNewLector = document.getElementById('collapseNewLector');
-showLectorChange.addEventListener('click', function(){
-    if (collapseNewLector.className == 'd-inline-block'){
-        collapseNewLector.className = 'd-none';
+for (let i of document.getElementsByClassName('btnToggle')){
+    i.addEventListener('click', showToggle);
+}
+
+function showToggle(e){
+    if (e.target.nextElementSibling.className == 'd-inline-block') {
+        e.target.nextElementSibling.className = 'd-none';
     }
     else {
-        collapseNewLector.className = 'd-inline-block';
+        e.target.nextElementSibling.className = 'd-inline-block';
     }
-})
+}
 </script>
 {% endblock content %}
