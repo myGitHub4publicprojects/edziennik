@@ -344,6 +344,57 @@ class LectorViewTests(TestCase):
         self.assertEqual(
             response.context['hours_in_month_list'], expeced_hours)
 
+    def test_lector_add_groups(self):
+        '''when new group ids are posted, the lector should be assigned to groups'''
+        u = User.objects.create_user(
+            username='lect', email='sdrj@adl.com', password='aksdfneina')
+        l = mixer.blend('edziennik.Lector', user=u)
+        g1 = mixer.blend('edziennik.Group', lector=l)
+        g2 = mixer.blend('edziennik.Group')
+        g3 = mixer.blend('edziennik.Group')
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:lector', args=(g1.id,))
+        data = {'newGroups': [g2.id, g3.id]}
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        # lector l should be now linked to the group g1
+        g1.refresh_from_db()
+        self.assertEqual(g1.lector, l)
+        # lector l should be now linked to the group g2
+        g2.refresh_from_db()
+        self.assertEqual(g2.lector, l)
+        # lector l should be now linked to the group g3
+        g3.refresh_from_db()
+        self.assertEqual(g3.lector, l)
+
+    def test_lector_remove_groups(self):
+        '''when del group ids are posted, the lector should be removed from the groups'''
+        u = User.objects.create_user(
+            username='lect', email='sdrj@adl.com', password='aksdfneina')
+        l = mixer.blend('edziennik.Lector', user=u)
+        g1 = mixer.blend('edziennik.Group', lector=l)
+        g2 = mixer.blend('edziennik.Group', lector=l)
+        g3 = mixer.blend('edziennik.Group', lector=l)
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:lector', args=(g1.id,))
+        data = {'delGroups': [g2.id, g3.id]}
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        # lector l should be now linked to the group g1
+        g1.refresh_from_db()
+        self.assertEqual(g1.lector, l)
+        # lector l should not be linked to the group g2
+        g2.refresh_from_db()
+        self.assertFalse(g2.lector)
+        # lector l should not be linked to the group g3
+        g3.refresh_from_db()
+        self.assertFalse(g3.lector)
+
+
 class StudentViewTests(TestCase):
     def test_student_view_noerror(self):
         """

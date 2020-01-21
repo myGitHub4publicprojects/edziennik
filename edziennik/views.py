@@ -87,6 +87,17 @@ def lector(request, pk):
     if not request.user.is_superuser:
         raise Http404
     lector = get_object_or_404(Lector, pk=pk)
+    if request.method == 'POST':
+        groups_to_remove = request.POST.getlist('delGroups')
+        groups_to_add = request.POST.getlist('newGroups')
+        for g in groups_to_remove:
+            group = Group.objects.get(id=g)
+            group.lector = None
+            group.save()
+        for g in groups_to_add:
+            group = Group.objects.get(id=g)
+            group.lector = lector
+            group.save()
     lectors_groups = lector.group_set.all()
     # lectors hours
     today = datetime.date.today()
@@ -114,6 +125,7 @@ def lector(request, pk):
     context = {
         'lector': lector,
         'lectors_groups': lectors_groups,
+        'groups': Group.objects.all(),
         'total_hours_year': len(hours_in_current_year),
         'hours_in_month_list': hours_in_month_list}
 

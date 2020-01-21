@@ -4,16 +4,48 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <h1>Lektor: {{ lector.user.get_full_name }}</h1>
 
-    {% if lectors_groups %}
-    <p>Obecne grupy:</p>
-    {% for group in lectors_groups %}
-    <a href="{% url 'edziennik:group' group.id %}">
-        <button class="btn btn-lg blue-btn">{{ group.name }}</button>
-    </a> 
-    {% endfor %}
-    {% else %}
-    <p>Nie ma żadnych grup</p>
-    {% endif %}
+    <div class="row">
+        <div class="col-sm">
+        <h4 class="text-center">Obecne grupy:</h4>
+        {% for group in lectors_groups %}
+        <a href="{% url 'edziennik:group' group.id %}" class="btn btn-lg blue-btn d-block">
+        {{ group.name }}</a> 
+        {% empty %}
+        <p>Nie ma żadnych grup</p>
+        {% endfor %}
+        </div>
+        <div class="col-sm text-center">
+            <button class="btn btn-primary btn-sm mb-1" 
+            type="button" id="showAddGroup">dodaj grupy</button>
+            <div id="collapseNewGroups" class="d-none">
+                zaznacz grupy do dodania:
+                <form action="" method="POST" class="d-inline-block">{% csrf_token %}
+                    <select name="newGroups" multiple>
+                        {% for g in groups %}
+                        <option value="{{ g.id }}">{{ g.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Zatwierdź">
+                </form>
+            </div>
+        </div>
+        <div class="col-sm text-center">
+            <button class="btn btn-primary btn-sm mb-1" type="button" id="showDelGroup">usuń grupy</button>
+            <div id="collapseDelGroups" class="d-none">
+                zaznacz grupy do dodania:
+                <form action="" method="POST" class="d-inline-block">{% csrf_token %}
+                    <select name="delGroups" multiple>
+                        {% for g in lectors_groups %}
+                        <option value="{{ g.id }}">{{ g.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Zatwierdź">
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <hr>
 
     <h2>Godziny</h2>
     <table class="table table-striped">
@@ -34,4 +66,29 @@
         <small>(wrzesień - sierpień)</small>: {{ total_hours_year }}</p>
     
 </section>
+
+<script>
+    const showAddGroup = document.getElementById('showAddGroup');
+    const collapseNewGroups = document.getElementById('collapseNewGroups');
+    showAddGroup.addEventListener('click', function () {
+        if (collapseNewGroups.className == 'd-inline-block') {
+            collapseNewGroups.className = 'd-none';
+        }
+        else {
+            collapseNewGroups.className = 'd-inline-block';
+        }
+    })
+
+    const showDelGroup = document.getElementById('showDelGroup');
+    const collapseDelGroups = document.getElementById('collapseDelGroups');
+    showDelGroup.addEventListener('click', function () {
+        if (collapseDelGroups.className == 'd-inline-block') {
+            collapseDelGroups.className = 'd-none';
+        }
+        else {
+            collapseDelGroups.className = 'd-inline-block';
+        }
+    })
+</script>
+
 {% endblock content %}
