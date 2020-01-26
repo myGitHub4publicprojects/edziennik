@@ -1,0 +1,205 @@
+{% extends "edziennik/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h2 class="text-center">Dodaj ucznia</h2>
+<button type="button" class="btn btn-primary btn-sm" id="btnToggle">Utwórz rodzica</button>
+<!-- <form action="post" class="d-none"> -->
+<form action="post">
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ parent_form.parent_first_name|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ parent_form.parent_last_name|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ parent_form.phone_number|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ parent_form.email|as_crispy_field }}
+        </div>
+    </div>
+    <!-- <div class="alert alert-danger" role="alert" id="parentErrors">
+        This is a danger alert—check it out!
+    </div> -->
+    <button id="acceptBtn" type="button" class="btn btn-primary btn-sm">zapisz rodzica</button>
+    <button id="cancelParentCreate" type="button" 
+    class="btn btn-outline-secondary btn-sm">anuluj</button>
+</form>
+
+<form method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>
+
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    // jak kliknie btn dodaj rodzica:
+    //      schowaj parent Selection
+    //     pokaż form rodzica, utwórz username i pass automatycznie
+    //     jeśli form_valid:
+    //         schowaj form_rodzica
+    //         dodaj rodzica do select name='parent'
+    //         ustaw nowego jako selected
+    //          pokaż parent selection input
+
+
+// const parentErrors = document.getElementById('parentErrors');
+document.getElementById('acceptBtn').addEventListener('click', function(){
+    let parent_first_name = document.getElementById('id_parent_first_name');
+    let parent_last_name = document.getElementById('id_parent_last_name');
+    let email = document.getElementById('id_email');
+    let phone_number = document.getElementById('id_phone_number');
+    parentEls = [parent_first_name, parent_last_name, phone_number, email];
+    // reset input errors
+    resetInputErros(parentEls);
+    // INITIAL VALIDATION - CLIENT SIDE
+    // if errors: add 'is-invalid' class to input and div class="invalid-feedback">  
+    let inputsFilled = emptyInvalid(parentEls, "To pole jest wymagane");
+    let phoneValid = lengthPhoneInvalid(phone_number, 'Numer telefonu musi mieć 9 cyfr');
+    let emailValid = emailValidation(email, "Niepoprawny format adresu email")
+    // if any errors in intial validation do not send data to server
+    if (inputsFilled && phoneValid && emailValid){
+        let data = ('parent_first_name=' + parent_first_name.value +
+            '&parent_last_name=' + parent_last_name.value +
+            '&phone_number=' + phone_number.value +
+            '&email=' + email.value)
+        let token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+        fetch('{% url "edziennik:create_parent_ajax" %}', {
+            method: 'POST',
+            headers: {
+                // 'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                "X-CSRFToken": token
+            },
+            body: data
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+                if (data.result == 'Error') {
+                    console.log('result == Err');
+                    processParentErrors(data.errors);
+                }
+                if (data.result == 'Success!') {
+                    console.log('result == Scs');
+                    processNewParent(data.parent)
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+});
+
+function resetInputErros(parentEls){
+    for (let el of parentEls) {
+        // remove is-invalid class
+        el.classList.remove("is-invalid");
+        // remove all div class="invalid-feedback"
+        for (let elInner of el.parentNode.getElementsByClassName('invalid-feedback')) {
+            elInner.remove();
+        }
+    }
+}
+
+function emptyInvalid(parentEls, msg){
+    let noErrors = true;
+    for (let el of parentEls) {
+        if (el.value == '') {
+            addErrors(el, msg)
+            noErrors = false
+        }
+    }
+    return noErrors
+}
+
+function emailValidation(email, msg){
+    if (validateEmail(email.value)==false){
+        addErrors(email, msg)
+        return false
+    }
+    return true
+}
+
+function lengthPhoneInvalid(phone_number, msg){
+    if (phone_number.value.length != 9) {
+        addErrors(phone_number, msg)
+        return false
+    }
+    return true
+}
+
+function addErrors(el, msg){
+    el.classList.add("is-invalid");
+    let errorInfo = document.createElement('div');
+    errorInfo.className = 'invalid-feedback';
+    let errorMsgText = document.createTextNode(msg);
+    errorInfo.appendChild(errorMsgText);
+    el.parentNode.appendChild(errorInfo)
+}
+
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
+function processNewParent(parent){
+    // hide parent create Form and create parent btn
+    console.log('new parent id: ', parent.id);
+    console.log('new parent ooo: ', parent.details);
+
+    // add new parent to student's parent select input
+    let newOption = cerateNewOption(parent);
+    // select new parent
+    selectNewParent(parent, newOption);
+
+    // show student Form
+}
+
+function processParentErrors(errors){
+    for (let err in errors) {
+        let el = document.getElementById('id_' + err);
+        let messageList = errors[err];
+        for (let message of messageList) {
+            addErrors(el, message)
+        }
+    }
+}
+
+function cerateNewOption(parent){
+    let newOption = document.createElement('option');
+    let optionText = document.createTextNode(parent.details);
+    newOption.value = parent.id;
+    newOption.appendChild(optionText);
+    return newOption
+}
+
+function selectNewParent(parent, newOption){
+    let parentSelect = document.getElementById('id_parent')
+    parentSelect.appendChild(newOption);
+    for (let o of parentSelect.options) {
+        if (o.value == parent.id) {
+            o.selected = true
+        }
+    }
+}
+document.getElementById('btnToggle').addEventListener('click', function (e) {
+        if (e.target.nextElementSibling.className == 'd-inline-block') {
+            e.target.nextElementSibling.className = 'd-none';
+        }
+        else {
+            e.target.nextElementSibling.className = 'd-inline-block';
+        }
+    });
+
+</script>
+{% endblock %}

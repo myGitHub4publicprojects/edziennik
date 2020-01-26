@@ -21,7 +21,8 @@ from django.templatetags.static import static
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile, Quizlet, Homework, Initial_Import,
                               Initial_Import_Usage)
-from .forms import AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm
+from .forms import (AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm,
+                SignUpForm2)
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
                              create_unique_username, signup_email, import_students)
@@ -598,7 +599,6 @@ def signup(request):
 
             # create student
             student = student_form.save(commit=False)
-            student.group = Group.objects.all().first()
             student.parent = parent
             student.save()
 
@@ -625,6 +625,80 @@ def signup(request):
 
     return render(request, 'edziennik/signup.html', context)
 
+
+class OnlySuperuserMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+class Student_Create(OnlySuperuserMixin, CreateView):
+    model = Student
+    fields = ['parent', 'first_name', 'last_name', 'gender']
+
+    def get_context_data(self, **kwargs):
+        parent_form = SignUpForm2()
+        context = super().get_context_data(**kwargs)
+        context['parent_form'] = parent_form
+        return context
+
+
+def create_parent_ajax(request):
+    '''Accepts ajax call with parent first name and surname.
+    creates and return parent instance or error'''
+    parent_form = SignUpForm2(request.POST)
+    data = {}
+
+    print('req post: ', request.POST)
+    print('parent form: ', parent_form)
+    if parent_form.is_valid():
+        # check if phone_number and email are not duplicates
+        email = parent_form.cleaned_data['email'].lower()
+        phone_number = parent_form.cleaned_data['phone_number']
+        if Parent.objects.filter(email=email).exists():
+            data['result'] = 'Error'
+            data['errors'] = {'email': ['Rodzic z takim adresem email już istnieje. Wybierz inny email, lub użyj istniejącego Rodzica']}
+
+        if Parent.objects.filter(phone_number=phone_number).exists():
+            data['result'] = 'Error'
+            data.get('errors', {}).update(
+                {'phone_number': [''''Rodzic z takim numerem telefonu już istnieje. 
+                    Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
+                }
+            )
+
+        if not data:    # when email and phone are unique and cause no errors
+            data['result'] = 'Success!'
+            password = User.objects.make_random_password(length=8)
+            user = User.objects.create(
+                first_name=parent_form.cleaned_data['parent_first_name'].capitalize(),
+                last_name=parent_form.cleaned_data['parent_last_name'].capitalize(),
+                email=email,
+                username=create_unique_username(
+                    parent_form.cleaned_data['parent_first_name'],
+                    parent_form.cleaned_data['parent_last_name']
+                )
+            )
+            user.set_password(password)
+            user.save()
+
+            parent = Parent.objects.create(
+                user=user,
+                phone_number=phone_number,
+                email=email,
+                initial_password = password
+            )
+            
+            # send data to js
+            parent = Parent.objects.all().last()
+            data['parent'] = {'id': parent.id, 'details': str(parent)}
+    else:
+        data['result'] = 'Error'
+        data['errors'] = {}
+        for k, v in parent_form.errors.as_data().items():
+            error_msgs = [i.message for i in v]
+            data['errors'][k] = error_msgs
+    
+    return JsonResponse(data)
+    
 
 def duplicate_check(request):
 	if request.GET.get('email'):
@@ -670,11 +744,6 @@ def add_homework(request, pk):
     form = HomeworkForm()
     context = {'form': form, 'group': group}
     return render(request, 'edziennik/add_homework.html', context)
-
-
-class OnlySuperuserMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
 
 
 class Initial_Import_Create(OnlySuperuserMixin, CreateView):

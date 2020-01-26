@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.forms import ModelForm, Textarea
 from .models import Admin_Profile, Student, Parent, Homework
 from edziennik.utils import create_unique_username
@@ -27,6 +28,20 @@ class StudentForm(ModelForm):
             'class_in_school', 'language_of_interest', 'language_at_school',
             'experience', 'book', 'avaliability', 'other_classes', 'focus', 'gender']
 
+# class StudentMinimalForm():
+#     pass
+
+#     model = Student
+#     fields = ['parent', 'first_name', 'last_name', 'gender']
+
+#     class TestTableModelChoiceField(forms.ModelChoiceField):
+#         def label_from_instance(self, obj):
+#          # return the field you want to display
+#          return obj.display_field
+
+# class TestForm(forms.ModelForm):
+#     type = TestTableModelChoiceField(queryset=Property.objects.all().order_by('desc1'))
+
     
 class ParentForm(ModelForm):
     class Meta:
@@ -39,6 +54,15 @@ class SignUpForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=50)
     email = forms.EmailField(max_length=254)
+
+class SignUpForm2(forms.Form):
+    parent_first_name = forms.CharField(max_length=30, label='Imię rodzica')
+    parent_last_name = forms.CharField(max_length=50, label='Nazwisko rodzica')
+    email = forms.EmailField(max_length=254)
+    phone_number = forms.IntegerField(
+        label='Nr telefonu',
+        help_text='9 cyfr, bez spacji',
+        validators=[MinValueValidator(100000000), MaxValueValidator(999999999)])
 
 class HomeworkForm(ModelForm):
     class Meta:

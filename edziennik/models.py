@@ -55,9 +55,9 @@ class Parent(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     # phone_number - 9 digits, no spaces, no other characters
-    phone_number = models.IntegerField(
+    phone_number = models.IntegerField(unique=True,
     	validators=[MinValueValidator(100000000),MaxValueValidator(999999999)])
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     # address
     street = models.CharField(max_length=120, null=True, blank=True)
     house_number = models.CharField(max_length=6, null=True, blank=True)
@@ -66,8 +66,12 @@ class Parent(models.Model):
     zip_code = models.CharField(max_length=6, null=True, blank=True)
     iiu = models.ForeignKey(
         Initial_Import_Usage, on_delete=models.CASCADE, blank=True, null=True)
+    initial_password = models.CharField(max_length=120)
     def __str__(self):              
-        return self.user.username
+        return ' '.join([self.user.last_name,
+                        self.user.first_name,
+                        self.user.username,
+                        str(self.phone_number)])
 
 class Student(models.Model):
     first_name = models.CharField(max_length=100)

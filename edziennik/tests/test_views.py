@@ -1853,3 +1853,96 @@ class TestAdvanced_SettingsView(TestCase):
         self.assertEqual(all_messages[0].message, 'Ustawienia zachowane')
 
 
+class Test_Student_Create_View(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+
+    def test_student_create_view_for_non_staff(self):
+        """
+        non staff user should not have access - status code 404
+        """
+        client = Client()
+        response = self.client.get(
+            reverse('edziennik:student_create'))
+        self.assertEqual(response.status_code, 404)
+
+    def test_student_create_no_parent(self):
+        """there is no preexisting parent, parent details are reqired
+        both Student and Parent objects should be created"""
+        
+        url = reverse('edziennik:student_create')
+        data = {}
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.post(url, data)
+        self.assertTrue(logged_in)
+        self.assertEqual(response.status_code, 200)
+
+        # should create one Parent instance
+        self.assertEqual(Parent.objects.all().count(), 1)
+        
+        # should create one Student instance
+        self.assertEqual(Student.objects.all().count(), 1)
+
+
+    def test_group_lector_change(self):
+        '''when new lector id is posted, new lector should be assigned to a group'''
+        l1 = mixer.blend('edziennik.Lector')
+        l2 = mixer.blend('edziennik.Lector')
+        g = mixer.blend('edziennik.Group', lector=l1)
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:group', args=(g.id,))
+        data = {'newLectorId': l2.id}
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        # lector l2 should be now linked to the group
+        g.refresh_from_db()
+        self.assertEqual(g.lector, l2)
+
+    def test_group_add_student(self):
+        '''when new student id is posted, new student should be assigned to a group'''
+        s1 = mixer.blend('edziennik.Student')
+        s2 = mixer.blend('edziennik.Student')
+        s3 = mixer.blend('edziennik.Student')
+        g = mixer.blend('edziennik.Group')
+        g.student.add(s1)
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:group', args=(g.id,))
+        data = {'newStudentId': [s2.id, s3.id]}
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        g.refresh_from_db()
+        # student s1 should still be linked to the group
+        self.assertIn(s1, g.student.all())
+        # student s2 should be now linked to the group
+        self.assertIn(s2, g.student.all())
+        # student s3 should be now linked to the group
+        self.assertIn(s3, g.student.all())
+
+    def test_group_remove_student(self):
+        '''when student id is posted, student should be removed from the group'''
+        s1 = mixer.blend('edziennik.Student')
+        s2 = mixer.blend('edziennik.Student')
+        s3 = mixer.blend('edziennik.Student')
+        g = mixer.blend('edziennik.Group')
+        g.student.add(s1, s2, s3)
+
+        self.client.login(username='admin', password='glassonion')
+        url = reverse('edziennik:group', args=(g.id,))
+        data = {'delStudentId': [s2.id, s3.id]}
+        response = self.client.post(url, data, follow=True)
+
+        print('test lll: ', [s2.id, s3.id])
+        # should give code 200 as follow is set to True
+        self.assertEqual(response.status_code, 200)
+        g.refresh_from_db()
+        # student s1 should still be linked to the group
+        self.assertIn(s1, g.student.all())
+        # student s2 should not be linked to the group
+        self.assertNotIn(s2, g.student.all())
+        # student s3 should not be linked to the group
+        self.assertNotIn(s3, g.student.all())
