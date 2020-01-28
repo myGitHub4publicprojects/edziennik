@@ -633,6 +633,7 @@ class OnlySuperuserMixin(UserPassesTestMixin):
 class Student_Create(OnlySuperuserMixin, CreateView):
     model = Student
     fields = ['parent', 'first_name', 'last_name', 'gender']
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         parent_form = SignUpForm2()
