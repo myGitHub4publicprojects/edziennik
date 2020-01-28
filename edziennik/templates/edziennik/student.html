@@ -13,7 +13,14 @@
 {% else %}
     {% if request.user.is_superuser or request.user in lectors or request.user == student.parent.user  %}
         <section class="mb-5">
-        <h1 class="text-center">{{ student }}</h1>
+        <h1 class="text-center">
+            <small class="text-muted">uczeń: </small>
+            {{ student }}
+            <small class="text-muted">
+                 (rodzic:<a href="{% url 'edziennik:parent_datail' student.parent.id %}">
+                     {{ student.parent.user.get_full_name }}</a>)
+            </small>
+        </h1>
         <hr>
         <h2 class="text-center mt-3">Oceny</h2>
         {% for student_group in student_groups %}

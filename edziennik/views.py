@@ -200,7 +200,7 @@ class StudentList(ListView):
         return context
 
 
-class ParentDetailView(DetailView):
+class ParentDetailView(LoginRequiredMixin, DetailView):
     model=Parent
 
 def group(request, pk):
@@ -647,9 +647,6 @@ def create_parent_ajax(request):
     creates and return parent instance or error'''
     parent_form = SignUpForm2(request.POST)
     data = {}
-
-    print('req post: ', request.POST)
-    print('parent form: ', parent_form)
     if parent_form.is_valid():
         # check if phone_number and email are not duplicates
         email = parent_form.cleaned_data['email'].lower()
@@ -661,7 +658,7 @@ def create_parent_ajax(request):
         if Parent.objects.filter(phone_number=phone_number).exists():
             data['result'] = 'Error'
             data.get('errors', {}).update(
-                {'phone_number': [''''Rodzic z takim numerem telefonu już istnieje. 
+                {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje. 
                     Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
                 }
             )
