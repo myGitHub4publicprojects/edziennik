@@ -2,7 +2,11 @@
 {% block content %}
 
 <section>
-    <h2>Lista uczniów:</h2>
+    <h2 class="d-inline-block">Lista uczniów:</h2>
+    <a href="{% url 'edziennik:student_create' %}"
+    class="btn btn-sm btn-outline-primary float-right d-inline-block">
+        Utwórz ucznia
+    </a>
     <table class="table table-sm table-hover">
         <thead>
             <tr>
