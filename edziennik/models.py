@@ -103,6 +103,9 @@ class Student(models.Model):
     iiu = models.ForeignKey(
     	Initial_Import_Usage, on_delete=models.CASCADE, blank=True, null=True)
 
+    def get_absolute_url(self):
+        return reverse('edziennik:student', kwargs={'pk': self.pk})
+
     def __str__(self):              
         return self.first_name + ' ' + self.last_name
 
