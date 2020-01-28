@@ -74,7 +74,8 @@ class Parent(models.Model):
                         str(self.phone_number)])
 
 class Student(models.Model):
-    first_name = models.CharField(max_length=100)
+    first_name = models.CharField(
+    	max_length=100, verbose_name='Imię ucznia')
     last_name = models.CharField(
         max_length=100, verbose_name='Nazwisko ucznia')
     date_of_birth = models.DateField(
@@ -91,8 +92,8 @@ class Student(models.Model):
     recruitment_note = models.TextField(null=True, blank=True)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
+        ('M', 'męska'),
+        ('F', 'żeńska'),
         )
     gender = models.CharField(
         max_length=1, choices=GENDER_CHOICES, verbose_name='Płeć ucznia')
