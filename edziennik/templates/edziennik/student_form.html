@@ -58,15 +58,6 @@
 
 {% block javascript %}
 <script>
-    // jak kliknie btn dodaj rodzica:
-    //      schowaj parent Selection
-    //     pokaż form rodzica, utwórz username i pass automatycznie
-    //     jeśli form_valid:
-    //         schowaj form_rodzica
-    //         dodaj rodzica do select name='parent'
-    //         ustaw nowego jako selected
-    //          pokaż parent selection input
-
 let parent_first_name = document.getElementById('id_parent_first_name');
 let parent_last_name = document.getElementById('id_parent_last_name');
 let email = document.getElementById('id_email');
@@ -74,10 +65,26 @@ let phone_number = document.getElementById('id_phone_number');
 let btnShowParentForm = document.getElementById('btnShowParentForm');
 parentEls = [parent_first_name, parent_last_name, phone_number, email];
 
+setRequiredFalse(parentEls);
+
+function setRequiredFalse(arr){
+    for (let inp of arr){
+        inp.required = false;
+    }
+};
+
+function setRequiredTrue(arr) {
+    for (let inp of arr) {
+        inp.required = true;
+    }
+};
+
 document.getElementById('acceptBtn').addEventListener('click', function(){
 
     // reset input errors
     resetInputErros(parentEls);
+    // make inputs required
+    setRequiredTrue(parentEls);
     // INITIAL VALIDATION - CLIENT SIDE
     // if errors: add 'is-invalid' class to input and div class="invalid-feedback">  
     let inputsFilled = emptyInvalid(parentEls, "To pole jest wymagane");
@@ -215,6 +222,7 @@ function resetInputValues(parentEls) {
 
 function cancelParentCreation(e){
     resetInputValues(parentEls);
+    setRequiredFalse(parentEls);
     // hide parent form
     e.target.parentNode.className = 'd-none';
     // hide parent create btn
