@@ -217,10 +217,14 @@ def import_students(initial_import_instance):
                         username=create_unique_username(
                             p_first_name, p_last_name),
                     )
+                    password = User.objects.make_random_password(length=8)
+                    u.set_password(password)
+                    u.save()
                     p = Parent(
                         user = u,
                         phone_number=p_phone_number,
                         email=p_email,
+                        initial_password=password,
                         iiu=iiu
                     )
                     p.full_clean() # a must for validation
