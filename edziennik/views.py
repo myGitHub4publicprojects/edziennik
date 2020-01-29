@@ -305,6 +305,7 @@ def create_parent_ajax(request):
 class ParentDetail(LoginRequiredMixin, DetailView):
     model=Parent
 
+
 class ParentList(OnlySuperuserMixin, ListView):
     model = Parent
 

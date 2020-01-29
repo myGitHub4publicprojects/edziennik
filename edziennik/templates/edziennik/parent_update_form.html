@@ -5,7 +5,7 @@
 <section>
     <h2>{{ object }}</h2>
 
-    <form action="POST">{% csrf_token %}
+    <form method="POST">{% csrf_token %}
         {{ form|crispy }}
         <input type="submit" value="Zapisz" class="btn btn-sm btn-primary">
     </form>
