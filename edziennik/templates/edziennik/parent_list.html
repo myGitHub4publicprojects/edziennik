@@ -1,0 +1,42 @@
+{% extends "edziennik/base.html" %}
+
+{% block content %}
+
+<section >
+    <h2 class="d-inline-block"> Lista Rodziców: </h2 >
+    <a href = "{% url 'edziennik:parent_create' %}"
+    class = "btn btn-sm btn-outline-primary float-right d-inline-block" >
+    Utwórz rodzica
+    </a >
+    <table class = "table table-sm table-hover" >
+       <thead >
+           <tr >
+                <td>Imię i nazwisko</td >
+                <td>username</td >
+                <td>telefon</td>
+                <td>pierwsze hasło</td>
+                <td>uczniowie</td>
+            </tr >
+        </thead >
+        <tbody >
+            {% for p in object_list %}
+            <tr >
+                <td><a href="{% url 'edziennik:parent_datail' p.id %}">
+                    {{ p.user.get_full_name }}</a>
+                </td>
+                <td>{{ p.user.username }}</td>
+                <td>{{ p.phone_number }}</td>
+                <td>{{ p.initial_password }}</td>
+                <td >
+                    {% for s in p.student_set.all %}
+                    <a href = "{% url 'edziennik:student' s.id %}">{{ s }}</a> 
+                    {% endfor %}
+                </td >
+            </tr >
+            {% endfor %}
+        </tbody >
+    </table >
+
+
+</section >
+{% endblock content %}

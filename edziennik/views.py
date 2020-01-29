@@ -20,7 +20,7 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile, Quizlet, Homework, Initial_Import,
                               Initial_Import_Usage)
 from .forms import (AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm,
-                SignUpForm2)
+                    SignUpForm2, ParentCreateForm)
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
                              create_unique_username, signup_email, import_students)
@@ -133,6 +133,18 @@ def lector(request, pk):
 
     return render(request, 'edziennik/lector.html', context)
 
+class Student_Create(OnlySuperuserMixin, CreateView):
+    model = Student
+    fields = ['parent', 'first_name', 'last_name', 'gender']
+    raise_exception = True
+
+    def get_context_data(self, **kwargs):
+        parent_form = SignUpForm2()
+        context = super().get_context_data(**kwargs)
+        context['parent_form'] = parent_form
+        return context
+
+
 def student(request, pk):
     '''displays info about a given student'''
     student = get_object_or_404(Student, pk = pk)
@@ -212,9 +224,95 @@ class StudentDelete(OnlySuperuserMixin, DeleteView):
     success_url = reverse_lazy('edziennik:student_list')
 
 
-class ParentDetailView(LoginRequiredMixin, DetailView):
+class Parent_Create(OnlySuperuserMixin, CreateView):
+    model = Parent
+    form_class = ParentCreateForm
+    raise_exception = True
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        u = User.objects.create(
+            first_name=form.cleaned_data['first_name'].capitalize(),
+            last_name=form.cleaned_data['last_name'].capitalize(),
+            username=create_unique_username(
+                form.cleaned_data['first_name'], form.cleaned_data['last_name'])
+        )
+        password = User.objects.make_random_password(length=8)
+        u.set_password(password)
+        u.save()
+        self.object.user = u
+        self.object.initial_password = password
+        self.object.save()
+        return super().form_valid(form)
+
+
+def create_parent_ajax(request):
+    '''Accepts ajax call with parent first name and surname.
+    creates and return parent instance or error'''
+    parent_form = SignUpForm2(request.POST)
+    data = {}
+    if parent_form.is_valid():
+        # check if phone_number and email are not duplicates
+        email = parent_form.cleaned_data['email'].lower()
+        phone_number = parent_form.cleaned_data['phone_number']
+        if Parent.objects.filter(email=email).exists():
+            data['result'] = 'Error'
+            data['errors'] = {'email': ['Rodzic z takim adresem email już istnieje. Wybierz inny email, lub użyj istniejącego Rodzica']}
+
+        if Parent.objects.filter(phone_number=phone_number).exists():
+            data['result'] = 'Error'
+            data.get('errors', {}).update(
+                {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje. 
+                    Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
+                }
+            )
+
+        if not data:    # when email and phone are unique and cause no errors
+            data['result'] = 'Success!'
+            password = User.objects.make_random_password(length=8)
+            user = User.objects.create(
+                first_name=parent_form.cleaned_data['parent_first_name'].capitalize(),
+                last_name=parent_form.cleaned_data['parent_last_name'].capitalize(),
+                email=email,
+                username=create_unique_username(
+                    parent_form.cleaned_data['parent_first_name'],
+                    parent_form.cleaned_data['parent_last_name']
+                )
+            )
+            user.set_password(password)
+            user.save()
+
+            parent = Parent.objects.create(
+                user=user,
+                phone_number=phone_number,
+                email=email,
+                initial_password = password
+            )
+            
+            # send data to js
+            parent = Parent.objects.all().last()
+            data['parent'] = {'id': parent.id, 'details': str(parent)}
+    else:
+        data['result'] = 'Error'
+        data['errors'] = {}
+        for k, v in parent_form.errors.as_data().items():
+            error_msgs = [i.message for i in v]
+            data['errors'][k] = error_msgs
+    
+    return JsonResponse(data)
+    
+
+class ParentDetail(LoginRequiredMixin, DetailView):
     model=Parent
 
+class ParentList(OnlySuperuserMixin, ListView):
+    model = Parent
+
+
+class ParentUpdate(OnlySuperuserMixin, UpdateView):
+    model = Parent
+    fields = '__all__'
+    template_name_suffix = '_update_form'
 
 def group(request, pk):
     ''' enables to select an action for a group '''
@@ -639,73 +737,6 @@ def signup(request):
     return render(request, 'edziennik/signup.html', context)
 
 
-class Student_Create(OnlySuperuserMixin, CreateView):
-    model = Student
-    fields = ['parent', 'first_name', 'last_name', 'gender']
-    raise_exception = True
-
-    def get_context_data(self, **kwargs):
-        parent_form = SignUpForm2()
-        context = super().get_context_data(**kwargs)
-        context['parent_form'] = parent_form
-        return context
-
-
-def create_parent_ajax(request):
-    '''Accepts ajax call with parent first name and surname.
-    creates and return parent instance or error'''
-    parent_form = SignUpForm2(request.POST)
-    data = {}
-    if parent_form.is_valid():
-        # check if phone_number and email are not duplicates
-        email = parent_form.cleaned_data['email'].lower()
-        phone_number = parent_form.cleaned_data['phone_number']
-        if Parent.objects.filter(email=email).exists():
-            data['result'] = 'Error'
-            data['errors'] = {'email': ['Rodzic z takim adresem email już istnieje. Wybierz inny email, lub użyj istniejącego Rodzica']}
-
-        if Parent.objects.filter(phone_number=phone_number).exists():
-            data['result'] = 'Error'
-            data.get('errors', {}).update(
-                {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje. 
-                    Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
-                }
-            )
-
-        if not data:    # when email and phone are unique and cause no errors
-            data['result'] = 'Success!'
-            password = User.objects.make_random_password(length=8)
-            user = User.objects.create(
-                first_name=parent_form.cleaned_data['parent_first_name'].capitalize(),
-                last_name=parent_form.cleaned_data['parent_last_name'].capitalize(),
-                email=email,
-                username=create_unique_username(
-                    parent_form.cleaned_data['parent_first_name'],
-                    parent_form.cleaned_data['parent_last_name']
-                )
-            )
-            user.set_password(password)
-            user.save()
-
-            parent = Parent.objects.create(
-                user=user,
-                phone_number=phone_number,
-                email=email,
-                initial_password = password
-            )
-            
-            # send data to js
-            parent = Parent.objects.all().last()
-            data['parent'] = {'id': parent.id, 'details': str(parent)}
-    else:
-        data['result'] = 'Error'
-        data['errors'] = {}
-        for k, v in parent_form.errors.as_data().items():
-            error_msgs = [i.message for i in v]
-            data['errors'][k] = error_msgs
-    
-    return JsonResponse(data)
-    
 
 def duplicate_check(request):
 	if request.GET.get('email'):

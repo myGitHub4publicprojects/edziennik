@@ -1,13 +1,14 @@
 {% extends "edziennik/base.html" %}
 {% load crispy_forms_tags %}
+
 {% block content %}
 
-<section>
-<h2>{{ object }}</h2>
+<h2 class="text-center">Dodaj Rodzica</h2>
 
-<form action="POST">{% csrf_token %}
+<form method="post">{% csrf_token %}
     {{ form|crispy }}
     <input type="submit" value="Zapisz" class="btn btn-sm btn-primary">
 </form>
-</section>
+
+
 {% endblock content %}

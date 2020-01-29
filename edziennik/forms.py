@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.forms import ModelForm, Textarea
 from .models import Admin_Profile, Student, Parent, Homework
 from edziennik.utils import create_unique_username
+from .validators_forms import UniqueEmailValidator, UniquePhoneValidator
 
 
 class AdminProfileForm(ModelForm):
@@ -28,21 +29,19 @@ class StudentForm(ModelForm):
             'class_in_school', 'language_of_interest', 'language_at_school',
             'experience', 'book', 'avaliability', 'other_classes', 'focus', 'gender']
 
-# class StudentMinimalForm():
-#     pass
 
-#     model = Student
-#     fields = ['parent', 'first_name', 'last_name', 'gender']
+class ParentCreateForm(ModelForm):
+    first_name = forms.CharField(max_length=30, label='Imię rodzica')
+    last_name = forms.CharField(max_length=50, label='Nazwisko rodzica')
+    class Meta:
+        model = Parent
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'street',
+            'house_number', 'apartment_number', 'city', 'zip_code']
+        help_texts = {
+            'phone_number': '9 cyfr, bez spacji',
+        }
 
-#     class TestTableModelChoiceField(forms.ModelChoiceField):
-#         def label_from_instance(self, obj):
-#          # return the field you want to display
-#          return obj.display_field
 
-# class TestForm(forms.ModelForm):
-#     type = TestTableModelChoiceField(queryset=Property.objects.all().order_by('desc1'))
-
-    
 class ParentForm(ModelForm):
     class Meta:
         model = Parent
