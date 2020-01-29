@@ -1,0 +1,13 @@
+{% extends "edziennik/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<section>
+    <h2>{{ object }}</h2>
+
+    <form action="POST">{% csrf_token %}
+        <p>Czy na pewno chcesz nieodwracalnie usunąć "{{ object }}"?</p>
+        <input type="submit" value="Potwierdzam" class="btn btn-sm btn-primary">
+    </form>
+</section>
+{% endblock content %}

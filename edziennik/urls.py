@@ -14,9 +14,15 @@ urlpatterns = [
     path('<int:group_id>/attendance_by_group/',
          views.attendance_by_group, name='attendance_by_group'),
     path('<int:pk>/lektor/', views.lector, name='lector'),
+
     path('<int:pk>/student/', views.student, name='student'),
     path('student_list/',
          login_required(views.StudentList.as_view()), name='student_list'),
+    path('<int:pk>/student_update/',
+         views.StudentUpdate.as_view(), name='student_update'),
+    path('<int:pk>/student_delete/',
+         views.StudentDelete.as_view(), name='student_delete'),
+
     path('<int:pk>/parent_datail/',
           views.ParentDetailView.as_view(), name='parent_datail'),
     path('<int:pk>/group/', views.group, name='group'),

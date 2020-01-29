@@ -8,14 +8,12 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
 
 import datetime
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.templatetags.static import static
 
 from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
@@ -30,6 +28,9 @@ from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg
 from .tasks import (quizlet_check_task,
     twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
 
+class OnlySuperuserMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
 
 def index(request):
     '''displays either a login prompt or a button to check attendance, for logged in users'''
@@ -200,8 +201,20 @@ class StudentList(ListView):
         return context
 
 
+class StudentUpdate(OnlySuperuserMixin, UpdateView):
+    model = Student
+    fields = '__all__'
+    template_name_suffix = '_update_form'
+
+
+class StudentDelete(OnlySuperuserMixin, DeleteView):
+    model = Student
+    success_url = reverse_lazy('edziennik:student_list')
+
+
 class ParentDetailView(LoginRequiredMixin, DetailView):
     model=Parent
+
 
 def group(request, pk):
     ''' enables to select an action for a group '''
@@ -625,10 +638,6 @@ def signup(request):
 
     return render(request, 'edziennik/signup.html', context)
 
-
-class OnlySuperuserMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
 
 class Student_Create(OnlySuperuserMixin, CreateView):
     model = Student
