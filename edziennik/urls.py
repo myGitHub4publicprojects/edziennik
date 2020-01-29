@@ -35,6 +35,8 @@ urlpatterns = [
          views.ParentUpdate.as_view(), name='parent_update'),
     path('parent_list/',
          views.ParentList.as_view(), name='parent_list'),
+    path('<int:pk>/parent_delete/',
+         views.ParentDelete.as_view(), name='parent_delete'),
 
     path('<int:pk>/group/', views.group, name='group'),
     path('<int:pk>/add_quizlet/', views.add_quizlet, name='add_quizlet'),

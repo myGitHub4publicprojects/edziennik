@@ -7,6 +7,15 @@
     <p>Nazwisko: {{ object.user.last_name }}</p>
     <p>Email: {{ object.user.email }}</p>
     <p>Nazwa użytkownika: {{ object.user.username }}</p>
+
+    {% if object.student_set.all %}
+    Ucziowie:
+    <ul>
+        {% for s in object.student_set.all %}
+        <li><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <p>Nr telefonu: {{ object.phone_number }}</p>
     <p>Ulica: {{ object.street }}</p>
     <p>Nr domu: {{ object.house_number }}</p>
@@ -14,4 +23,8 @@
     <p>Miejscowość: {{ object.city }}</p>
     <p>Kod pocztowy: {{ object.zip_code }}</p>
 </section>
+{% if request.user.is_superuser %}
+<a href="{% url 'edziennik:parent_update' object.id %}"
+class="btn btn-sm btn-outline-primary">edytuj</a>
+{% endif %}
 {% endblock content %}

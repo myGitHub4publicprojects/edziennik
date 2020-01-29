@@ -315,6 +315,12 @@ class ParentUpdate(OnlySuperuserMixin, UpdateView):
     fields = '__all__'
     template_name_suffix = '_update_form'
 
+
+class ParentDelete(OnlySuperuserMixin, DeleteView):
+    model = Parent
+    success_url = reverse_lazy('edziennik:parent_list')
+
+
 def group(request, pk):
     ''' enables to select an action for a group '''
     if not request.user.is_staff:
