@@ -8,6 +8,8 @@
 <form method="POST">{% csrf_token %}
     {{ form|crispy }}
     <input type="submit" value="Zapisz" class="btn btn-sm btn-primary">
+    <a href="{% url 'edziennik:student_delete' object.id %}"
+    class="btn btn-sm btn-outline-danger">Usuń ucznia</a>
 </form>
 </section>
 {% endblock content %}

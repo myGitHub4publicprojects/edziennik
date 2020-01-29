@@ -21,6 +21,10 @@
                      {{ student.parent.user.get_full_name }}</a>)
             </small>
         </h1>
+        {% if request.user.is_superuser %}
+        <a href="{% url 'edziennik:student_update' student.id %}"
+        class="btn btn-sm btn-outline-primary">edytuj</a>
+        {% endif %}
         <hr>
         <h2 class="text-center mt-3">Oceny</h2>
         {% for student_group in student_groups %}

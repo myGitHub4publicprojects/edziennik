@@ -7,7 +7,9 @@
 
     <form action="POST">{% csrf_token %}
         <p>Czy na pewno chcesz nieodwracalnie usunąć "{{ object }}"?</p>
-        <input type="submit" value="Potwierdzam" class="btn btn-sm btn-primary">
+        <input type="submit" value="Potwierdzam" class="btn btn-sm btn-outline-danger">
+        <a href="{% url 'edziennik:student' object.id %}"
+        class="btn btn-sm btn-primary">Powrót do ucznia</a>
     </form>
 </section>
 {% endblock content %}
