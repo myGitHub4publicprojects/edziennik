@@ -558,7 +558,8 @@ class Test_import_students2(TransactionTestCase):
 
         # Parent Olo (tel 555506333) should have ‘test@test.test’ email
         p = Parent.objects.get(phone_number=555506333)
-        self.assertEqual(p.email, 'test@test.test')
+        self.assertEqual(len(p.email), 20)
+        self.assertIn('@test.test', p.email)
 
     def test_2_students_1e_student_invalid_email(self):
         '''invalid email'''
