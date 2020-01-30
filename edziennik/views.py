@@ -23,7 +23,8 @@ from .forms import (AdminProfileForm, SignUpForm, ParentForm, StudentForm, Homew
                     SignUpForm2, ParentCreateForm)
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
-                             create_unique_username, signup_email, import_students)
+                             create_unique_username, signup_email, import_students,
+                             create_fake_unique_email)
 
 from .tasks import (quizlet_check_task,
     twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
@@ -231,17 +232,20 @@ class Parent_Create(OnlySuperuserMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        email = form.cleaned_data['email'] or create_fake_unique_email()
         u = User.objects.create(
             first_name=form.cleaned_data['first_name'].capitalize(),
             last_name=form.cleaned_data['last_name'].capitalize(),
             username=create_unique_username(
-                form.cleaned_data['first_name'], form.cleaned_data['last_name'])
+                form.cleaned_data['first_name'], form.cleaned_data['last_name']),
+            email=email
         )
         password = User.objects.make_random_password(length=8)
         u.set_password(password)
         u.save()
         self.object.user = u
         self.object.initial_password = password
+        self.object.email = email
         self.object.save()
         return super().form_valid(form)
 

@@ -179,6 +179,16 @@ def signup_email(parent, student, password):
               fail_silently=False)
 
 
+def create_fake_unique_email():
+    rand_string = ''.join(
+        [random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(10)])
+    new_email = rand_string + '@test.test'
+    if User.objects.filter(email=new_email).exists():
+        return create_fake_unique_email()
+    else:
+        return new_email
+
+        
 def import_students(initial_import_instance):
     '''Accepts Initial_Import obj, imports clients and studetns data from obj.file,
     returns Initial_Import_Usage instance,
@@ -204,7 +214,7 @@ def import_students(initial_import_instance):
                 s_gender = row[4].strip().upper()
                 group_name = row[5].strip()
                 p_phone_number = int(row[6])
-                p_email = row[7] or 'test@test.test'
+                p_email = row[7] or create_fake_unique_email()
                 p_email = p_email.strip()
                 s_recruitment_note = row[8].strip()
                 try:

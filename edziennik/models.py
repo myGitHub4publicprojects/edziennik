@@ -59,7 +59,7 @@ class Parent(models.Model):
         unique=True,
     	validators=[MinValueValidator(100000000),MaxValueValidator(999999999)],
         verbose_name='Nr telefonu')
-    email = models.EmailField(unique=True, null=True, blank=True)
+    email = models.EmailField(unique=True)
     # address
     street = models.CharField(max_length=120, null=True, blank=True)
     house_number = models.CharField(max_length=6, null=True, blank=True)

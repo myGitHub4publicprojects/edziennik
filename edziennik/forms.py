@@ -33,12 +33,15 @@ class StudentForm(ModelForm):
 class ParentCreateForm(ModelForm):
     first_name = forms.CharField(max_length=30, label='Imię rodzica')
     last_name = forms.CharField(max_length=50, label='Nazwisko rodzica')
+    email = forms.EmailField(required=False,
+                             validators=[UniqueEmailValidator])
     class Meta:
         model = Parent
         fields = ['first_name', 'last_name', 'phone_number', 'email', 'street',
             'house_number', 'apartment_number', 'city', 'zip_code']
         help_texts = {
             'phone_number': '9 cyfr, bez spacji',
+            'email': 'jeśli nie podasz będzie losowo utworzony np.: wjayvao@test.test'
         }
 
 
