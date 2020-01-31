@@ -87,7 +87,8 @@ document.getElementById('acceptBtn').addEventListener('click', function(){
     setRequiredTrue(parentEls);
     // INITIAL VALIDATION - CLIENT SIDE
     // if errors: add 'is-invalid' class to input and div class="invalid-feedback">  
-    let inputsFilled = emptyInvalid(parentEls, "To pole jest wymagane");
+    let inputsFilled = emptyInvalid(
+        [parent_first_name, parent_last_name, phone_number], "To pole jest wymagane");
     let phoneValid = lengthPhoneInvalid(phone_number, 'Numer telefonu musi mieć 9 cyfr');
     let emailValid = emailValidation(email, "Niepoprawny format adresu email")
     // if any errors in intial validation do not send data to server
@@ -136,9 +137,9 @@ function resetInputErros(parentEls){
     }
 }
 
-function emptyInvalid(parentEls, msg){
+function emptyInvalid(elList, msg){
     let noErrors = true;
-    for (let el of parentEls) {
+    for (let el of elList) {
         if (el.value == '') {
             addErrors(el, msg)
             noErrors = false
@@ -148,7 +149,7 @@ function emptyInvalid(parentEls, msg){
 }
 
 function emailValidation(email, msg){
-    if (validateEmail(email.value)==false){
+    if (validateEmail(email.value)==false && email.value!=''){
         addErrors(email, msg)
         return false
     }

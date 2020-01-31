@@ -203,19 +203,19 @@ def import_students(initial_import_instance):
     for row_no, row in enumerate(ws.values):
         if row_no != 0:
             try:
-                p_first_name = row[0].strip()
-                p_last_name = row[1].strip()
-                s_first_name = row[2].strip()
+                p_first_name = row[0].strip().capitalize()
+                p_last_name = row[1].strip().title()
+                s_first_name = row[2].strip().capitalize()
                 s_last_name = row[3]
                 if not s_last_name:
                     s_last_name = p_last_name
                 else:
-                    s_last_name = s_last_name.strip()
+                    s_last_name = s_last_name.strip().title()
                 s_gender = row[4].strip().upper()
                 group_name = row[5].strip()
                 p_phone_number = int(row[6])
                 p_email = row[7] or create_fake_unique_email()
-                p_email = p_email.strip()
+                p_email = p_email.strip().lower()
                 s_recruitment_note = row[8].strip()
                 try:
                     p = Parent.objects.get(phone_number=p_phone_number)

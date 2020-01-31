@@ -60,7 +60,10 @@ class SignUpForm(forms.Form):
 class SignUpForm2(forms.Form):
     parent_first_name = forms.CharField(max_length=30, label='Imię rodzica')
     parent_last_name = forms.CharField(max_length=50, label='Nazwisko rodzica')
-    email = forms.EmailField(max_length=254)
+    email = forms.EmailField(
+        max_length=254,
+        help_text='jeśli nie podasz będzie losowo utworzony np.: wjayvao@test.test',
+        required=False)
     phone_number = forms.IntegerField(
         label='Nr telefonu',
         help_text='9 cyfr, bez spacji',

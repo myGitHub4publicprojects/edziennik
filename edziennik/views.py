@@ -232,6 +232,7 @@ class Parent_Create(OnlySuperuserMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        # if no email provided ganerate unique email
         email = form.cleaned_data['email'] or create_fake_unique_email()
         u = User.objects.create(
             first_name=form.cleaned_data['first_name'].capitalize(),
@@ -258,25 +259,40 @@ def create_parent_ajax(request):
     if parent_form.is_valid():
         # check if phone_number and email are not duplicates
         email = parent_form.cleaned_data['email'].lower()
-        phone_number = parent_form.cleaned_data['phone_number']
-        if Parent.objects.filter(email=email).exists():
-            data['result'] = 'Error'
-            data['errors'] = {'email': ['Rodzic z takim adresem email już istnieje. Wybierz inny email, lub użyj istniejącego Rodzica']}
+        print('here')
+        if email:
+            print('here2')
+            if Parent.objects.filter(email=email).exists():
+                data['result'] = 'Error'
+                data['errors'] = {'email': ['''Rodzic z takim adresem email już istnieje. 
+                    Wybierz inny email, lub użyj istniejącego Rodzica''']}
+        else:
+            print('here3')
+            email = create_fake_unique_email()
 
+        phone_number = parent_form.cleaned_data['phone_number']
         if Parent.objects.filter(phone_number=phone_number).exists():
+            print('here6')
             data['result'] = 'Error'
-            data.get('errors', {}).update(
-                {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje. 
+            if data.get('errors'):
+                data['errors'].update(
+                    {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje.
                     Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
-                }
-            )
+                    }
+                )
+            else:
+                data['errors'] = {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje.
+                    Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
+                                }
+            print('data: ', data)
 
         if not data:    # when email and phone are unique and cause no errors
+            print('here5')
             data['result'] = 'Success!'
             password = User.objects.make_random_password(length=8)
             user = User.objects.create(
                 first_name=parent_form.cleaned_data['parent_first_name'].capitalize(),
-                last_name=parent_form.cleaned_data['parent_last_name'].capitalize(),
+                last_name=parent_form.cleaned_data['parent_last_name'].title(),
                 email=email,
                 username=create_unique_username(
                     parent_form.cleaned_data['parent_first_name'],
