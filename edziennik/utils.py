@@ -278,3 +278,47 @@ def import_students(initial_import_instance):
         transaction.savepoint_commit(sid)
 
     return iiu
+
+def valid_email_or_errors(email, data):
+    if Parent.objects.filter(email=email).exists():
+        data['result'] = 'Error'
+        data['errors'] = {'email': ['''Rodzic z takim adresem email już istnieje. 
+            Wybierz inny email, lub użyj istniejącego Rodzica''']}
+
+def valid_phone_or_errors(phone_number, data):
+    if Parent.objects.filter(phone_number=phone_number).exists():
+        data['result'] = 'Error'
+        if data.get('errors'):
+            data['errors'].update(
+                {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje.
+                Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
+                    }
+            )
+        else:
+            data['errors'] = {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje.
+                Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
+                                }
+
+
+def create_parent_and_user(parent_form, email, phone_number):
+    password = User.objects.make_random_password(length=8)
+    user = User.objects.create(
+        first_name=parent_form.cleaned_data['parent_first_name'].capitalize(
+        ),
+        last_name=parent_form.cleaned_data['parent_last_name'].title(),
+        email=email,
+        username=create_unique_username(
+            parent_form.cleaned_data['parent_first_name'],
+            parent_form.cleaned_data['parent_last_name']
+        )
+    )
+    user.set_password(password)
+    user.save()
+
+    parent = Parent.objects.create(
+        user=user,
+        phone_number=phone_number,
+        email=email,
+        initial_password=password
+    )
+    return parent

@@ -24,7 +24,8 @@ from .forms import (AdminProfileForm, SignUpForm, ParentForm, StudentForm, Homew
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
                              create_unique_username, signup_email, import_students,
-                             create_fake_unique_email)
+            create_fake_unique_email, valid_email_or_errors, valid_phone_or_errors,
+            create_parent_and_user)
 
 from .tasks import (quizlet_check_task,
     twilio_first_sms_status_check_task, twilio_second_sms_status_check_task, sms_test_task)
@@ -259,58 +260,18 @@ def create_parent_ajax(request):
     if parent_form.is_valid():
         # check if phone_number and email are not duplicates
         email = parent_form.cleaned_data['email'].lower()
-        print('here')
         if email:
-            print('here2')
-            if Parent.objects.filter(email=email).exists():
-                data['result'] = 'Error'
-                data['errors'] = {'email': ['''Rodzic z takim adresem email już istnieje. 
-                    Wybierz inny email, lub użyj istniejącego Rodzica''']}
+            valid_email_or_errors(email, data)
         else:
-            print('here3')
             email = create_fake_unique_email()
 
         phone_number = parent_form.cleaned_data['phone_number']
-        if Parent.objects.filter(phone_number=phone_number).exists():
-            print('here6')
-            data['result'] = 'Error'
-            if data.get('errors'):
-                data['errors'].update(
-                    {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje.
-                    Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
-                    }
-                )
-            else:
-                data['errors'] = {'phone_number': ['''Rodzic z takim numerem telefonu już istnieje.
-                    Wybierz inny nr tel, lub użyj istniejącego Rodzica''']
-                                }
-            print('data: ', data)
+        valid_phone_or_errors(phone_number, data)
 
         if not data:    # when email and phone are unique and cause no errors
-            print('here5')
             data['result'] = 'Success!'
-            password = User.objects.make_random_password(length=8)
-            user = User.objects.create(
-                first_name=parent_form.cleaned_data['parent_first_name'].capitalize(),
-                last_name=parent_form.cleaned_data['parent_last_name'].title(),
-                email=email,
-                username=create_unique_username(
-                    parent_form.cleaned_data['parent_first_name'],
-                    parent_form.cleaned_data['parent_last_name']
-                )
-            )
-            user.set_password(password)
-            user.save()
-
-            parent = Parent.objects.create(
-                user=user,
-                phone_number=phone_number,
-                email=email,
-                initial_password = password
-            )
-            
+            parent = create_parent_and_user(parent_form, email, phone_number)
             # send data to js
-            parent = Parent.objects.all().last()
             data['parent'] = {'id': parent.id, 'details': str(parent)}
     else:
         data['result'] = 'Error'

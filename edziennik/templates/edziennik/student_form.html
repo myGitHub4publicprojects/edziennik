@@ -5,9 +5,7 @@
 
 <h2 class="text-center">Dodaj ucznia</h2>
 
-
 <form method="post">{% csrf_token %}
-
     <div class="form-row">
         <div class="form-group col-md-5 mb-0">
             {{ form.first_name|as_crispy_field }}
@@ -42,9 +40,6 @@
                         {{ parent_form.email|as_crispy_field }}
                     </div>
                 </div>
-                <!-- <div class="alert alert-danger" role="alert" id="parentErrors">
-                        This is a danger alert—check it out!
-                    </div> -->
                 <button id="acceptBtn" type="button" class="btn btn-primary btn-sm">zapisz rodzica</button>
                 <button id="cancelBtn" type="button" class="btn btn-outline-secondary btn-sm">anuluj</button>
             </div>
@@ -84,7 +79,7 @@ document.getElementById('acceptBtn').addEventListener('click', function(){
     // reset input errors
     resetInputErros(parentEls);
     // make inputs required
-    setRequiredTrue(parentEls);
+    setRequiredTrue([parent_first_name, parent_last_name, phone_number]);
     // INITIAL VALIDATION - CLIENT SIDE
     // if errors: add 'is-invalid' class to input and div class="invalid-feedback">  
     let inputsFilled = emptyInvalid(
@@ -121,7 +116,7 @@ document.getElementById('acceptBtn').addEventListener('click', function(){
                 }
             })
             .catch((error) => {
-                console.error('Error:', error);
+                console.log('Error:', error);
             });
     }
 });
