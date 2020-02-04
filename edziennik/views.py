@@ -255,6 +255,8 @@ class Parent_Create(OnlySuperuserMixin, CreateView):
 def create_parent_ajax(request):
     '''Accepts ajax call with parent first name and surname.
     creates and return parent instance or error'''
+    if not request.user.is_superuser:
+        raise Http404
     parent_form = SignUpForm2(request.POST)
     data = {}
     if parent_form.is_valid():

@@ -400,6 +400,7 @@ class LectorViewTests(TestCase):
         self.assertFalse(g3.lector)
 
 
+# STUDENT
 class StudentViewTests(TestCase):
     def test_student_view_noerror(self):
         """
@@ -631,6 +632,152 @@ class StudentViewTests(TestCase):
         response_attendance_table_content= first_group['attendance_table_content']
         absent_sign = '<img src=%s>' % static('img/x-mark-red.png')
         self.assertEqual(response_attendance_table_content[0][2], absent_sign)
+
+
+class Test_Student_Create_View(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+
+    def test_student_create_view_for_non_admin(self):
+        """
+        non admin should not have access - status code 403 Forbidden - PermissionDenied
+        """
+        client = Client()
+        response = self.client.get(
+            reverse('edziennik:student_create'), follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_student_create_admin(self):
+        """Student should be created and bound to correct Parent"""
+        mixer.blend('edziennik.Parent')
+        p2 = mixer.blend('edziennik.Parent')
+        mixer.blend('edziennik.Parent')
+        url = reverse('edziennik:student_create')
+        data = {
+            'parent': p2.id,
+            'first_name': 'Adam',
+            'last_name': 'NowaćĄŁ',
+            'gender': 'M'
+        }
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.post(url, data, follow=True)
+        self.assertTrue(logged_in)
+        self.assertEqual(response.status_code, 200)
+
+        # should create one Student instance
+        self.assertEqual(Student.objects.all().count(), 1)
+        # Students parent should be p2
+        s = Student.objects.all().first()
+        self.assertEqual(s.parent, p2)
+
+
+# PARENT
+# class Test_Parent_Create(TestCase):
+#     pass
+
+
+class Test_Create_Parent_Ajax(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+        username='admin', email='jlennon@beatles.com', password='glassonion')
+        
+    def test_for_non_admin(self):
+        """non admin user should not have access - status code 404"""
+        client = Client()
+        response = self.client.get(reverse('edziennik:create_parent_ajax'))
+        self.assertEqual(response.status_code, 404)
+
+    def test_no_preexisting_parents(self):
+        """no preexisting parents, correct data, should create one Parent instance"""
+        data = {
+            'parent_first_name': 'Adam',
+            'parent_last_name': 'Nowak',
+            'phone_number': '123123123',
+            'email': 'adam@gmail.com'
+        }
+        
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:create_parent_ajax')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        self.assertContains(response, 'Success!')
+
+        # should create 1 Parent
+        self.assertEqual(Parent.objects.all().count(), 1)
+        # parent should have initial_password
+        self.assertEqual(len(Parent.objects.all().first().initial_password), 8)
+
+        # should create 1 User with first name 'Adam', last name 'Nowak' and proper email
+        self.assertEqual(User.objects.all().count(), 2) # 1 admin and 1 new
+        new_user = User.objects.all().last()
+        self.assertEqual(new_user.first_name, 'Adam')
+        self.assertEqual(new_user.last_name, 'Nowak')
+        self.assertEqual(new_user.email, 'adam@gmail.com')
+
+    def test_email_taken(self):
+        """1 preexisting parent, email already taken, should not create Parent instance,
+        should return 'Error' in response result"""
+        mixer.blend('edziennik.Parent', email='adam@gmail.com')
+        data = {
+            'parent_first_name': 'Adam',
+            'parent_last_name': 'Nowak',
+            'phone_number': '123123123',
+            'email': 'adam@gmail.com'
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:create_parent_ajax')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # response result should be 'Error'
+        self.assertContains(response, 'Error')
+        # response 'errors' should indicate email
+        self.assertContains(response, 'email')
+
+        # should not create Parent, 1 Parent aleready exists
+        self.assertEqual(Parent.objects.all().count(), 1)
+
+    def test_phone_taken(self):
+        """1 preexisting parent, phone number already taken, should not create Parent instance,
+        should return 'Error' in response result"""
+        mixer.blend('edziennik.Parent', phone_number=123123123)
+        data = {
+            'parent_first_name': 'Adam',
+            'parent_last_name': 'Nowak',
+            'phone_number': '123123123',
+            'email': 'adam@gmail.com'
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:create_parent_ajax')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # response result should be 'Error'
+        self.assertContains(response, 'Error')
+        # response 'errors' should indicate phone
+        self.assertContains(response, 'phone_number')
+
+        # should not create Parent, 1 Parent aleready exists
+        self.assertEqual(Parent.objects.all().count(), 1)
+
+# email and phone taken
+# no email
+# no phone
+# no email and phone
+
 
 class TestGroupView(TestCase):
     def setUp(self):
@@ -1857,43 +2004,6 @@ class TestAdvanced_SettingsView(TestCase):
         self.assertEqual(all_messages[0].tags, "success")
         self.assertEqual(all_messages[0].message, 'Ustawienia zachowane')
 
-
-class Test_Student_Create_View(TestCase):
-    def setUp(self):
-        User.objects.create_superuser(
-            username='admin', email='jlennon@beatles.com', password='glassonion')
-
-    def test_student_create_view_for_non_admin(self):
-        """
-        non admin should not have access - status code 403 Forbidden - PermissionDenied
-        """
-        client = Client()
-        response = self.client.get(
-            reverse('edziennik:student_create'), follow=True)
-        self.assertEqual(response.status_code, 403)
-
-    def test_student_create_admin(self):
-        """Student should be created and bound to correct Parent"""
-        mixer.blend('edziennik.Parent')
-        p2 = mixer.blend('edziennik.Parent')
-        mixer.blend('edziennik.Parent')
-        url = reverse('edziennik:student_create')
-        data = {
-            'parent': p2.id,
-            'first_name': 'Adam',
-            'last_name' :'NowaćĄŁ',
-            'gender': 'M'
-        }
-        logged_in = self.client.login(username='admin', password='glassonion')
-        response = self.client.post(url, data, follow=True)
-        self.assertTrue(logged_in)
-        self.assertEqual(response.status_code, 200)
-        
-        # should create one Student instance
-        self.assertEqual(Student.objects.all().count(), 1)
-        # Students parent should be p2
-        s = Student.objects.all().first()
-        self.assertEqual(s.parent, p2)
 
 
 class Test_Initial_Import_Create(TestCase):
