@@ -7,6 +7,15 @@
 
     <form method="POST">{% csrf_token %}
         <p>Czy na pewno chcesz nieodwracalnie usunąć "{{ object }}"?</p>
+        {% if object.student_set.all %}
+        <p>Następujący uczniowie są związani z tym rodzicem:</p>
+        <ul>
+        {% for s in object.student_set.all %}
+        <li><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></li>
+        {% endfor %}
+        </ul>
+        <h3>Uczniowe związani z tym rodzicem też zostaną usunięci!</h3>
+        {% endif %}
         <input type="submit" value="Potwierdzam" class="btn btn-sm btn-outline-danger">
         <a href="{% url 'edziennik:parent_datail' object.id %}" class="btn btn-sm btn-primary">Powrót do rodzica</a>
     </form>
