@@ -773,10 +773,87 @@ class Test_Create_Parent_Ajax(TestCase):
         # should not create Parent, 1 Parent aleready exists
         self.assertEqual(Parent.objects.all().count(), 1)
 
-# email and phone taken
-# no email
-# no phone
-# no email and phone
+    def test_phone_and_email_taken(self):
+        """1 preexisting parent, phone number and email already taken, should not create Parent instance,
+        should return 'Error' in response result"""
+        mixer.blend('edziennik.Parent', phone_number=123123123, email='adam@gmail.com')
+        data = {
+            'parent_first_name': 'Adam',
+            'parent_last_name': 'Nowak',
+            'phone_number': '123123123',
+            'email': 'adam@gmail.com'
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:create_parent_ajax')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # response result should be 'Error'
+        self.assertContains(response, 'Error')
+        # response 'errors' should indicate phone
+        self.assertContains(response, 'phone_number')
+        # response 'errors' should indicate email
+        self.assertContains(response, 'email')
+
+        # should not create Parent, 1 Parent aleready exists
+        self.assertEqual(Parent.objects.all().count(), 1)
+
+    def test_no_email(self):
+        """1 preexisting parent, no email given, should create 1 Parent instance,
+        should return 'Success!' in response result, should generate fake email"""
+        mixer.blend('edziennik.Parent')
+        data = {
+            'parent_first_name': 'Adam',
+            'parent_last_name': 'Nowak',
+            'phone_number': '123123123',
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:create_parent_ajax')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # response result should be 'Success!'
+        self.assertContains(response, 'Success!')
+
+        # should create 1 Parent, 1 Parent aleready exists
+        self.assertEqual(Parent.objects.all().count(), 2)
+
+        # new Parent should have a fake, unique email
+        self.assertIn('@test.test', Parent.objects.all().last().email)
+
+    def test_no_phone(self):
+        """1 preexisting parent, no phone number given, should not create Parent instance,
+        should return 'Error' in response result"""
+        mixer.blend('edziennik.Parent')
+        data = {
+            'parent_first_name': 'Adam',
+            'parent_last_name': 'Nowak',
+            'email': 'adam@gmail.com'
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:create_parent_ajax')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # response result should be 'Success!'
+        self.assertContains(response, 'Error')
+        # response 'errors' should indicate phone
+        self.assertContains(response, 'phone_number')
+
+        # should not create Parent, 1 Parent aleready exists
+        self.assertEqual(Parent.objects.all().count(), 1)
 
 
 class TestGroupView(TestCase):
