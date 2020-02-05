@@ -13,6 +13,10 @@ urlpatterns = [
     path('<int:pk>/add_grades/', views.add_grades, name='add_grades'),
     path('<int:group_id>/attendance_by_group/',
          views.attendance_by_group, name='attendance_by_group'),
+
+          # LECTOR
+    path('lector_create/',
+         views.Lector_Create.as_view(), name='lector_create'),
     path('<int:pk>/lektor/', views.lector, name='lector'),
 
     path('student_create/',

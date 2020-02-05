@@ -3,9 +3,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.forms import ModelForm, Textarea
-from .models import Admin_Profile, Student, Parent, Homework
+from .models import Admin_Profile, Student, Parent, Homework, Lector
 from edziennik.utils import create_unique_username
-from .validators_forms import UniqueEmailValidator, UniquePhoneValidator
+from .validators_forms import UniqueEmailValidator, UniquePhoneValidator, UniqueEmailValidator_Lector
 
 
 class AdminProfileForm(ModelForm):
@@ -28,6 +28,20 @@ class StudentForm(ModelForm):
         fields = ['first_name', 'last_name', 'date_of_birth', 'school',
             'class_in_school', 'language_of_interest', 'language_at_school',
             'experience', 'book', 'avaliability', 'other_classes', 'focus', 'gender']
+
+
+class LectorCreateForm(ModelForm):
+    first_name = forms.CharField(max_length=30, label='Imię')
+    last_name = forms.CharField(max_length=50, label='Nazwisko')
+    email = forms.EmailField(required=False,
+                             validators=[UniqueEmailValidator_Lector])
+
+    class Meta:
+        model = Lector
+        fields = ['first_name', 'last_name', 'email']
+        help_texts = {
+            'email': 'jeśli nie podasz będzie losowo utworzony np.: wjayvao@test.test'
+        }
 
 
 class ParentCreateForm(ModelForm):
@@ -68,6 +82,7 @@ class SignUpForm2(forms.Form):
         label='Nr telefonu',
         help_text='9 cyfr, bez spacji',
         validators=[MinValueValidator(100000000), MaxValueValidator(999999999)])
+
 
 class HomeworkForm(ModelForm):
     class Meta:

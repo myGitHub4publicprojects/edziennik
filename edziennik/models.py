@@ -48,7 +48,8 @@ class Lector(models.Model):
                              on_delete=models.CASCADE)
     initial_password = models.CharField(max_length=120)
 
-
+    def get_absolute_url(self):
+        return reverse('edziennik:lector', kwargs={'pk': self.pk})
     def __str__(self):              
         return self.user.username
 

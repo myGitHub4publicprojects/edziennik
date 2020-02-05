@@ -212,6 +212,99 @@ class IndexViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
+# LECTOR
+
+class Test_Lector_Create(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+        username='admin', email='jlennon@beatles.com', password='glassonion')
+
+    def test_for_non_admin(self):
+        """non admin user should not have access - status code 403"""
+        client = Client()
+        response = self.client.get(reverse('edziennik:lector_create'))
+        self.assertEqual(response.status_code, 403)
+
+    def test_no_preexisting_lectors(self):
+        """no preexisting lectors, correct data, should create one Lector instance"""
+        data = {
+            'first_name': 'Adam',
+            'last_name': 'Nowak',
+            'email': 'adam@gmail.com'
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:lector_create')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # should create 1 Lector
+        self.assertEqual(Lector.objects.all().count(), 1)
+        # parent should have initial_password
+        self.assertEqual(len(Lector.objects.all().first().initial_password), 8)
+
+        # should create 1 User with first name 'Adam', last name 'Nowak' and proper email
+        self.assertEqual(User.objects.all().count(), 2)  # 1 admin and 1 new
+        new_user = User.objects.all().last()
+        self.assertEqual(new_user.first_name, 'Adam')
+        self.assertEqual(new_user.last_name, 'Nowak')
+        self.assertEqual(new_user.email, 'adam@gmail.com')
+
+    def test_email_taken(self):
+        """1 preexisting lector, email already taken, should not create Lector instance"""
+        u = User.objects.create(username='al', email='adam@gmail.com', password='testpass')
+        mixer.blend('edziennik.Lector', user=u)
+        data = {
+            'first_name': 'Adam',
+            'last_name': 'Nowak',
+            'email': 'adam@gmail.com'
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:lector_create')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # response 'errors' should indicate phone
+        self.assertContains(response, 'email')
+
+        # should not create Lector, 1 Lector aleready exists
+        self.assertEqual(Lector.objects.all().count(), 1)
+
+
+    def test_no_email(self):
+        """1 preexisting lector, no email given, should create 1 Lector instance,
+        should generate fake email"""
+        u = User.objects.create(
+            username='al', email='adam@gmail.com', password='testpass')
+        mixer.blend('edziennik.Lector', user=u)
+        data = {
+            'first_name': 'Adam',
+            'last_name': 'Nowak',
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:lector_create')
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # should create 1 Lector, 1 Lector aleready exists
+        self.assertEqual(Lector.objects.all().count(), 2)
+
+        # new Lector should have a fake, unique email
+        self.assertIn('@test.test', Lector.objects.all().last().user.email)
+
+
+
 class LectorViewTests(TestCase):
     def setUp(self):
         User.objects.create_superuser(
@@ -401,6 +494,7 @@ class LectorViewTests(TestCase):
 
 
 # STUDENT
+
 class StudentViewTests(TestCase):
     def test_student_view_noerror(self):
         """

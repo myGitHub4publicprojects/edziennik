@@ -20,7 +20,7 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile, Quizlet, Homework, Initial_Import,
                               Initial_Import_Usage)
 from .forms import (AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm,
-                    SignUpForm2, ParentCreateForm)
+                    SignUpForm2, ParentCreateForm, LectorCreateForm)
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
                              create_unique_username, signup_email, import_students,
@@ -86,6 +86,35 @@ def index(request):
     else:
         raise Http404
 
+
+# LECTOR
+
+class Lector_Create(OnlySuperuserMixin, CreateView):
+    model = Lector
+    form_class = LectorCreateForm
+    raise_exception = True
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        # if no email provided ganerate unique email
+        email = form.cleaned_data['email'] or create_fake_unique_email()
+        u = User.objects.create(
+            first_name=form.cleaned_data['first_name'].capitalize(),
+            last_name=form.cleaned_data['last_name'].capitalize(),
+            username=create_unique_username(
+                form.cleaned_data['first_name'], form.cleaned_data['last_name']),
+            email=email
+        )
+        password = User.objects.make_random_password(length=8)
+        u.set_password(password)
+        u.save()
+        self.object.user = u
+        self.object.initial_password = password
+        self.object.email = email
+        self.object.save()
+        return super().form_valid(form)
+
+
 def lector(request, pk):
     '''displays lectors name and his groups'''
     if not request.user.is_superuser:
@@ -134,6 +163,9 @@ def lector(request, pk):
         'hours_in_month_list': hours_in_month_list}
 
     return render(request, 'edziennik/lector.html', context)
+
+
+# STUDENT
 
 class Student_Create(OnlySuperuserMixin, CreateView):
     model = Student
@@ -226,6 +258,9 @@ class StudentDelete(OnlySuperuserMixin, DeleteView):
     success_url = reverse_lazy('edziennik:student_list')
 
 
+# PARENT
+
+
 class Parent_Create(OnlySuperuserMixin, CreateView):
     model = Parent
     form_class = ParentCreateForm
@@ -302,6 +337,7 @@ class ParentUpdate(OnlySuperuserMixin, UpdateView):
 class ParentDelete(OnlySuperuserMixin, DeleteView):
     model = Parent
     success_url = reverse_lazy('edziennik:parent_list')
+
 
 
 def group(request, pk):
