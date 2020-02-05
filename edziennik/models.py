@@ -46,6 +46,8 @@ class Initial_Import_Usage_Errors(models.Model):
 class Lector(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+    initial_password = models.CharField(max_length=120)
+
 
     def __str__(self):              
         return self.user.username
