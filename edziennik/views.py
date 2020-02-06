@@ -20,7 +20,7 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile, Quizlet, Homework, Initial_Import,
                               Initial_Import_Usage)
 from .forms import (AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm,
-                    SignUpForm2, ParentCreateForm, LectorCreateForm)
+                    SignUpForm2, ParentCreateForm, LectorCreateForm, LectorUpdateForm)
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
                              create_unique_username, signup_email, import_students,
@@ -163,6 +163,31 @@ def lector(request, pk):
         'hours_in_month_list': hours_in_month_list}
 
     return render(request, 'edziennik/lector.html', context)
+
+
+class Lector_List(OnlySuperuserMixin, ListView):
+    model = Lector
+    raise_exception = True
+
+
+class Lector_Delete(OnlySuperuserMixin, DeleteView):
+    model = Lector
+    success_url = reverse_lazy('edziennik:lector_list')
+    raise_exception = True
+
+
+class Lector_Update(OnlySuperuserMixin, UpdateView):
+    model = Lector
+    form_class = LectorUpdateForm
+    template_name_suffix = '_update_form'
+    raise_exception = True
+    def form_valid(self, form):
+        u = self.object.user
+        u.email = form.cleaned_data['email']
+        u.first_name=form.cleaned_data['first_name'].capitalize()
+        u.last_name=form.cleaned_data['last_name'].capitalize()
+        u.save()
+        return super().form_valid(form)
 
 
 # STUDENT

@@ -304,6 +304,77 @@ class Test_Lector_Create(TestCase):
         self.assertIn('@test.test', Lector.objects.all().last().user.email)
 
 
+class Test_Lector_Update(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+
+    def test_for_non_admin(self):
+        """non admin user should not have access - status code 403"""
+        client = Client()
+        response = self.client.get(reverse('edziennik:lector_update', args=(1,)))
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin(self):
+        """1 preexisting lector, correct data, should update Lector instance"""
+        u = User.objects.create(
+            username='al', email='ffff@gmail.com', password='testpass')
+        mixer.blend('edziennik.Lector', user=u)
+        data = {
+            'first_name': 'adam',
+            'last_name': 'nowak',
+            'email': 'adam@gmail.com'
+        }
+
+        logged_in = self.client.login(
+            username='admin', password='glassonion')
+
+        url = reverse('edziennik:lector_update', args=(1,))
+        response = self.client.post(url, data, follow=True)
+        # should give code 200 as follow is set to True
+        assert response.status_code == 200
+
+        # should update but not create
+        self.assertEqual(Lector.objects.all().count(), 1)
+
+        # should create 1 User with first name 'Adam', last name 'Nowak' and proper email
+        self.assertEqual(User.objects.all().count(), 2)  # 1 admin and 1 new
+        new_user = User.objects.all().last()
+        self.assertEqual(new_user.first_name, 'Adam') # should capitalize first name
+        self.assertEqual(new_user.last_name, 'Nowak') # should capitalize last name
+        self.assertEqual(new_user.email, 'adam@gmail.com')
+
+
+class Test_Lector_List(TestCase):
+    def setUp(self):
+        User.objects.create_superuser(
+            username='admin', email='jlennon@beatles.com', password='glassonion')
+
+    def test_for_non_admin(self):
+        """non admin user should not have access - status code 403"""
+        client = Client()
+        response = self.client.get(reverse('edziennik:lector_list'))
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin(self):
+        # should contain details of two lectors
+        l1 = mixer.blend('edziennik.Lector')
+        l2 = mixer.blend('edziennik.Lector')
+        client = Client()
+        logged_in = self.client.login(username='admin', password='glassonion')
+        response = self.client.get(reverse('edziennik:lector_list'))
+        self.assertTrue(logged_in)
+
+        self.assertEqual(response.status_code, 200)
+
+        response_lectors= response.context['object_list']
+        # lector l1 should be in response_lectors
+        self.assertTrue(response_lectors.filter(id=l1.id).exists())
+        # lector l2 should be in response_lectors
+        self.assertTrue(response_lectors.filter(id=l2.id).exists())
+        # there should be 2 Lectors in response_lectors
+        self.assertEqual(response_lectors.count(), 2)
+
 
 class LectorViewTests(TestCase):
     def setUp(self):

@@ -18,6 +18,12 @@ urlpatterns = [
     path('lector_create/',
          views.Lector_Create.as_view(), name='lector_create'),
     path('<int:pk>/lektor/', views.lector, name='lector'),
+    path('lector_list/',
+         views.Lector_List.as_view(), name='lector_list'),
+    path('<int:pk>/lector_update/',
+         views.Lector_Update.as_view(), name='lector_update'),
+    path('<int:pk>/lector_delete/',
+         views.Lector_Delete.as_view(), name='lector_delete'),
 
     path('student_create/',
          views.Student_Create.as_view(), name='student_create'),

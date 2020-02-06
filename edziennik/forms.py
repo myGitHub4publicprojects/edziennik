@@ -44,6 +44,16 @@ class LectorCreateForm(ModelForm):
         }
 
 
+class LectorUpdateForm(ModelForm):
+    first_name = forms.CharField(max_length=30, label='Imię')
+    last_name = forms.CharField(max_length=50, label='Nazwisko')
+    email = forms.EmailField(validators=[UniqueEmailValidator_Lector])
+
+    class Meta:
+        model = Lector
+        fields = ['first_name', 'last_name', 'email']
+
+
 class ParentCreateForm(ModelForm):
     first_name = forms.CharField(max_length=30, label='Imię rodzica')
     last_name = forms.CharField(max_length=50, label='Nazwisko rodzica')

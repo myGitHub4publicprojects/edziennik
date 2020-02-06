@@ -1,0 +1,19 @@
+{% extends "edziennik/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<section>
+    <h2>{{ object }}</h2>
+
+    <form method="POST">{% csrf_token %}
+        <p>Czy na pewno chcesz nieodwracalnie usunąć "{{ object }}"?</p>
+        {% if object.classdate_set.all %}
+        
+        <h3>Zajęcia przeprowadzone przez tego lektora też zostaną usunięte.</h3>
+        <p>Nie będzie dostępu do tematów zajęć, dat ani obecności na tych zajęciach</p>
+        {% endif %}
+        <input type="submit" value="Potwierdzam" class="btn btn-sm btn-outline-danger">
+        <a href="{% url 'edziennik:lector' object.id %}" class="btn btn-sm btn-primary">Powrót do lektora</a>
+    </form>
+</section>
+{% endblock content %}

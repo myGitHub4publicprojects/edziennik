@@ -3,7 +3,7 @@
 <section>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <h1>Lektor: {{ lector.user.get_full_name }}</h1>
-
+<a href="{% url 'edziennik:lector_update' lector.id %}" class="btn btn-sm btn-outline-primary">edytuj</a>
     <div class="row">
         <div class="col-sm">
         <h4 class="text-center">Obecne grupy:</h4>
