@@ -22,8 +22,14 @@
             </small>
         </h1>
         {% if request.user.is_superuser %}
+        <hr>
+        <p>Notatka rekrutacyjna: 
+        {% if student.recruitment_note %}
+        {{ student.recruitment_note }}
+        {% endif %}
+        </p>
         <a href="{% url 'edziennik:student_update' student.id %}"
-        class="btn btn-sm btn-outline-primary">edytuj</a>
+        class="btn btn-sm btn-outline-primary">edytuj ucznia</a>
         {% endif %}
         <hr>
         <h2 class="text-center mt-3">Oceny</h2>
