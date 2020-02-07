@@ -181,6 +181,14 @@ class Lector_Update(OnlySuperuserMixin, UpdateView):
     form_class = LectorUpdateForm
     template_name_suffix = '_update_form'
     raise_exception = True
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["first_name"] = self.object.user.first_name
+        initial["last_name"] = self.object.user.last_name
+        initial["email"] = self.object.user.email
+        return initial
+
     def form_valid(self, form):
         u = self.object.user
         u.email = form.cleaned_data['email']
