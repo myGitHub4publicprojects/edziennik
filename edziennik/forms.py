@@ -69,6 +69,17 @@ class ParentCreateForm(ModelForm):
         }
 
 
+class ParentUpdateForm(ModelForm):
+    first_name = forms.CharField(max_length=30, label='Imię rodzica')
+    last_name = forms.CharField(max_length=50, label='Nazwisko rodzica')
+
+    class Meta:
+        model = Parent
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'street',
+                  'house_number', 'apartment_number', 'city', 'zip_code']
+        help_texts = {'phone_number': '9 cyfr, bez spacji'}
+
+
 class ParentForm(ModelForm):
     class Meta:
         model = Parent

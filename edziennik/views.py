@@ -20,7 +20,8 @@ from edziennik.models import (Lector, Group, Parent, Student, ClassDate, Grades,
                               Admin_Profile, Quizlet, Homework, Initial_Import,
                               Initial_Import_Usage)
 from .forms import (AdminProfileForm, SignUpForm, ParentForm, StudentForm, HomeworkForm,
-                    SignUpForm2, ParentCreateForm, LectorCreateForm, LectorUpdateForm)
+                    SignUpForm2, ParentCreateForm, LectorCreateForm, LectorUpdateForm,
+                    ParentUpdateForm)
 
 from edziennik.utils import (admin_email, send_sms_twilio, generate_test_sms_msg,
                              create_unique_username, signup_email, import_students,
@@ -363,9 +364,21 @@ class ParentList(OnlySuperuserMixin, ListView):
 
 class ParentUpdate(OnlySuperuserMixin, UpdateView):
     model = Parent
-    fields = '__all__'
+    form_class = ParentUpdateForm
     template_name_suffix = '_update_form'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["first_name"] = self.object.user.first_name
+        initial["last_name"] = self.object.user.last_name
+        return initial
+
+    def form_valid(self, form):
+        u = self.object.user
+        u.first_name = form.cleaned_data['first_name'].capitalize()
+        u.last_name = form.cleaned_data['last_name'].capitalize()
+        u.save()
+        return super().form_valid(form)
 
 class ParentDelete(OnlySuperuserMixin, DeleteView):
     model = Parent
