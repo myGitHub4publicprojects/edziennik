@@ -23,6 +23,10 @@
         </h1>
         {% if request.user.is_superuser %}
         <hr>
+        <p>Grupy: 
+            {% for g in student.group_student.all %}
+            <a href="{% url 'edziennik:group' g.id %}">{{ g }}</a> 
+            {% endfor %}</p>
         <p>Notatka rekrutacyjna: 
         {% if student.recruitment_note %}
         {{ student.recruitment_note }}
