@@ -112,6 +112,13 @@ class Student(models.Model):
     iiu = models.ForeignKey(
     	Initial_Import_Usage, on_delete=models.CASCADE, blank=True, null=True)
 
+    def get_extended_data(self):
+        return '{fname} {lname} (rodzic: {parent})'.format(
+            fname=self.first_name,
+            lname=self.last_name,
+            parent=self.parent.user.get_full_name()
+        )
+
     def get_absolute_url(self):
         return reverse('edziennik:student', kwargs={'pk': self.pk})
 
@@ -127,6 +134,10 @@ class Group(models.Model):
     quizlet_group_url = models.URLField(blank=True)
     iiu = models.ForeignKey(
     	Initial_Import_Usage, on_delete=models.CASCADE, blank=True, null=True)
+
+    def get_absolute_url(self):
+        return reverse('edziennik:group', kwargs={'pk': self.pk})
+
     def __str__(self):
         return self.name
 

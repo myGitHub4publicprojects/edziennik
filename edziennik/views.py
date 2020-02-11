@@ -390,7 +390,12 @@ class ParentDelete(OnlySuperuserMixin, DeleteView):
 class Group_Create(OnlySuperuserMixin, CreateView):
     model = Group
     raise_exception = True
-    fields = '__all__'
+    fields = ['name', 'lector', 'quizlet_group_url', 'student']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['students'] = Student.objects.all()
+        return context
 
 def group(request, pk):
     ''' enables to select an action for a group '''
@@ -813,7 +818,6 @@ def signup(request):
         }
 
     return render(request, 'edziennik/signup.html', context)
-
 
 
 def duplicate_check(request):

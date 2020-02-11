@@ -5,9 +5,139 @@
 
 <h2 class="text-center">Dodaj Grupę</h2>
 
-<form method="post">{% csrf_token %}
-    {{ form|crispy }}
+<form method="post" id="groupForm">{% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.name|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.lector|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form.quizlet_group_url|as_crispy_field }}
+    </div>
+
+    <div class="form-group">
+        {{ form.student|as_crispy_field }}
+    </div>
+
+    <div class="form-row">
+        <div class="col-md-6 form-group border border-secondary">
+            <p>Wszyscy uczniowie:</p>
+            <input type="text" placeholder="wyszukaj ucznia" id="studentSearch">
+            <ul id="unselectedStudents" style="max-height: 200px; overflow-y: scroll;" class="px-0">
+                {% for s in students %}
+                <li id="{{ s.id }}" class="btn btn-secondary btn-sm w-100 students">{{ s.get_extended_data }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6 form-group border border-success" id="selectWithSearch">
+            <p>Wybrani uczniowie:</p>
+            <ul id="selectedStudents" class="px-0"></ul>
+        </div>
+    </div>
+
+
     <input type="submit" value="Zapisz" class="btn btn-sm btn-primary">
 </form>
 
+
 {% endblock content %}
+
+{% block javascript %}
+<script>
+// select student by clicking on the li element
+// add selected to array and remove from unselectedStudents ul
+// display selected in selelctedStudent ul with a div with cross to remove them
+// when cross clicked - remove item from array, add it back to options, redispaly div with current array items
+// when submit clicked use only items from array to be posted
+
+let serchBox = document.getElementById('studentSearch');
+let unselectedStudents = document.getElementById('unselectedStudents');
+let selectedStudents = document.getElementById('selectedStudents');
+let selectedStudentsArray = [];
+let groupForm = document.getElementById('groupForm');
+
+unselectedStudents.addEventListener('click', selectStudent);
+selectedStudents.addEventListener('click', unselectStudent);
+serchBox.addEventListener('input', searchStudents)
+groupForm.addEventListener('submit', submitForm);
+
+function submitForm(e) {
+    e.preventDefault();
+    if (selectedStudentsArray){
+        genereateStudentSelect();
+    }
+    
+    // this.submit();
+}
+
+function genereateStudentSelect(){
+    // create select el
+    for (let s of selectedStudentsArray){
+        console.log(s);
+        // create option selected
+        // add option to select el
+    }
+}
+
+    function selectStudent(e) {
+        let li = e.target
+        if (li.classList.contains('students')) {
+            li.remove();
+            addStudentToSelected(li);
+            refreshSelected();
+        }
+    }
+
+    function unselectStudent(e) {
+        let el = e.target
+        if (el.classList.contains('delete')) {
+            let li = el.parentNode
+            li.remove();
+            addStudentToUnselected(li)
+            refreshSelected();
+        }
+    }
+
+    function addStudentToSelected(li) {
+        let deleteBtn = document.createElement('div');
+        deleteBtn.className = "btn btn-danger btn-sm float-right py-0 delete";
+        deleteBtn.appendChild(document.createTextNode('x'));
+        li.appendChild(deleteBtn);
+        selectedStudentsArray.push(li);
+    }
+
+    function addStudentToUnselected(li) {
+        // add to unselectedStudents, remove deleteBtn, remove from selectedStudentsArray
+        unselectedStudents.appendChild(li);
+        li.lastChild.remove();
+        selectedStudentsArray = selectedStudentsArray.filter(el => el !== li)
+    }
+
+    function refreshSelected() {
+        for (let el of selectedStudentsArray) {
+            selectedStudents.appendChild(el);
+        }
+    }
+
+    function searchStudents() {
+        resetHide();
+        let searchTerm = this.value.toLowerCase();
+        for (let o of unselectedStudents.children) {
+            if (o.innerText.toLowerCase().includes(searchTerm) == false) {
+                o.classList.add('d-none');
+            }
+        }
+    }
+
+    function resetHide() {
+        for (let o of unselectedStudents.children) {
+            o.classList.remove('d-none');
+        }
+    }
+
+</script>
+{% endblock %}
