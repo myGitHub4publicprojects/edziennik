@@ -1,4 +1,6 @@
 {% extends "edziennik/base.html" %}
+{% load static %}
+
 {% block content %}
 
 <div class="row">
@@ -76,10 +78,11 @@
             dodaj studentów</button>
         <div class="d-none">
             zaznacz uczniów do dodania:
-            <form action="" method="POST" class="d-inline-block">{% csrf_token %}
+            <form action="" method="POST" class="d-inline-block" id="selectWithSearch">{% csrf_token %}
+                <input type="text" placeholder="wyszukaj ucznia">
                 <select name="newStudentId" multiple>
                     {% for s in all_students %}
-                    <option value="{{ s.id }}">{{ s }}, parent: {{ s.parent }}</option>
+                    <option value="{{ s.id }}">{{ s }} (rodzic: {{ s.parent }})</option>
                     {% endfor %}
                 </select>
                 <input type="submit" value="Zatwierdź">
@@ -94,7 +97,7 @@
             <form action="" method="POST" class="d-inline-block">{% csrf_token %}
                 <select name="delStudentId" multiple>
                     {% for s in students %}
-                    <option value="{{ s.id }}">{{ s }}, parent: {{ s.parent }}</option>
+                    <option value="{{ s.id }}">{{ s }} (rodzic: {{ s.parent }})</option>
                     {% endfor %}
                 </select>
                 <input type="submit" value="Zatwierdź">
@@ -123,18 +126,23 @@
     </table>
 </section>
 
-<script>
-for (let i of document.getElementsByClassName('btnToggle')){
-    i.addEventListener('click', showToggle);
-}
 
-function showToggle(e){
-    if (e.target.nextElementSibling.className == 'd-inline-block') {
-        e.target.nextElementSibling.className = 'd-none';
-    }
-    else {
-        e.target.nextElementSibling.className = 'd-inline-block';
-    }
-}
-</script>
 {% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'scripts/selectWithSearch.js' %}"></script>
+<script>
+    for (let i of document.getElementsByClassName('btnToggle')) {
+        i.addEventListener('click', showToggle);
+    }
+
+    function showToggle(e) {
+        if (e.target.nextElementSibling.className == 'd-inline-block') {
+            e.target.nextElementSibling.className = 'd-none';
+        }
+        else {
+            e.target.nextElementSibling.className = 'd-inline-block';
+        }
+    }
+</script>
+{% endblock %}
