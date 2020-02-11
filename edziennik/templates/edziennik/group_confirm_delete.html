@@ -1,0 +1,14 @@
+{% extends "edziennik/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<section>
+    <h2>{{ object }}</h2>
+
+    <form method="POST">{% csrf_token %}
+        <p>Czy na pewno chcesz nieodwracalnie usunąć grupę <strong>{{ object }}</strong>?</p>
+        <input type="submit" value="Potwierdzam" class="btn btn-sm btn-outline-danger">
+        <a href="{% url 'edziennik:group' object.id %}" class="btn btn-sm btn-primary">Powrót do grupy</a>
+    </form>
+</section>
+{% endblock content %}

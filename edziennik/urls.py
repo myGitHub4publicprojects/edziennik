@@ -54,6 +54,12 @@ urlpatterns = [
     path('group_create/',
          views.Group_Create.as_view(), name='group_create'),
     path('<int:pk>/group/', views.group, name='group'),
+    path('<int:pk>/group_update/',
+         views.Group_Update.as_view(), name='group_update'),
+    path('group_list/',
+         views.Group_List.as_view(), name='group_list'),
+    path('<int:pk>/group_delete/',
+         views.Group_Delete.as_view(), name='group_delete'),
 
 
     path('<int:pk>/add_quizlet/', views.add_quizlet, name='add_quizlet'),

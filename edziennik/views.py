@@ -397,6 +397,7 @@ class Group_Create(OnlySuperuserMixin, CreateView):
         context['students'] = Student.objects.all()
         return context
 
+
 def group(request, pk):
     ''' enables to select an action for a group '''
     if not request.user.is_staff:
@@ -428,6 +429,25 @@ def group(request, pk):
         'homeworks': homeworks
     }
     return render(request, 'edziennik/group.html', context)
+
+
+class Group_List(OnlySuperuserMixin, ListView):
+    model = Group
+    raise_exception = True
+
+
+class Group_Update(OnlySuperuserMixin, UpdateView):
+    model = Group
+    fields = ['name', 'quizlet_group_url']
+    template_name_suffix = '_update_form'
+    raise_exception = True
+
+
+class Group_Delete(OnlySuperuserMixin, DeleteView):
+    model = Group
+    success_url = reverse_lazy('edziennik:group_list')
+    raise_exception = True
+
 
 def show_group_grades(request, pk):
     ''' displays grades in a group '''
