@@ -1,0 +1,36 @@
+{% extends "edziennik/base.html" %}
+
+{% block content %}
+
+<section>
+    <h2 class="d-inline-block"> Lista grup: </h2>
+    <a href="{% url 'edziennik:group_create' %}" class="btn btn-sm btn-outline-primary float-right d-inline-block">
+        Utwórz grupę
+    </a>
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <td>Nazwa grupy</td>
+                <td>lektor prowadzący</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for g in object_list %}
+            <tr>
+                <td><a href="{% url 'edziennik:group' g.id %}">
+                        {{ g }}</a>
+                </td>
+                <td>{% if g.lector %}
+                    <a href="{% url 'edziennik:lector' g.lector.id %}">{{ g.lector.user.get_full_name }}</a>
+                    {% else %}
+                    Nie przypisano lektora
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</section>
+{% endblock content %}
