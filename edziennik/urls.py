@@ -25,6 +25,7 @@ urlpatterns = [
     path('<int:pk>/lector_delete/',
          views.Lector_Delete.as_view(), name='lector_delete'),
 
+          #STUDENT
     path('student_create/',
          views.Student_Create.as_view(), name='student_create'),
     path('<int:pk>/student/', views.student, name='student'),
@@ -35,6 +36,7 @@ urlpatterns = [
     path('<int:pk>/student_delete/',
          views.StudentDelete.as_view(), name='student_delete'),
 
+          #PARENT
     path('parent_create/',
          views.Parent_Create.as_view(), name='parent_create'),
     path('create_parent_ajax/',
@@ -48,7 +50,12 @@ urlpatterns = [
     path('<int:pk>/parent_delete/',
          views.ParentDelete.as_view(), name='parent_delete'),
 
+          #GROUP
+    path('group_create/',
+         views.Group_Create.as_view(), name='group_create'),
     path('<int:pk>/group/', views.group, name='group'),
+
+
     path('<int:pk>/add_quizlet/', views.add_quizlet, name='add_quizlet'),
     path('<int:pk>/process_quizlet/',
          views.process_quizlet, name='process_quizlet'),

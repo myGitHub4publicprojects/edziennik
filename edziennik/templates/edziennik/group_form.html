@@ -1,0 +1,13 @@
+{% extends "edziennik/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h2 class="text-center">Dodaj Grupę</h2>
+
+<form method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Zapisz" class="btn btn-sm btn-primary">
+</form>
+
+{% endblock content %}

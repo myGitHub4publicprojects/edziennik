@@ -385,6 +385,12 @@ class ParentDelete(OnlySuperuserMixin, DeleteView):
     success_url = reverse_lazy('edziennik:parent_list')
 
 
+# GROUP
+
+class Group_Create(OnlySuperuserMixin, CreateView):
+    model = Group
+    raise_exception = True
+    fields = '__all__'
 
 def group(request, pk):
     ''' enables to select an action for a group '''
