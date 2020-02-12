@@ -258,33 +258,18 @@ def student(request, pk):
 class StudentList(ListView):
     model = Student
     def get_context_data(self, **kwargs):
-        students = []
-        for i in Student.objects.all():
-            s = {}
-            s['student'] = i
-            s['groups'] = Group.objects.filter(student=i)
-            students.append(s)
+        students = Student.objects.all()
+        if self.request.GET.get('lname'):
+            students = students.filter(
+                last_name__icontains=self.request.GET.get('lname'))
+        if self.request.GET.get('fname'):
+            students = students.filter(
+                first_name__icontains=self.request.GET.get('fname'))
         context = super(StudentList, self).get_context_data(**kwargs)
         context['students'] = students
         return context
 
-# lname = request.GET.get('lname')
-#         fname = request.GET.get('fname')
-#         if lname or fname:
-#             students = []
-#             results = Student.objects.all()
-#             if fname:
-#                 results = results.filter(
-#                     first_name__icontains=fname)
-#             if lname:
-#                 results = results.filter(
-#                     last_name__icontains=lname)
-#             for i in results:
-#                     s = {}
-#                     s['student'] = i
-#                     s['groups'] = Group.objects.filter(student=i)
-#                     students.append(s)
-#             context['students'] = students
+
 
 class StudentUpdate(OnlySuperuserMixin, UpdateView):
     model = Student
