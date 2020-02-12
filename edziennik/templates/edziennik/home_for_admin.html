@@ -1,84 +1,90 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 
-<p class="text-center"><small>Zalogowano jako:</small> <b>{{ user.get_username }}</b></p>
-
-<section>
-    <div class="d-inline-block ">
-        <form action="" method="GET">
-        <input type="text" name="fname" placeholder="imię ucznia">
-        <input type="text" name="lname" placeholder="nazwisko ucznia">
-        <input type="submit" value="szukaj ucznia">
-        </form>
-
-    {% if students %}
-    <table class="table table-sm table-hover">
-        <thead>
+<div class="row mt-3">
+    <div class="col-md-4 text-center">
+        <section class="jumbotron">
+        <h4>nowi uczniowie</h4>
+        <table class="table table-sm">
             <tr>
-                <td>
-                    Imię i nazwisko
-                </td>
-                <td>
-                    Grupy
-                </td>
+                <td><small class="text-muted">imię i nazwisko</small></td>
+                <td><small class="text-muted">data dodania</small></td>
             </tr>
-        </thead>
-        <tbody>
-            {% for s in students %}
+            {% for s in recent_students %}
             <tr>
-                <td><a href="{% url 'edziennik:student' s.student.id %}">{{ s.student }}</a></td>
-                <td>
-                    {% for g in s.groups %}
-                    <a href="{% url 'edziennik:group' g.id %}">{{ g }}</a> 
-                    {% endfor %}
-                </td>
-
+                <td><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></td>
+                <td>{{ s.created|date:'d.m.Y' }}</td>
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
+        </table>
+        </section>
 
+        <section class="jumbotron">
+        <h4>uczniowie zaktualizowani</h4>
+        <table class="table table-sm">
+            <tr>
+                <td><small class="text-muted">imię i nazwisko</small></td>
+                <td><small class="text-muted">data dodania</small></td>
+            </tr>
+            {% for s in recent_students %}
+            <tr>
+                <td><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></td>
+                <td>{{ s.created|date:'d.m.Y' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        </section>
     </div>
-    <a href="{% url 'edziennik:student_list' %}">
-        <button class="btn blue-btn ml-3 float-right">Uczniowie</button>
+    <div class="col-md-4 text-center">
+        <section class="jumbotron">
+            <h4>nowi rodzice</h4>
+            <table class="table table-sm">
+                <tr>
+                    <td><small class="text-muted">imię i nazwisko</small></td>
+                    <td><small class="text-muted">data dodania</small></td>
+                </tr>
+                {% for p in recent_parents %}
+                <tr>
+                    <td><a href="{% url 'edziennik:parent_datail' p.id %}">{{ p.user.get_full_name }}</a></td>
+                    <td>{{ p.created|date:'d.m.Y' }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
 
-    </a>
-    <hr>
-    <div><h3>Lektorzy: </h3>
-    {% if lectors %}
-    <ul class="list-unstyled">
-        {% for lector in lectors %}
-            <li>
-            <a class="btn" href="{% url 'edziennik:lector' lector.id %}"
-            >{{ lector.user.last_name }} {{ lector.user.first_name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-        <p>Nie masz żadnych lektorów</p>
-    {% endif %}
+        <section class="jumbotron">
+            <h4>rodzice zaktualizowani</h4>
+            <table class="table table-sm">
+                <tr>
+                    <td><small class="text-muted">imię i nazwisko</small></td>
+                    <td><small class="text-muted">data dodania</small></td>
+                </tr>
+                {% for p in recent_parents %}
+                <tr>
+                    <td><a href="{% url 'edziennik:parent_datail' p.id %}">{{ p.user.get_full_name }}</a></td>
+                    <td>{{ p.created|date:'d.m.Y' }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
     </div>
-    <hr>
-
-    <div><h3>Grupy: </h3>
-    {% if groups %}
-    <ul class="list-unstyled">
-        {% for group in groups %}
-            <li>
-            <a class="btn" href="{% url 'edziennik:group' group.id %}">{{ group.name }}</a>    
-            </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-        <p>Nie masz żadnych grup</p>
-    {% endif %}
+    <div class="col-md-4 text-center">
+        <section class="jumbotron">
+        <h4>nowe grupy</h4>
+        <table class="table table-sm">
+            <tr>
+                <td><small class="text-muted">nazwa</small></td>
+                <td><small class="text-muted">data dodania</small></td>
+            </tr>
+            {% for g in recent_groups %}
+            <tr>
+                <td><a href="{% url 'edziennik:group' g.id %}">{{ g }}</a></td>
+                <td>{{ g.created|date:'d.m.Y' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        </section>
     </div>
-    <hr>
-        <a href="{% url 'edziennik:advanced_settings' %}">
-            <button class="btn blue-btn ml-3 float-right">Ustawienia</button>
-        
-        </a>
-</section>
+</div>
     
 {% endblock content %}

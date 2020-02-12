@@ -1,17 +1,7 @@
 /*projektdziennik\projektdziennik\static\css*/
 
 body {
-  background: #4193FF;
-}
-
-#head-img {
-  max-width: 100%;
-}
-
-.main {
-  padding-top: 1%;
-  padding-bottom: 1%;
-  background-color: #d2d2f7;
+  background: #4193FF;background: url(../img/edziennik-bg-pattern.png),linear-gradient(to left,#7b4397,#669fd0);
 }
 
 .top-btn {
