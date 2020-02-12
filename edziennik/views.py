@@ -265,7 +265,7 @@ class StudentList(ListView):
         if self.request.GET.get('fname'):
             students = students.filter(
                 first_name__icontains=self.request.GET.get('fname'))
-        context = super(StudentList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['students'] = students
         return context
 
@@ -350,6 +350,24 @@ class ParentDetail(LoginRequiredMixin, DetailView):
 
 class ParentList(OnlySuperuserMixin, ListView):
     model = Parent
+
+    def get_context_data(self, **kwargs):
+        parents = Parent.objects.all()
+        if self.request.GET.get('lname'):
+            parents = parents.filter(
+                user__last_name__icontains=self.request.GET.get('lname'))
+        if self.request.GET.get('fname'):
+            parents = parents.filter(
+                user__first_name__icontains=self.request.GET.get('fname'))
+        if self.request.GET.get('email'):
+            parents = parents.filter(
+                email__icontains=self.request.GET.get('email'))
+        if self.request.GET.get('phone'):
+            parents = parents.filter(
+                phone_number__icontains=self.request.GET.get('phone'))
+        context = super().get_context_data(**kwargs)
+        context['parents'] = parents
+        return context
 
 
 class ParentUpdate(OnlySuperuserMixin, UpdateView):

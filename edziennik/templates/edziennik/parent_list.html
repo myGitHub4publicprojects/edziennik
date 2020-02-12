@@ -2,34 +2,44 @@
 
 {% block content %}
 
-<section >
-    <h2 class="d-inline-block"> Lista Rodziców: </h2 >
-    <a href = "{% url 'edziennik:parent_create' %}"
-    class = "btn btn-sm btn-outline-primary float-right d-inline-block" >
-    Utwórz rodzica
-    </a >
-    <table class = "table table-sm table-hover" >
+<section class="bg-light text-dark p-2">
+    <h3 class="d-inline-block">Rodzice:</h3>
+    <a href="{% url 'edziennik:parent_create' %}" class="btn btn-sm btn-outline-success float-right d-inline-block">
+        Utwórz rodzica
+    </a>
+    <form action="" method="GET" class="mb-2">
+        <input type="text" name="fname" placeholder="imię rodzica">
+        <input type="text" name="lname" placeholder="nazwisko rodzica">
+        <input type="text" name="phone" placeholder="nr tel">
+        <input type="text" name="email" placeholder="email">
+        <input type="text" name="username" placeholder="username">
+        <input type="submit" value="szukaj rodzica">
+    </form>
+    <table class="table table-sm table-hover table-bordered">
+
        <thead >
            <tr >
-                <td>Imię i nazwisko</td >
-                <td>username</td >
+                <td>Imię i nazwisko</td>
+                <td>dodany</td>
                 <td>telefon</td>
-                <td>pierwsze hasło</td>
+                <td>email</td>
+                <td>username</td>
                 <td>uczniowie</td>
             </tr >
         </thead >
         <tbody >
-            {% for p in object_list %}
+            {% for p in parents %}
             <tr >
                 <td><a href="{% url 'edziennik:parent_datail' p.id %}">
                     {{ p.user.get_full_name }}</a>
                 </td>
-                <td>{{ p.user.username }}</td>
-                <td>{{ p.phone_number }}</td>
-                <td>{{ p.initial_password }}</td>
+                <td><small>{{ p.created|date:'d.m.Y' }}</small></td>
+                <td><small>{{ p.phone_number }}</small></td>
+                <td><small>{{ p.email }}</small></td>
+                <td><small>{{ p.user.username }}</small></td>
                 <td >
                     {% for s in p.student_set.all %}
-                    <a href = "{% url 'edziennik:student' s.id %}">{{ s }}</a> 
+                    <a href = "{% url 'edziennik:student' s.id %}"><small>{{ s }}</small></a> 
                     {% endfor %}
                 </td >
             </tr >
