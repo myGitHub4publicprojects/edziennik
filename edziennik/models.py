@@ -127,9 +127,9 @@ class Student(models.Model):
 
 
 class Group(models.Model):
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True, verbose_name='nazwa')
     lector = models.ForeignKey(
-    	Lector, on_delete=models.CASCADE, blank=True, null=True)
+    	Lector, on_delete=models.CASCADE, blank=True, null=True, verbose_name='lektor')
     student = models.ManyToManyField(Student, related_name="group_student", blank=True)
     quizlet_group_url = models.URLField(blank=True)
     iiu = models.ForeignKey(
