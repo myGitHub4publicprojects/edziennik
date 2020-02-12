@@ -108,6 +108,7 @@ class Lector_Create(OnlySuperuserMixin, CreateView):
         )
         password = User.objects.make_random_password(length=8)
         u.set_password(password)
+        u.is_staff = True
         u.save()
         self.object.user = u
         self.object.initial_password = password
@@ -379,6 +380,7 @@ class ParentUpdate(OnlySuperuserMixin, UpdateView):
         u.last_name = form.cleaned_data['last_name'].capitalize()
         u.save()
         return super().form_valid(form)
+
 
 class ParentDelete(OnlySuperuserMixin, DeleteView):
     model = Parent

@@ -253,6 +253,9 @@ class Test_Lector_Create(TestCase):
         self.assertEqual(new_user.last_name, 'Nowak')
         self.assertEqual(new_user.email, 'adam@gmail.com')
 
+        # lector.user should be staff
+        self.assertTrue(new_user.is_staff)
+
     def test_email_taken(self):
         """1 preexisting lector, email already taken, should not create Lector instance"""
         u = User.objects.create(username='al', email='adam@gmail.com', password='testpass')
