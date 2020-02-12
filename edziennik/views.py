@@ -52,8 +52,14 @@ def index(request):
 
     # home for admins
     if request.user.is_superuser:
-        context = {'groups': Group.objects.all().order_by('name'),
-                    'lectors': Lector.objects.all().order_by('user__last_name'), }
+        context = {
+            'groups': Group.objects.all().order_by('name'),
+            'lectors': Lector.objects.all().order_by('user__last_name'),
+            'recent_parents': Parent.objects.all().order_by('created'),
+            'recent_updated_parents': Parent.objects.all().order_by('updated'),
+            'recent_students': Student.objects.all().order_by('created'),
+            'recent_updated_students': Student.objects.all().order_by('updated'),
+            'recent_groups': Group.objects.all().order_by('created')}
         lname = request.GET.get('lname')
         fname = request.GET.get('fname')
         if lname or fname:

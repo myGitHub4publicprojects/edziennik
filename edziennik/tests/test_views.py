@@ -180,6 +180,19 @@ class IndexViewTests(TestCase):
         response = self.client.get(reverse('edziennik:name_home'))
         response_lectors = list(response.context['lectors'])
         self.assertQuerysetEqual(response_lectors, lectors)
+
+    def test_home_view_for_admin_2_parents(self):
+        """there are 2 parents"""
+        mixer.blend('edziennik.Parent')
+        mixer.blend('edziennik.Parent')
+        user_admin = User.objects.create_superuser(username='admin',
+                                                   email='jlennon@beatles.com',
+                                                   password='glassonion')
+        self.client.login(username='admin', password='glassonion')
+        response = self.client.get(reverse('edziennik:name_home'))
+        response_parents = response.context['recent_parents']
+        self.assertEqual(len(response_parents), 2)
+
     
     def test_home_view_for_parent(self):
         """

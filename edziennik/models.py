@@ -45,7 +45,7 @@ class Initial_Import_Usage_Errors(models.Model):
 
 class Lector(models.Model):
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
-	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+    updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     initial_password = models.CharField(max_length=120)
@@ -58,7 +58,7 @@ class Lector(models.Model):
 
 class Parent(models.Model):
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
-	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+    updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     # phone_number - 9 digits, no spaces, no other characters
@@ -88,7 +88,7 @@ class Parent(models.Model):
 
 class Student(models.Model):
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
-	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+    updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     first_name = models.CharField(
     	max_length=100, verbose_name='Imię ucznia')
     last_name = models.CharField(
@@ -134,7 +134,7 @@ class Student(models.Model):
 
 class Group(models.Model):
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
-	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+    updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     name = models.CharField(max_length=200, unique=True, verbose_name='nazwa')
     lector = models.ForeignKey(
     	Lector, on_delete=models.CASCADE, blank=True, null=True, verbose_name='lektor')
