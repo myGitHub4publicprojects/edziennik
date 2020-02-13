@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-
+<div class="main bg-light text-dark p-2">
 <div class="row">
     <div class="col-sm-3">Nazwa grupy: <b>{{ group.name }}</b></div>
     <div class="col-sm-9">
@@ -38,29 +38,21 @@
 
 </div>
 
-<section>
-    
+<section class="mt-2">
     {% if request.user.is_superuser %}
-    <a href="{% url 'edziennik:add_quizlet' group.id %}">
-        <button class="btn blue-btn">Dodaj quizlet</button>
-    </a>
+    <a href="{% url 'edziennik:add_quizlet' group.id %}" class="btn btn-primary">
+        Dodaj quizlet</a>
     {% endif %}
-
-    <a href="{% url 'edziennik:group_check' group.id %}">
-        <button class="btn blue-btn">Sprawdź obecność</button>
-    </a>
-    <a href="{% url 'edziennik:group_grades' group.id %}">
-        <button class="btn blue-btn">Dodaj oceny</button>
-    </a>
-    <a href="{% url 'edziennik:attendance_by_group' group.id %}">
-        <button class="btn blue-btn">Pokaż frekwencje</button>
-    </a>
-    <a href="{% url 'edziennik:show_group_grades' group.id %}">
-        <button class="btn blue-btn">Pokaż oceny</button>
-    </a>
-    <a href="{% url 'edziennik:add_homework' group.id %}">
-        <button class="btn blue-btn">Homework</button>
-    </a>
+    <a href="{% url 'edziennik:group_check' group.id %}" class="btn btn-primary" id="groupCheckBtn">
+        Sprawdź obecność</a>
+    <a href="{% url 'edziennik:group_grades' group.id %}" class="btn btn-primary">
+        Dodaj oceny</a>
+    <a href="{% url 'edziennik:attendance_by_group' group.id %}" class="btn btn-primary">
+        Pokaż frekwencje</a>
+    <a href="{% url 'edziennik:show_group_grades' group.id %}" class="btn btn-primary">
+        Pokaż oceny</a>
+    <a href="{% url 'edziennik:add_homework' group.id %}" class="btn btn-primary">
+        Homework</a>
 </section>
 <hr>
 
@@ -107,7 +99,6 @@
                 <input type="submit" value="Zatwierdź">
             </form>
         </div>
-        </div>
     </div>
     {% endif %}
 </div>
@@ -130,12 +121,24 @@
     </table>
 </section>
 
+</div>
 
 {% endblock content %}
 
 {% block javascript %}
 <script src="{% static 'scripts/selectWithSearch.js' %}"></script>
 <script>
+    let lector = "{{ lector }}";
+    let groupCheckBtn = document.getElementById('groupCheckBtn');
+    groupCheckBtn.addEventListener('click', function(e){
+        if (lector=='None'){
+            e.preventDefault();
+            alert('Musisz przydzielić lektora aby sprawdzić obecność')
+        }
+
+    })
+
+
     for (let i of document.getElementsByClassName('btnToggle')) {
         i.addEventListener('click', showToggle);
     }
