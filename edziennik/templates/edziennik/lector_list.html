@@ -2,29 +2,33 @@
 
 {% block content %}
 
-<section>
-    <h2 class="d-inline-block"> Lista Lektorów: </h2>
-    <a href="{% url 'edziennik:lector_create' %}" class="btn btn-sm btn-outline-primary float-right d-inline-block">
+<section class="bg-light text-dark p-2">
+    <h3 class="d-inline-block">Lektorzy:</h3>
+    <a href="{% url 'edziennik:lector_create' %}" class="btn btn-sm btn-outline-success float-right d-inline-block">
         Utwórz lektora
     </a>
+    <form action="" method="GET" class="form-inline mb-2">
+        <input type="text" name="fname" placeholder="imię lektora" class="form-control form-control-sm">
+        <input type="text" name="lname" placeholder="nazwisko lektora" class="form-control form-control-sm">
+        <input type="submit" value="szukaj lektora" class="form-control form-control-sm">
+    </form>
     <table class="table table-sm table-hover">
         <thead>
             <tr>
                 <td>Imię i nazwisko</td>
                 <td>username</td>
-                <td>pierwsze hasło</td>
+                <td>email</td>
                 <td>grupy</td>
             </tr>
         </thead>
         <tbody>
-            {% for l in object_list %}
+            {% for l in lectors %}
             <tr>
                 <td><a href="{% url 'edziennik:lector' l.id %}">
                         {{ l.user.get_full_name }}</a>
                 </td>
                 <td>{{ l.user.username }}</td>
                 <td>{{ l.user.email }}</td>
-                <td>{{ l.initial_password }}</td>
                 <td>
                     {% for g in l.group_set.all %}
                     <a href="{% url 'edziennik:group' g.id %}">{{ g }} </a>

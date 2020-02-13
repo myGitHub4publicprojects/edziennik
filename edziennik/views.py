@@ -158,6 +158,17 @@ class Lector_List(OnlySuperuserMixin, ListView):
     model = Lector
     raise_exception = True
 
+    def get_context_data(self, **kwargs):
+        lectors = Lector.objects.all()
+        if self.request.GET.get('lname'):
+            lectors = lectors.filter(
+                user__last_name__icontains=self.request.GET.get('lname'))
+        if self.request.GET.get('fname'):
+            lectors = lectors.filter(
+                user__first_name__icontains=self.request.GET.get('fname'))
+        context = super().get_context_data(**kwargs)
+        context['lectors'] = lectors
+        return context
 
 class Lector_Delete(OnlySuperuserMixin, DeleteView):
     model = Lector
