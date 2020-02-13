@@ -514,12 +514,14 @@ def show_group_grades(request, pk):
 
 def group_check(request, pk):
     ''' displays a group where attendance is checked'''
-    if not request.user.is_authenticated:
+    if not request.user.is_staff:
         raise Http404
     group = get_object_or_404(Group, pk=pk)
-    lector = group.lector
-    # if not request.user.is_superuser and request.user != lector.user:
-    #     raise Http404
+    if group.lector==None:
+        messages.error(
+                request, "Nie można sprawdzić obecności w grupie bez lektora. PRZYDZIEL LEKTORA")
+        return redirect(reverse('edziennik:group', args=(group.id,)))
+
     students = []
     for i in group.student.all():
         quizlet = Quizlet.objects.get(student=i, group=group).status
