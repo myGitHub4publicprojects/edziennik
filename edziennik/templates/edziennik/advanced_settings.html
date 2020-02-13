@@ -1,6 +1,7 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 
+<div class="main bg-light text-dark p-2">
 <form action="{% url 'edziennik:advanced_settings' %}" method="post">
     {% csrf_token %}
     <div id='Quizlet'>
@@ -140,7 +141,7 @@
     <hr>
     <input type="submit" value="Zatwierdzam" />
 </form>
-
+</div>
 {% endblock content %}
 
 {% block javascript %}
