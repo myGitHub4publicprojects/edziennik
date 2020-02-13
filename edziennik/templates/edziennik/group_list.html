@@ -2,11 +2,21 @@
 
 {% block content %}
 
-<section>
-    <h2 class="d-inline-block"> Lista grup: </h2>
-    <a href="{% url 'edziennik:group_create' %}" class="btn btn-sm btn-outline-primary float-right d-inline-block">
+<section class="bg-light text-dark p-2">
+    <h3 class="d-inline-block">Grupy:</h3>
+    <a href="{% url 'edziennik:group_create' %}" class="btn btn-sm btn-outline-success float-right d-inline-block">
         Utwórz grupę
     </a>
+    <form action="" method="GET" class="form-inline mb-2">
+        <input type="text" name="name" placeholder="nazwa" class="form-control form-control-sm">
+        <select name="lector" class="form-control form-control-sm">
+            <option value="">wybierz lektora</option>
+            {% for l in lectors %}
+                <option value="{{ l.id }}">{{ l.user.get_full_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="szukaj grupy" class="form-control form-control-sm">
+    </form>
     <table class="table table-sm table-hover">
         <thead>
             <tr>
@@ -15,7 +25,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for g in object_list %}
+            {% for g in groups %}
             <tr>
                 <td><a href="{% url 'edziennik:group' g.id %}">
                         {{ g }}</a>

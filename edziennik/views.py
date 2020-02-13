@@ -444,6 +444,18 @@ class Group_List(OnlySuperuserMixin, ListView):
     model = Group
     raise_exception = True
 
+    def get_context_data(self, **kwargs):
+        groups = Group.objects.all()
+        if self.request.GET.get('lector'):
+            groups = groups.filter(
+                lector__id=self.request.GET.get('lector'))
+        if self.request.GET.get('name'):
+            groups = groups.filter(
+               name__icontains=self.request.GET.get('name'))
+        context = super().get_context_data(**kwargs)
+        context['groups'] = groups
+        context['lectors'] = Lector.objects.all()
+        return context
 
 class Group_Update(OnlySuperuserMixin, UpdateView):
     model = Group
