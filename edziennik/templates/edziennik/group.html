@@ -3,15 +3,18 @@
 
 {% block content %}
 <div class="main bg-light text-dark p-2">
-<div class="row">
-    <div class="col-sm-3">Nazwa grupy: <b>{{ group.name }}</b></div>
-    <div class="col-sm-9">
+<div class="row my-3">
+    <div class="col-md-6">
+        <small class="text-muted">Nazwa grupy: </small>
+        <b>{{ group.name }}</b>
+        {% if request.user.is_superuser %}
+        
+        <a href="{% url 'edziennik:group_update' group.id %}" class="btn btn-sm btn-outline-success ml-1">edytuj</a>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
     {% if request.user.is_superuser %}
-
-    <a href="{% url 'edziennik:group_update' group.id %}" class="btn btn-sm btn-outline-primary">edytuj</a>
-
-
-        Lektor prowadzący:
+        <small class="text-muted">Lektor prowadzący: </small>
         {% if lector %}
         <a href="{% url 'edziennik:lector' lector.id %}">
             <b>{{ lector.user.get_full_name }}</b>
@@ -20,7 +23,7 @@
         nie przydzielono lektora
         {% endif %}
         
-        <button class="btn btn-primary btn-sm mx-3 mb-1 btnToggle" type="button" 
+        <button class="btn btn-outline-success btn-sm mx-3 mb-1 btnToggle" type="button" 
         >zmień lektora</button>
         <div id="collapseNewLector" class="d-none">
         nowy lektor:
