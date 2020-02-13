@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 
-<div class="main bg-light text-dark p-2">
 <p>Obecność słuchaczy w dniu <b>{% now "d m Y" %}</b></p>
 <p>Nazwa grupy: <b>{{ group.name }}</b></p>
 
@@ -70,7 +69,7 @@
 </form>
 {% endif %}
 
-</div>
+
 {% endblock content %}
 
 {% block javascript %}

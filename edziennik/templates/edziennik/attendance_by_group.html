@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-<div class="main bg-light text-dark p-2">
 
 {% if table_content %}
   <p>Obecność w grupie: <b>{{ group.name }}</b></p>
@@ -41,6 +40,4 @@
 {% else %}
     <p>Nie ma żadnych danych do wyświetlenia.</p>
 {% endif %}
-
-</div>
 {% endblock content %}

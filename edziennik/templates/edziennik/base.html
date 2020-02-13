@@ -1,62 +1,8 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-<!-- Required meta tags -->
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-
-<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
-<link rel="icon" type="image/png" href="{% static 'img/energyicon.png' %}">
-<title>Edziennik</title>
-</head>
+{% include "head.html" %}
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
-    <span class="navbar-brand mb-0 h1 text-success">EDZIENNIK</span>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        {% if request.user.is_authenticated %}
-        <ul class="nav navbar-nav ml-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'edziennik:name_home' %}">Home <span class="sr-only">(current)</span></a>
-            </li>
-
-                {% if request.user.is_superuser %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'edziennik:student_list' %}">Uczniowie</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'edziennik:parent_list' %}">Rodzice</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'edziennik:group_list' %}">Grupy</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'edziennik:lector_list' %}">Lektorzy</a>
-                </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="{% url 'edziennik:advanced_settings' %}">Ustawienia</a>
-                </li> -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin:index' %}">Zaawansowane</a>
-                </li>
-                {% endif %}
-        </ul>
-        <span class="border border-secondary border-top-0 border-right-0 border-bottom-0 ml-3 px-2 text-muted">
-            <small>Zalogowano jako:</small> <b>{{ user.get_full_name }}</b></span>
-        <a class="btn btn-sm btn-secondary" href="{% url 'auth_logout' %}?next=/">Wyloguj</a>
-        {% endif %}
-    </div>
-</nav>
-<div class='container'>
+{% include "navbar.html" %}
+<div class='container bg-light text-dark p-2'>
     {% if messages %}
     <ul class="messages bg-danger">
         {% for message in messages %}
@@ -64,20 +10,9 @@
         {% endfor %}
     </ul>
     {% endif %}
-
-{% block content %}
-
-{% endblock content %}
+{% block content %}{% endblock content %}
 </div>
 {% block javascript %}{% endblock %}
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
+{% include "scripts.html" %}
 </body>
 </html>

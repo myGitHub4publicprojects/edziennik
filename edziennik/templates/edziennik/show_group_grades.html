@@ -1,18 +1,26 @@
 {% extends "edziennik/base.html" %}
 {% block content %}
 <h1 class="text-center">Oceny</h1>
-    <p>Nazwa grupy: <b>{{ group.name }}</b>
+<div class="row my-3">
+    <div class="col-md-6">
+        <small class="text-muted">Nazwa grupy: </small>
+        <b>{{ group.name }}</b>
+    </div>
+    <div class="col-md-6">
     {% if request.user.is_superuser %}
-        , Lektor prowadzący: 
+        <small class="text-muted">Lektor prowadzący: </small>
         {% if lector %}
         <a href="{% url 'edziennik:lector' lector.id %}">
             <b>{{ lector.user.get_full_name }}</b>
         </a>
         {% else %}
-        nie przydzielono lekora
+        nie przydzielono lektora
         {% endif %}
     {% endif %}
-    </p>
+    </div>
+
+</div>
+
 
 <div class="table-responsive">
 <table class="table">
@@ -32,5 +40,4 @@
   {% endfor %}
 </table>
 </div>
-
 {% endblock content %}
