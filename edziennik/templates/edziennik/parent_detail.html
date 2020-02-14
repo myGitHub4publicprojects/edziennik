@@ -7,9 +7,12 @@
     <p>Nazwisko: {{ object.user.last_name }}</p>
     <p>Email: {{ object.user.email }}</p>
     <p>Nazwa użytkownika: {{ object.user.username }}</p>
+    {% if request.user.is_superuser %}
+    <p>pierwsze hasło: {{ object.initial_password }}</p>
+    {% endif %}
 
     {% if object.student_set.all %}
-    Ucziowie:
+    Uczniowie:
     <ul>
         {% for s in object.student_set.all %}
         <li><a href="{% url 'edziennik:student' s.id %}">{{ s }}</a></li>
