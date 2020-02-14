@@ -16,10 +16,12 @@
         <h1 class="text-center">
             <small class="text-muted">uczeń: </small>
             {{ student }}
+            {% if request.user.is_staff %}
             <small class="text-muted">
                  (rodzic:<a href="{% url 'edziennik:parent_datail' student.parent.id %}">
                      {{ student.parent.user.get_full_name }}</a>)
             </small>
+            {% endif %}
         </h1>
         {% if request.user.is_superuser %}
         <hr>
