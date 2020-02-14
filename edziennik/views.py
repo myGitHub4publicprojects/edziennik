@@ -57,11 +57,11 @@ def index(request):
             'students_num': Student.objects.all().count(),
             'groups_num': Group.objects.all().count(),
             'lectors_num': Lector.objects.all().count(),
-            'recent_parents': Parent.objects.all().order_by('created')[:4],
-            'recent_updated_parents': Parent.objects.all().order_by('updated')[:4],
-            'recent_students': Student.objects.all().order_by('created')[:4],
-            'recent_updated_students': Student.objects.all().order_by('updated')[:4],
-            'recent_groups': Group.objects.all().order_by('created')[:4]}
+            'recent_parents': Parent.objects.all().order_by('-created')[:4],
+            'recent_updated_parents': Parent.objects.all().order_by('-updated')[:4],
+            'recent_students': Student.objects.all().order_by('-created')[:4],
+            'recent_updated_students': Student.objects.all().order_by('-updated')[:4],
+            'recent_groups': Group.objects.all().order_by('-created')[:4]}
 
         return render(request, 'edziennik/home_for_admin.html', context)
 

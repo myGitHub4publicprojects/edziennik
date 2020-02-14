@@ -8,7 +8,7 @@
         <div class="col-sm">
         <h4 class="text-center">Obecne grupy:</h4>
         {% for group in lectors_groups %}
-        <a href="{% url 'edziennik:group' group.id %}" class="btn btn-lg blue-btn d-block">
+        <a href="{% url 'edziennik:group' group.id %}" class="btn btn-sm btn-primary d-block">
         {{ group.name }}</a> 
         {% empty %}
         <p>Nie ma żadnych grup</p>
