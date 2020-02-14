@@ -2,13 +2,11 @@
 {% block content %}
 
 <section>
-    <h2>Wybierz ucznia:</h2>
+    <h3>Wybierz ucznia:</h3>
     {% for s in students %}
-    <a href="{% url 'edziennik:student' s.id %}">
-        <button class="btn btn-lg blue-btn">{{ s }}</button>
-    </a>
+    <a href="{% url 'edziennik:student' s.id %}" class="btn btn-sm btn-primary">{{ s }}</a>
     {% endfor %}
-
-<a href="{% url 'auth_password_change' %}">Zmień hasło</a>
+    <hr>
+    <a href="{% url 'auth_password_change' %}" class="btn btn-sm btn-outline-success">Zmień swoje hasło</a>
 </section>
 {% endblock content %}
