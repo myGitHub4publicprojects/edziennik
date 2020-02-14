@@ -217,8 +217,8 @@ def import_students(initial_import_instance):
                 p_email = row[7] or create_fake_unique_email()
                 p_email = p_email.strip().lower()
                 s_recruitment_note = row[8]
-                if recruitment_note:
-                    recruitment_note = recruitment_note.strip()
+                if s_recruitment_note:
+                    s_recruitment_note = s_recruitment_note.strip()
                 try:
                     p = Parent.objects.get(phone_number=p_phone_number)
                 except Parent.DoesNotExist:
