@@ -212,11 +212,11 @@ def import_students(initial_import_instance):
                 else:
                     s_last_name = s_last_name.strip().title()
                 s_gender = row[4].strip().upper()
-                group_name = row[5].strip()
+                group_name = str(row[5]).strip()
                 p_phone_number = int(row[6])
                 p_email = row[7] or create_fake_unique_email()
                 p_email = p_email.strip().lower()
-                s_recruitment_note = row[8]
+                s_recruitment_note = str(row[8])
                 if s_recruitment_note:
                     s_recruitment_note = s_recruitment_note.strip()
                 try:
