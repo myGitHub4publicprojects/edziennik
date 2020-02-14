@@ -9,9 +9,9 @@
     <div class="col-md-6">
     {% if request.user.is_superuser %}
         <small class="text-muted">Lektor prowadzący: </small>
-        {% if lector %}
-        <a href="{% url 'edziennik:lector' lector.id %}">
-            <b>{{ lector.user.get_full_name }}</b>
+        {% if group.lector %}
+        <a href="{% url 'edziennik:lector' group.lector.id %}">
+            <b>{{ group.lector.user.get_full_name }}</b>
         </a>
         {% else %}
         nie przydzielono lektora
@@ -28,7 +28,7 @@
         <th>data</th>
         <th>za co</th>
         {% for student in students %}
-        <th><a href="{% url 'edziennik:student' student.id %}">{{ student.name }}</a></th>
+        <th><a href="{% url 'edziennik:student' student.id %}">{{ student }}</a></th>
         {% endfor %}
       </tr>
   {% for i in table_content %}
