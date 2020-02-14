@@ -15,16 +15,20 @@
 
             {% if request.user.is_superuser %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'edziennik:student_list' %}">Uczniowie</a>
+                <a class="nav-link" href="{% url 'edziennik:student_list' %}">
+                    Uczniowie <span class="badge badge-light">{{ students_num }}</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'edziennik:parent_list' %}">Rodzice</a>
+                <a class="nav-link" href="{% url 'edziennik:parent_list' %}">
+                    Rodzice <span class="badge badge-light">{{ parents_num }}</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'edziennik:group_list' %}">Grupy</a>
+                <a class="nav-link" href="{% url 'edziennik:group_list' %}">
+                    Grupy <span class="badge badge-light">{{ groups_num }}</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'edziennik:lector_list' %}">Lektorzy</a>
+                <a class="nav-link" href="{% url 'edziennik:lector_list' %}">
+                    Lektorzy <span class="badge badge-light">{{ lectors_num }}</span></a>
             </li>
             <!-- <li class="nav-item">
                     <a class="nav-link" href="{% url 'edziennik:advanced_settings' %}">Ustawienia</a>

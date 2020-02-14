@@ -53,6 +53,10 @@ def index(request):
     # home for admins
     if request.user.is_superuser:
         context = {
+            'parents_num': Parent.objects.all().count(),
+            'students_num': Student.objects.all().count(),
+            'groups_num': Group.objects.all().count(),
+            'lectors_num': Lector.objects.all().count(),
             'recent_parents': Parent.objects.all().order_by('created')[:4],
             'recent_updated_parents': Parent.objects.all().order_by('updated')[:4],
             'recent_students': Student.objects.all().order_by('created')[:4],
