@@ -5,11 +5,13 @@
     <section>
     <h2>Wybierz grupę:</h2>
     {% if groups %}
-        {% for group in groups %}
-        <a href="{% url 'edziennik:group' group.id %}">
-            <button class="btn btn-lg blue-btn">{{ group.name }}</button>
-        </a>
-        {% endfor %}
+        <div class="list-group">
+            {% for group in groups %}
+            <a href="{% url 'edziennik:group' group.id %}"
+             class="list-group-item list-group-item-dark">{{ group.name }}</a>
+            {% endfor %}
+        </div>
+
     {% else %}
         <p>No group available.</p>
     {% endif %}
@@ -17,12 +19,11 @@
     <hr>
     <section>
         <h4>Dodatkowe grupy (zastępstwo):</h4>
-        <button id="additional_hour_btn" class="btn btn-sm btn-primary" type="button">pokaż</button>
-        <div id="additional_hour_div">
+        <button id="additional_hour_btn" class="btn btn-sm btn-outline-success" type="button">pokaż</button>
+        <div id="additional_hour_div" class="list-group">
             {% for group in all_groups %}
-            <a href="{% url 'edziennik:group' group.id %}">
-                <button class="btn btn-lg blue-btn">{{ group.name }}</button>
-            </a>
+                <a href="{% url 'edziennik:group' group.id %}" 
+                class="list-group-item list-group-item-dark">{{ group.name }}</a>
             {% endfor %}
         </div>
     </section>

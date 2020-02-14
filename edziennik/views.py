@@ -46,8 +46,8 @@ def index(request):
     if request.user in lector_users:
         # show only groups associated with this lector
         lector = Lector.objects.get(user=request.user)
-        context = {'groups': Group.objects.filter(lector=lector),
-                   'all_groups': Group.objects.all()}
+        context = {'groups': Group.objects.filter(lector=lector).order_by('name'),
+                   'all_groups': Group.objects.all().order_by('name')}
         return render(request, 'edziennik/home_for_lector.html', context)
 
     # home for admins
