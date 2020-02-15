@@ -270,7 +270,7 @@ def student(request, pk):
     return render(request, 'edziennik/student.html', context)
 
 
-class StudentList(ListView):
+class StudentList(OnlySuperuserMixin, ListView):
     model = Student
     def get_context_data(self, **kwargs):
         students = Student.objects.all()
