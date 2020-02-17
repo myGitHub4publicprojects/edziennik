@@ -122,11 +122,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# for Heroku
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
-
-
 # Django Registration Redux settings:
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
 REGISTRATION_AUTO_LOGIN = True # Automatically log the user in.
@@ -137,8 +132,6 @@ LOGOUT_REDIRECT_URL = '/'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = ['*']
-
-DEBUG = False
 
 # for smsapi.pl
 SMS_API_PASS = os.environ.get('SMS_API_PASS')
@@ -169,14 +162,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# for development
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Internationalization
-# LOCALE_PATHS = (os.path.join(PROJECT_ROOT, 'locale'),)
-# LOCALE_PATHS = (
-#     PROJECT_ROOT + '/locale', )
-
+DEBUG = False
 try:
     from .local_settings import *
 except ImportError:
