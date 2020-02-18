@@ -132,6 +132,9 @@ class TestAdmin_Email(TestCase):
         # should have an expected recipient
         self.assertEqual(mail.outbox[0].to, expected_email_address)
 
+        # should be sent from EMAIL_HOST_USER
+        self.assertEqual(mail.outbox[0].from_email, settings.EMAIL_HOST_USER)
+
     def test_two_args_with_admin_profile(self):
         '''should send one email to the address specified in admin_profile'''
         admin_profile_email = 'jlennon@beatles.com'
