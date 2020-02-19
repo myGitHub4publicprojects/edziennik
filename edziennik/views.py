@@ -364,9 +364,10 @@ class ParentDetail(OnlySuperuserMixin, DetailView):
 
 
 class ParentList(OnlySuperuserMixin, ListView):
+    paginate_by = 50
     model = Parent
 
-    def get_context_data(self, **kwargs):
+    def get_queryset(self):
         parents = Parent.objects.all()
         if self.request.GET.get('lname'):
             parents = parents.filter(
@@ -380,10 +381,8 @@ class ParentList(OnlySuperuserMixin, ListView):
         if self.request.GET.get('phone'):
             parents = parents.filter(
                 phone_number__icontains=self.request.GET.get('phone'))
-        
         if self.request.GET.get('sortBy'):
             sort_by = self.request.GET.get('sortBy')
-            print('sortby: ', sort_by)
             if sort_by == 'lnaz':
                 parents = parents.order_by('user__last_name')
             if sort_by == 'lnza':
@@ -397,10 +396,7 @@ class ParentList(OnlySuperuserMixin, ListView):
             if sort_by == 'cza':
                 parents = parents.order_by('created')
 
-
-        context = super().get_context_data(**kwargs)
-        context['parents'] = parents
-        return context
+        return parents
 
 
 class ParentUpdate(OnlySuperuserMixin, UpdateView):
