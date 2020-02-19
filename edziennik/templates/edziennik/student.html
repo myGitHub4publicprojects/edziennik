@@ -17,7 +17,7 @@
 {% else %}
     {% if request.user.is_superuser or request.user in lectors or request.user == student.parent.user  %}
         <section class="mb-5">
-        <h1 class="text-center">
+        <h3 class="text-center">
             <small class="text-muted">uczeń: </small>
             {{ student }}
             {% if request.user.is_staff %}
@@ -26,7 +26,7 @@
                      {{ student.parent.user.get_full_name }}</a>)
             </small>
             {% endif %}
-        </h1>
+        </h3>
         {% if request.user.is_superuser %}
         <hr>
         <p>Grupy: 
@@ -42,55 +42,50 @@
         class="btn btn-sm btn-outline-primary">edytuj ucznia</a>
         {% endif %}
         <hr>
-        <h2 class="text-center mt-3">Oceny</h2>
+
         {% for student_group in student_groups %}
-            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>
+            <h4><small class="text-muted">Grupa: </small>{{ student_group.group.name }} 
+                <small class="text-muted">Lektor: 
             {% if student_group.group.lector %}
                 {{ student_group.group.lector.user.get_full_name}}
             {% else %}
                 lektor nie został przypisany
             {% endif %}
-            </b></p>
-            <p>Ostatnie zadania domowe:</p>
-            <ul class="list-unstyled">
+            </small></h4>
+            <hr>
+            <p class="lead">Ostatnie zadania domowe:</p>
+            <ul class="list-group list-group-flush">
                 {% for h in student_group.homeworks %}
-                <li>
-                    Data: {{ h.classdate.date_of_class }}, treść: {{ h.message }}
+                <li class="list-group-item">
+                    {{ h.classdate.date_of_class|date:'d/m/Y' }}: {{ h.message }}
                 </li>
                 {% endfor %}
             </ul>
-                {% if student_group.grade_list %}
-                <table class="table">
-                    <tr>
-                        <th>Data</th>
-                        <th>Za co</th>
-                        <th>Ocena</th>
-                    </tr>
-                    {% for i in student_group.grade_list %}
-                    <tr>
-                        {% for j in i %}
-                        <td>{{ j }}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </table>
+            <hr>
 
-                {% else %}
-                <p>Nie ma jeszcze żadnych ocen</p>
-                {% endif %}
-            <hr class="mb-3">
-        {% endfor %}
-        </section>
-        
-        <h2 class="text-center">Frekwencja</h2>
-        {% for student_group in student_groups %}
-            <p>Grupa: <b>{{ student_group.group.name }}</b>, Lektor: <b>
-            {% if student_group.group.lector %}
-                {{ student_group.group.lector.user.get_full_name}}
+            <p class="lead">Oceny:</p>
+            {% if student_group.grade_list %}
+            <table class="table">
+                <tr>
+                    <th>Data</th>
+                    <th>Za co</th>
+                    <th>Ocena</th>
+                </tr>
+                {% for i in student_group.grade_list %}
+                <tr>
+                    {% for j in i %}
+                    <td>{{ j }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+
             {% else %}
-                lektor nie został przypisany
+            <p>Nie ma jeszcze żadnych ocen</p>
             {% endif %}
-            </b></p>
+            <hr class="mb-3">
+        
+        <p class="lead">Frekwencja:</p>
             <table class="table">
                 <tr>
                 {% for i in student_group.attendence_table_header %}
@@ -121,8 +116,10 @@
                     <td>obecny bez zadania domowego</td>
                 </tr>
             </table>
-            <hr>
+        <hr class="m-0">
+        <hr class="m-0">
         {% endfor %}
+        </section>
 
     {% else %}
     
