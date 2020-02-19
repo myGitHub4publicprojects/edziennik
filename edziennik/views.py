@@ -237,20 +237,20 @@ def student(request, pk):
         # students = group.student.all() # all students in this group
         all_classes = ClassDate.objects.filter(group=group).order_by('date_of_class') #all clases in this group
         # check students attendance and build an array
-        attendence_table_header = ['data', 'temat', 'obecnosc']
+        attendence_table_header = ['data', 'temat', 'obecność']
         attendance_table_content = []
         for date in all_classes:
             date_string = date.date_of_class.strftime("%d/%m/%Y")
             subject = date.subject
             if student.student.filter(date_of_class=date.date_of_class):
                 if  not student.has_homework.filter(date_of_class=date.date_of_class):
-                    img_url = static('img/green_on_red.png')
+                    img_url = '<i class="fas fa-check text-success border border-danger"></i>'
                 else:
-                    img_url = static('img/check_sign_icon_green.png')
+                    img_url = '<i class="fas fa-check text-success"></i>'
             else:
-                img_url = static('img/x-mark-red.png')
-                
-            row = [date_string, subject, '<img src=%s>' % img_url]
+                img_url = '<i class="fas fa-times text-danger"></i>'
+
+            row = [date_string, subject, img_url]
             attendance_table_content.append(row)
         student_group = {
             'group': group,

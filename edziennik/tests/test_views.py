@@ -704,7 +704,7 @@ class StudentViewTests(TestCase):
         response_sign = first_group['attendance_table_content'][0][2]
 
         self.assertEqual(len(all_student_groups), 1)
-        present_sign = '<img src=%s>' % static('img/check_sign_icon_green.png')
+        present_sign = '<i class="fas fa-check text-success"></i>'
         self.assertEqual(response_sign, present_sign)
 
     def test_student_view_absent_admin(self):
@@ -732,7 +732,7 @@ class StudentViewTests(TestCase):
         all_student_groups = list(response.context['student_groups'])
         first_group = all_student_groups[0]
         response_attendance_table_content= first_group['attendance_table_content']
-        absent_sign = '<img src=%s>' % static('img/x-mark-red.png')
+        absent_sign = '<i class="fas fa-times text-danger"></i>'
         self.assertEqual(response_attendance_table_content[0][2], absent_sign)
 
 

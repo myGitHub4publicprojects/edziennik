@@ -1,5 +1,9 @@
 {% extends "edziennik/base.html" %}
 {% load static %}
+{% block scripts %}
+<script src="https://kit.fontawesome.com/3f2c316c9a.js" crossorigin="anonymous"></script>
+{% endblock %}
+
 {% block content %}
 <section>
 {% if not request.user.is_authenticated %}
@@ -103,21 +107,23 @@
                 {% endfor %}
             </table>
 
+            <hr>
+            <small class="text-muted">Legenda:</small>
             <table class="table">
-                    <tr>
-                        <td><img src="{% static 'img/x-mark-red.png' %}"></td>
-                        <td><img src="{% static 'img/check_sign_icon_green.png' %}"></td>
-                        <td><img src="{% static 'img/green_on_red.png' %}"></td>
-                    </tr>
-                    <tr>
-                        <td>nieobecny</td>
-                        <td>obecny</td>
-                        <td>obecny bez zadania domowego</td>
-                    </tr>
+                <tr>
+                    <td><i class="fas fa-times text-danger"></i></td>
+                    <td><i class="fas fa-check text-success"></i></td>
+                    <td><i class="fas fa-check text-success border border-danger"></i></td>
+                </tr>
+                <tr>
+                    <td>nieobecny</td>
+                    <td>obecny</td>
+                    <td>obecny bez zadania domowego</td>
+                </tr>
             </table>
             <hr>
         {% endfor %}
-        
+
     {% else %}
     
     nie masz uprawnień
