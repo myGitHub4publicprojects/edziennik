@@ -1825,12 +1825,12 @@ class TestAttendance_By_GroupView(TestCase):
         self.assertEqual(date2, today.strftime("%d/%m/%Y"))
 
         # student1 should have attendance and homework yesterday, 2 and 3 should not
-        """ attendance with homework == 'img/check_sign_icon_green.png'
-            absence == 'img/x-mark-red.png'
+        """ attendance with homework == '<i class="fas fa-check text-success"></i>'
+            absence == '<i class="fas fa-times text-danger"></i>'
             order of students in table head: 'date', 'subject', student1, s2, s3..
         """
-        present_with_hw = '<img src=%s>' % static('img/check_sign_icon_green.png')
-        absent_sign = '<img src=%s>' % static('img/x-mark-red.png')
+        present_with_hw = '<i class="fas fa-check text-success"></i>'
+        absent_sign = '<i class="fas fa-times text-danger"></i>'
         self.assertEqual(present_with_hw, yesterday_row[2])
 
         # student2 and student3 should not have absence yesterday
@@ -1844,8 +1844,7 @@ class TestAttendance_By_GroupView(TestCase):
         self.assertEqual(absent_sign, today_row[2])
 
         # student3 present today but no homework
-        present_with_no_hw = '<img src=%s>' % static(
-            'img/green_on_red.png')
+        present_with_no_hw = '<i class="fas fa-check text-success border border-danger"></i>'
         self.assertEqual(present_with_no_hw, today_row[4])
 
 

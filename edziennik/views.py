@@ -654,14 +654,13 @@ def attendance_by_group(request, group_id):
         for s in students:
             if s in i.student.all():
                 if s.has_homework.filter(date_of_class=i.date_of_class):
-                    img_url = static('img/check_sign_icon_green.png')
+                    img_url = '<i class="fas fa-check text-success"></i>'
                 else:
-                    img_url = static('img/green_on_red.png')
+                    img_url = '<i class="fas fa-check text-success border border-danger"></i>'
             else:
-                img_url = static('img/x-mark-red.png')
-            row.append('<img src=%s>' % img_url)
+                img_url = '<i class="fas fa-times text-danger"></i>'
+            row.append(img_url)
         table_content.append(row)
-
 
     context = {
         'group': group,
