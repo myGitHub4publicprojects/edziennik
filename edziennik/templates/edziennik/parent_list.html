@@ -15,6 +15,19 @@
         <input type="text" name="username" placeholder="username" class="form-control form-control-sm">
         <input type="submit" value="szukaj rodzica" class="form-control form-control-sm">
     </form>
+
+    <form action="" method="GET" class="form-inline mb-2">
+        <select name="sortBy" class="form-control form-control-sm">
+            <option value="lnaz">nazwisko (A->Z)</option>
+            <option value="lnza">nazwisko (Z->A)</option>
+            <option value="fnaz">imię (A->Z)</option>
+            <option value="fnza">imię (Z->A)</option>
+            <option value="caz">dodany (od najnowszego)</option>
+            <option value="cza">dodany (od najstarszego)</option>
+        </select>
+
+        <input type="submit" value="sortuj" class="form-control form-control-sm">
+    </form>
     <table class="table table-sm table-hover table-bordered">
 
        <thead >
@@ -31,7 +44,7 @@
             {% for p in parents %}
             <tr >
                 <td><a href="{% url 'edziennik:parent_datail' p.id %}">
-                    {{ p.user.get_full_name }}</a>
+                    {{ p.user.last_name }} {{ p.user.first_name }}</a>
                 </td>
                 <td><small>{{ p.created|date:'d.m.Y' }}</small></td>
                 <td><small>{{ p.phone_number }}</small></td>
@@ -46,7 +59,7 @@
             {% endfor %}
         </tbody >
     </table >
-
-
 </section >
+
+
 {% endblock content %}

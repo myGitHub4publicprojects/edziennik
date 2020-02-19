@@ -380,6 +380,24 @@ class ParentList(OnlySuperuserMixin, ListView):
         if self.request.GET.get('phone'):
             parents = parents.filter(
                 phone_number__icontains=self.request.GET.get('phone'))
+        
+        if self.request.GET.get('sortBy'):
+            sort_by = self.request.GET.get('sortBy')
+            print('sortby: ', sort_by)
+            if sort_by == 'lnaz':
+                parents = parents.order_by('user__last_name')
+            if sort_by == 'lnza':
+                parents = parents.order_by('user__last_name').reverse()
+            if sort_by == 'fnaz':
+                parents = parents.order_by('user__first_name')
+            if sort_by == 'fnza':
+                parents = parents.order_by('user__first_name').reverse()
+            if sort_by == 'caz':
+                parents = parents.order_by('-created')
+            if sort_by == 'cza':
+                parents = parents.order_by('created')
+
+
         context = super().get_context_data(**kwargs)
         context['parents'] = parents
         return context
