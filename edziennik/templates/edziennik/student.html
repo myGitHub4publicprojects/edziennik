@@ -77,13 +77,6 @@
             <hr class="mb-3">
         {% endfor %}
         </section>
-    {% else %}
-
-        nie masz uprawnień
-        
-    {% endif %}
-
-    {% if request.user.is_superuser or request.user in lectors %}
         
         <h2 class="text-center">Frekwencja</h2>
         {% for student_group in student_groups %}
@@ -124,6 +117,11 @@
             </table>
             <hr>
         {% endfor %}
+        
+    {% else %}
+    
+    nie masz uprawnień
+    
     {% endif %}
 
 {% endif %}
