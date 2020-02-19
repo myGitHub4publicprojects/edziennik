@@ -359,7 +359,7 @@ def create_parent_ajax(request):
     return JsonResponse(data)
     
 
-class ParentDetail(LoginRequiredMixin, DetailView):
+class ParentDetail(OnlySuperuserMixin, DetailView):
     model=Parent
 
 
