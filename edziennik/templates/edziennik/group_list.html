@@ -14,6 +14,7 @@
             {% for l in lectors %}
                 <option value="{{ l.id }}">{{ l.user.get_full_name }}</option>
             {% endfor %}
+            <option value="none">bez przypisanego lektora</option>
         </select>
         <input type="submit" value="szukaj grupy" class="form-control form-control-sm">
     </form>

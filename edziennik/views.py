@@ -476,8 +476,11 @@ class Group_List(OnlySuperuserMixin, ListView):
     def get_context_data(self, **kwargs):
         groups = Group.objects.all()
         if self.request.GET.get('lector'):
-            groups = groups.filter(
-                lector__id=self.request.GET.get('lector'))
+            lector = self.request.GET.get('lector')
+            if lector == 'none':
+                groups = groups.filter(lector=None)
+            else:
+                groups = groups.filter(lector__id=lector)
         if self.request.GET.get('name'):
             groups = groups.filter(
                name__icontains=self.request.GET.get('name'))
