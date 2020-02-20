@@ -65,6 +65,7 @@
 
             <p class="lead">Oceny:</p>
             {% if student_group.grade_list %}
+            <div class="table-responsive">
             <table class="table">
                 <tr>
                     <th>Data</th>
@@ -79,13 +80,14 @@
                 </tr>
                 {% endfor %}
             </table>
-
+            </div>
             {% else %}
             <p>Nie ma jeszcze żadnych ocen</p>
             {% endif %}
             <hr class="mb-3">
         
         <p class="lead">Frekwencja:</p>
+            <div class="table-responsive">
             <table class="table">
                 <tr>
                 {% for i in student_group.attendence_table_header %}
@@ -101,9 +103,10 @@
                 </tr>
                 {% endfor %}
             </table>
-
+            </div>
             <hr>
             <small class="text-muted">Legenda:</small>
+            <div class="table-responsive">
             <table class="table">
                 <tr>
                     <td><i class="fas fa-times text-danger"></i></td>
@@ -116,6 +119,7 @@
                     <td>obecny bez zadania domowego</td>
                 </tr>
             </table>
+            </div>
         <hr class="m-0">
         <hr class="m-0">
         {% endfor %}
