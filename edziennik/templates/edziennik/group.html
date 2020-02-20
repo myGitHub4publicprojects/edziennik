@@ -42,36 +42,35 @@
 
 <section class="mt-2">
     {% if request.user.is_superuser %}
-    <a href="{% url 'edziennik:add_quizlet' group.id %}" class="btn btn-primary">
+    <a href="{% url 'edziennik:add_quizlet' group.id %}" class="btn btn-primary mb-1">
         Dodaj quizlet</a>
     {% endif %}
-    <a href="{% url 'edziennik:group_check' group.id %}" class="btn btn-primary" id="groupCheckBtn">
+    <a href="{% url 'edziennik:group_check' group.id %}" class="btn btn-primary mb-1" id="groupCheckBtn">
         Sprawdź obecność</a>
-    <a href="{% url 'edziennik:group_grades' group.id %}" class="btn btn-primary">
+    <a href="{% url 'edziennik:group_grades' group.id %}" class="btn btn-primary mb-1">
         Dodaj oceny</a>
-    <a href="{% url 'edziennik:attendance_by_group' group.id %}" class="btn btn-primary">
+    <a href="{% url 'edziennik:attendance_by_group' group.id %}" class="btn btn-primary mb-1">
         Pokaż frekwencje</a>
-    <a href="{% url 'edziennik:show_group_grades' group.id %}" class="btn btn-primary">
+    <a href="{% url 'edziennik:show_group_grades' group.id %}" class="btn btn-primary mb-1">
         Pokaż oceny</a>
-    <a href="{% url 'edziennik:add_homework' group.id %}" class="btn btn-primary">
+    <a href="{% url 'edziennik:add_homework' group.id %}" class="btn btn-primary mb-1">
         Homework</a>
 </section>
 <hr>
 
 <div class="row">
-    <div class="col-sm text-center">
-        Uczniowie:
-            <ul class="list-unstyled">
-                {% for s in students %}
-                <li>
-                    <a href="{% url 'edziennik:student' s.id %}">{{ s }}</a>
-                </li>
-                {% endfor %}
-            </ul>
+    <div class="col-md-6">
+        <h4>Uczniowie:</h4>
+        <div class="list-group">
+            {% for s in students %}
+            <a href="{% url 'edziennik:student' s.id %}" 
+            class="list-group-item list-group-item-action">{{ s }}</a>
+            {% endfor %}
+        </div>
 
     </div>
     {% if request.user.is_superuser %}
-    <div class="col-sm">
+    <div class="col-md-6 text-center">
         <button class="btn btn-primary btn-sm mb-1 btnToggle" type="button">
             dodaj studentów</button>
         <div class="d-none">
@@ -86,8 +85,7 @@
                 <input type="submit" value="Zatwierdź">
             </form>
         </div>
-    </div>
-    <div class="col-sm">
+        <hr>
         <button class="btn btn-primary btn-sm mb-1 btnToggle" type="button">
             usuń studentów</button>
         <div class="d-none">
@@ -102,12 +100,13 @@
             </form>
         </div>
     </div>
+
     {% endif %}
 </div>
 
 <hr>
 <section>
-    <p>Zadania domowe:</p>
+    <p class="lead">Zadania domowe:</p>
     <table class="table">
         <thead>
             <td>Data</td>
