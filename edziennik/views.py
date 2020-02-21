@@ -151,7 +151,7 @@ def lector(request, pk):
     context = {
         'lector': lector,
         'lectors_groups': lectors_groups,
-        'groups': Group.objects.all(),
+        'groups': Group.objects.all().order_by('name'),
         'total_hours_year': len(hours_in_current_year),
         'hours_in_month_list': hours_in_month_list}
 

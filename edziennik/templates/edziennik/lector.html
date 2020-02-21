@@ -1,4 +1,5 @@
 {% extends "edziennik/base.html" %}
+{% load static %}
 {% block content %}
 <section>
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -17,12 +18,13 @@
             </div>
         </div>
         <div class="col-md-6 text-center">
-            <button class="btn btn-primary btn-sm mb-1" 
-            type="button" id="showAddGroup">dodaj grupy</button>
+            <div class="btn btn-outline-success btn-sm mb-1 d-block" 
+            id="showAddGroup">dodaj grupy</div>
             <div id="collapseNewGroups" class="d-none">
-                zaznacz grupy do dodania:
-                <form action="" method="POST" class="d-inline-block">{% csrf_token %}
-                    <select name="newGroups" multiple>
+                <p>zaznacz grupy do dodania:</p>
+                <form action="" method="POST" id="selectWithSearch">{% csrf_token %}
+                    <input type="text" placeholder="wyszukaj grupy">
+                    <select name="newGroups" multiple class="select form-control input-sm">
                         {% for g in groups %}
                         <option value="{{ g.id }}">{{ g.name }}</option>
                         {% endfor %}
@@ -30,12 +32,21 @@
                     <input type="submit" value="Zatwierdź">
                 </form>
             </div>
+            
+            
+            
+            
             <hr>
-            <button class="btn btn-primary btn-sm mb-1" type="button" id="showDelGroup">usuń grupy</button>
+
+
+
+
+
+            <div class="btn btn-outline-danger btn-sm mb-1 d-block" id="showDelGroup">usuń grupy</div>
             <div id="collapseDelGroups" class="d-none">
-                zaznacz grupy do dodania:
+                <p>zaznacz grupy do usunięcia:</p>
                 <form action="" method="POST" class="d-inline-block">{% csrf_token %}
-                    <select name="delGroups" multiple>
+                    <select name="delGroups" multiple class=" select form-control input-sm">
                         {% for g in lectors_groups %}
                         <option value="{{ g.id }}">{{ g.name }}</option>
                         {% endfor %}
@@ -43,6 +54,9 @@
                     <input type="submit" value="Zatwierdź">
                 </form>
             </div>
+
+
+
         </div>
 
     </div>
@@ -72,7 +86,12 @@
     
 </section>
 
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'scripts/selectWithSearch.js' %}"></script>
 <script>
+
     const showAddGroup = document.getElementById('showAddGroup');
     const collapseNewGroups = document.getElementById('collapseNewGroups');
     showAddGroup.addEventListener('click', function () {
@@ -95,5 +114,4 @@
         }
     })
 </script>
-
-{% endblock content %}
+{% endblock javascript %}
