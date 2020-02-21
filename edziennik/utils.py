@@ -256,10 +256,12 @@ def import_students(initial_import_instance):
                                 )
                     s.full_clean()  # a must for validation
                     s.save()
-                g, created = Group.objects.get_or_create(
-                    name=group_name, defaults={'iiu': iiu})
-                # add Student to a Group
-                g.student.add(s)
+                if group_name!='None':
+                    # create group
+                    g, created = Group.objects.get_or_create(
+                        name=group_name, defaults={'iiu': iiu})
+                    # add Student to a Group
+                    g.student.add(s)
             except:
                 error={
                     'error_log': traceback.format_exc(),

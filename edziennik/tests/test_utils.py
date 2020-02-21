@@ -453,17 +453,19 @@ class Test_import_students(TestCase):
         self.assertIn(exp_log, e.first().error_log)
 
     def test_2_students_1e_student_no_group(self):
-        '''missing student group,
-        Initial_Import_Usage_Errors instance should have correct properties'''
+        '''missing student group, should be no errors, no gropus should be created'''
         iiu = import_students(self.make_initial_import_obj(
             'test_2students_1e_missing_student_group.xlsx'))
 
-        # there should be 1 Initial_Import_Usage_Errors instance
-        self.assertEqual(Initial_Import_Usage_Errors.objects.all().count(), 1)
-        e = Initial_Import_Usage_Errors.objects.filter(
-            initial_import_usage=iiu)
-        # error sould be in row number 3 (row_number 2 as 0 indexed)
-        self.assertEqual(e.first().row_number, 2)
+        # there should be no Initial_Import_Usage_Errors instance
+        self.assertFalse(Initial_Import_Usage_Errors.objects.all().exists())
+
+        # there should bo one group ('jun1' for student Adam Nowak)
+        self.assertEqual(Group.objects.all().count(), 1)
+
+        # stuent Ola should not belong to any group
+        Ola = Student.objects.get(first_name='Ola')
+        self.assertFalse(Ola.group_student.all().exists())
 
     def test_2_students_1e_student_no_tel(self):
         '''missing tel,
